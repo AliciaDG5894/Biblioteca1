@@ -1,0 +1,16 @@
+html, body {
+  height: 100%;
+}
+
+#wrapper {
+  display: flex;
+  min-height: 100vh; /* ocupa toda la pantalla */
+}
+
+#content-wrapper {
+  flex: 1; /* el contenido se estira al lado derecho */
+}
+
+#accordionSidebar {
+  min-height: 100vh; /* sidebar azul hasta abajo */
+}

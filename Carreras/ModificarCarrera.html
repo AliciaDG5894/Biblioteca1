@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one
+    or more contributor license agreements.  See the NOTICE file
+    distributed with this work for additional information
+    regarding copyright ownership.  The ASF licenses this file
+    to you under the Apache License, Version 2.0 (the
+    "License"); you may not use this file except in compliance
+    with the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing,
+    software distributed under the License is distributed on an
+    "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY
+     KIND, either express or implied.  See the License for the
+    specific language governing permissions and limitations
+    under the License.
+-->
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <!--
+        Customize this policy to fit your own app's needs. For more guidance, please refer to the docs:
+            https://cordova.apache.org/docs/en/latest/
+        Some notes:
+            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
+            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
+                * Enable inline JS: add 'unsafe-inline' to default-src
+        -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: https://ssl.gstatic.com 'unsafe-eval'; style-src 'self' 'unsafe-inline'; media-src *; img-src 'self' data: content:;"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval'; 
+        connect-src 'self' https://tion-mambo-upon-elections.trycloudflare.com; style-src 'self' 'unsafe-inline'; media-src *;"> -->
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' https://tion-mambo-upon-elections.trycloudflare.com data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline';
+               script-src 'self' https://tion-mambo-upon-elections.trycloudflare.com 'unsafe-inline' 'unsafe-eval';
+               connect-src 'self' https://tion-mambo-upon-elections.trycloudflare.com;
+               frame-src 'self' https://tion-mambo-upon-elections.trycloudflare.com;
+               img-src 'self' https://tion-mambo-upon-elections.trycloudflare.com data:;
+               style-src 'self' https://tion-mambo-upon-elections.trycloudflare.com 'unsafe-inline';
+               media-src *;"> -->
+
+    <!-- <meta http-equiv="Content-Security-Policy" content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file:;
+               script-src 'self' 'unsafe-inline' 'unsafe-eval' file:;
+               connect-src 'self' https://functionality-div-juan-adjustable.trycloudflare.com http://192.168.1.121 file:;
+               img-src 'self' data: file:;
+               style-src 'self' 'unsafe-inline' file:;
+               media-src *;"> -->
+
+    <meta name="format-detection" content="telephone=no">
+    <meta name="msapplication-tap-highlight" content="no">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light dark">
+    <title>Modificar Carrera</title>
+
+    <!-- Custom fonts for this template -->
+    <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
+
+    <!-- Custom styles for this template -->
+    <link href="../css/sb-admin-2.css" rel="stylesheet">
+
+    <!-- Custom styles for this page -->
+    <link href="../css/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+
+    <script src="../js/jquery.min.js"></script>
+
+    <!-- DataTables CSS y JS -->
+    <link rel="stylesheet" href="../css/vendor/datatables/dataTables.bootstrap4.min.css">
+    <script src="../css/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../css/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+    <script src="../js/app.js"></script>
+    <link rel="icon" href="../img/favicon.png" type="image/png">
+</head>
+
+<body id="page-top">
+    <!-- Page Wrapper -->
+    <div id="wrapper">
+
+        <!-- Sidebar -->
+            <div id="sidebar"></div>
+        <!-- End of Sidebar -->
+
+        <!-- Content Wrapper -->
+        <div id="content-wrapper" class="d-flex flex-column">
+
+            <!-- Main Content -->
+            <div id="content">
+
+                <!-- Topbar -->
+                <div id="topbar"></div>
+                <!-- End of Topbar -->
+                    <h2>Modificar Carrera</h2>
+
+                    <form class="formulario mx-auto" id="modificarCarr" name="modificarCarr" autocomplete="off">
+                        <input type="hidden" id="id" name="id" />                        
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
+                                    <label for="nombre">Nombre</label>
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required minlength="10" maxlength="200" multipleSpaces="true" letters="true"/>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="d-flex justify-content-center mt-4 gap-3">
+                            <button class="botonAgregar mr-3" id="guardar" name="guardar" type="submit">Guardar</button>
+                            <a href="Carreras.html" class="botonAgregar">Regresar</a>
+                        </div>
+                    </form>
+            </div>
+            <!-- End of Main Content -->
+
+            <!-- Footer -->
+            <footer class="sticky-footer bg-white">
+                <div class="container my-auto">
+                    <div class="copyright text-center my-auto">
+                    </div>
+                </div>
+            </footer>
+            <!-- End of Footer -->
+
+        </div>
+        <!-- End of Content Wrapper -->
+
+    </div>
+    <!-- End of Page Wrapper -->
+
+    <!-- Scroll to Top Button-->
+    <a class="scroll-to-top rounded" href="#page-top">
+        <i class="fas fa-angle-up"></i>
+    </a>
+
+    <!-- Logout Modal-->
+    <div class="modal fade" id="logoutModal" tabindex="-1" role="dialog" aria-labelledby="exampleModalLabel"
+        aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel">Ready to Leave?</h5>
+                    <button class="close" type="button" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">×</span>
+                    </button>
+                </div>
+                <div class="modal-body">Select "Logout" below if you are ready to end your current session.</div>
+                <div class="modal-footer">
+                    <button class="btn btn-secondary" type="button" data-dismiss="modal">Cancel</button>
+                    <a class="btn btn-primary" href="login.html">Logout</a>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap core JavaScript-->
+    <script src="../css/vendor/jquery/jquery.min.js"></script>
+    <script src="../css/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+
+    <!-- Core plugin JavaScript-->
+    <script src="../css/vendor/jquery-easing/jquery.easing.min.js"></script>
+
+    <!-- Custom scripts for all pages-->
+    <script src="../js/sb-admin-2.min.js"></script>
+
+    <!-- Page level plugins -->
+    <script src="../css/vendor/datatables/jquery.dataTables.min.js"></script>
+    <script src="../css/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <!-- Page level custom scripts -->
+    <script src="../js/demo/datatables-demo.js"></script>
+
+    <!-- VALIDACIONES jQuery -->
+    <!-- <script src="https://code.jquery.com/jquery-3.7.1.min.js" integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
+    <script src="../js/Validaciones/Carrera_Modificar.js"></script> -->
+
+    <!-- <script src="cordova.js"></script>
+    <script src="js/index.js"></script> -->
+</body>
+
+</html>
