@@ -21,89 +21,99 @@
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
 // document.addEventListener('deviceready', onDeviceReady, false);
 
+document.addEventListener('deviceready', onDeviceReady, false);
+document.addEventListener("pause", function() { console.log("App en segundo plano"); }, false);
+document.addEventListener("online", function() { console.log("Conectado a internet"); }, false);
+document.addEventListener("offline", function() { console.log("Sin conexión"); }, false);
+
 function onDeviceReady() {
 
     console.log('Running cordova-' + cordova.platformId + '@' + cordova.version);
     document.getElementById('deviceready').classList.add('ready');
+
+    fb();
 }
 
 // PUSHER
-
 function fb() {
-    decoradorObtenerFBToken()
- 
+    decoradorObtenerFBToken();
+
     window.FirebasexMessaging.onTokenRefresh(function (token) {
-        localStorage.setItem("helloFBToken", token)
+        console.log("Token refrescado:", token);
+        localStorage.setItem("FBToken", token);
+
+        enviarToken(token);
     }, function (error) {
-        // Error al refrescar el Firebase Token
-    })
- 
+        console.error("Error al refrescar el Firebase Token:", error);
+    });
+
     window.FirebasexMessaging.onMessageReceived(function (message) {
-        let mensaje = (message.body || "Sin mensaje")
- 
-        fbOnPushNotification(mensaje)
-    })
- 
+        let mensaje = (message.body || "Sin mensaje");
+        fbOnPushNotification(mensaje);
+    }, function (error) {
+        console.error("Error al recibir mensaje:", error);
+    });
+
     window.FirebasexMessaging.onNotificationOpen(function (notification) {
         let mensaje = (notification.body)
-                ||    (notification.notification ? notification.notification.body : "Sin mensaje")
- 
-        fbOnPushNotification(mensaje)
-    })
+            || (notification.notification ? notification.notification.body : "Sin mensaje");
+
+        fbOnPushNotification(mensaje);
+    }, function (error) {
+        console.error("Error al abrir notificación:", error);
+    });
 }
- 
+
 function obtenerFBToken() {
     window.FirebasexMessaging.getToken(function (token) {
         if (token) {
-            console.log("Firebase Token", token)
-            localStorage.setItem("helloFBToken", token)
- 
-            return
-            // Tabla de token hacer un insert que no nos metamos en auteticacion porque te metes con json web token y es mucho pedo, despues hacer un .post qu envie el token
-            // crea una tabla de token en bd, se recomineda con post, crea un end point 
-            // hacer un selct consultando los tokens
-            // copiar este codigo
-            // crear una tabla de token
-            // crear un end point que reciba el token y lo guarde en la tabla/ de ID Y TOKEN
+            console.log("Firebase Token:", token);
+            localStorage.setItem("FBToken", token);
 
-            // PRESENTACION
-            // Cuales son los mecanismos 
-            // rescribir una notificaccion
-            // hacer una diferencia de push notification
+            enviarToken(token);
         }
     }, function (error) {
-        // Error al obtener Firebase Token
-    })
+        console.error("Error al obtener Firebase Token:", error);
+    });
 }
- 
+
 function decoradorObtenerFBToken() {
     window.FirebasexMessaging.hasPermission(function (granted) {
         if (!granted) {
             window.FirebasexMessaging.grantPermission(function () {
-                obtenerFBToken()
+                obtenerFBToken();
             }, function (error) {
-                // Error al solicitar permiso
-            })
- 
-            return
+                console.error("Error al solicitar permiso:", error);
+            });
+            return;
         }
- 
-        obtenerFBToken()
-    })
+        obtenerFBToken();
+    });
 }
- 
+
 function esperarFirebasePlugin() {
     if (window.FirebasexMessaging) {
-        console.log("FirebasePlugin disponible, obteniendo token...")
-        fb()
+        console.log("FirebasePlugin disponible, obteniendo token...");
+        fb();
     } else {
-        console.log("FirebasePlugin aún no disponible, reintentando...")
-        setTimeout(esperarFirebasePlugin, 1000)
+        console.log("FirebasePlugin aún no disponible, reintentando...");
+        setTimeout(esperarFirebasePlugin, 1000);
     }
 }
- 
+
 let fbOnPushNotification = function (mensaje) {
-    alert(mensaje)
+    alert(mensaje);
+};
+
+function enviarToken(token) {
+    fetch(`${API}?accion=insertarToken`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ fbtoken: token })
+    })
+    .then(res => res.json())
+    .then(data => console.log("Token guardado en backend:", data))
+    .catch(err => console.error("Error al guardar token:", err));
 }
- 
-esperarFirebasePlugin()
+
+esperarFirebasePlugin();
