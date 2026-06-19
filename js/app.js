@@ -1,5 +1,5 @@
-const API = "https://temple-momentum-unique-chorus.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://temple-momentum-unique-chorus.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://slideshow-been-incurred-lived.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://slideshow-been-incurred-lived.trycloudflare.com/test/api/Estudiantes.php";
 
 function cargarCarreras() {
   fetch(`${API}?accion=listar`)
@@ -574,7 +574,7 @@ function cargarLibros() {
         dato.Area,
         dato.Cantidad,
 
-        `<a href="ModificarLibro.html?id=${dato.Id_libro}">
+        `<a href="ModificarLibros.html?id=${dato.Id_libro}">
            <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
          </a>`,
         `<a href="#" onclick="eliminarLibro(${dato.Id_libro}, this)">
@@ -635,7 +635,7 @@ function insertarLibro(event) {
   fetch(`${API}?accion=insertar_libro`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "titulo=" + encodeURIComponent(Titulo) + "&fecha_edi=" + encodeURIComponent(Fecha_edi) + "&autores=" + encodeURIComponent(Autores) + "&res_cus=" + encodeURIComponent(Res_cus) + "&dep_res=" + encodeURIComponent(Dep_res) + "&tipo=" + encodeURIComponent(Tipo) + "&editora=" + encodeURIComponent(Editora) + "&ISBN=" + encodeURIComponent(ISBN) + "&area=" + encodeURIComponent(Area) + "&cantidad=" + encodeURIComponent(Cantidad)
+    body: "Titulo=" + encodeURIComponent(Titulo) + "&Fecha_edicion=" + encodeURIComponent(Fecha_edi) + "&Autores=" + encodeURIComponent(Autores) + "&Responsable_custodia=" + encodeURIComponent(Res_cus) + "&Departamento_responsable=" + encodeURIComponent(Dep_res) + "&Tipo=" + encodeURIComponent(Tipo) + "&Editora=" + encodeURIComponent(Editora) + "&ISBN=" + encodeURIComponent(ISBN) + "&Area=" + encodeURIComponent(Area) + "&Cantidad=" + encodeURIComponent(Cantidad)
   })
     .then(res => res.json())
     .then(data => {
