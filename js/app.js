@@ -1,5 +1,5 @@
-const API = "https://edge-ian-parameters-blogging.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://edge-ian-parameters-blogging.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://temple-momentum-unique-chorus.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://temple-momentum-unique-chorus.trycloudflare.com/test/api/Estudiantes.php";
 
 function cargarCarreras() {
   fetch(`${API}?accion=listar`)
@@ -470,10 +470,10 @@ function cargarServicios() {
         dato.Id_servicio,
         dato.Nombre,
         `<a href="ModificarServicio.html?id=${dato.Id_servicio}">
-           <i class="fas fa-edit"></i><span class='d-none d-md-inline'> Modificar
+           <i class="fas fa-edit"></i><span class='d-none d-md-inline'> Modificar</span>
          </a>`,
         `<a href="#" onclick="eliminarServicio(${dato.Id_servicio}, this)">
-           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar
+           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
          </a>`
       ]);
  
@@ -555,16 +555,146 @@ function eliminarServicio(id) {
     .catch(err => console.error("Error eliminando servicio:", err));
 }
 
+// LIBROS
+
+function cargarLibros() {
+  fetch(`${API}?accion=listar_libro`)
+    .then(res => res.json())
+    .then(data => {
+      const filas = data.map(dato => [
+        dato.Id_libro,
+        dato.Titulo,               
+        dato.Fecha_edicion,            
+        dato.Autores,
+        dato.Responsable_custodia,
+        dato.Departamento_responsable,
+        dato.Tipo,
+        dato.Editora,
+        dato.ISBN,
+        dato.Area,
+        dato.Cantidad,
+
+        `<a href="ModificarLibro.html?id=${dato.Id_libro}">
+           <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
+         </a>`,
+        `<a href="#" onclick="eliminarLibro(${dato.Id_libro}, this)">
+           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+         </a>`
+
+      ]);
+ 
+      if ($.fn.DataTable.isDataTable('#dataTableLibros')) {
+        let tabla = $('#dataTableLibros').DataTable();
+        tabla.clear();
+        tabla.rows.add(filas).draw();
+      } else {
+        $('#dataTableLibros').DataTable({
+          data: filas,
+          columns: [
+            { title: 'ID' },
+            { title: 'titulo' },
+            { title: 'fecha_edi' },
+            { title: 'autores' },
+            { title: 'res_cus' },
+            { title: 'dep_res' },
+            { title: 'tipo' },
+            { title: 'editora' },
+            { title: 'isbn' },
+            { title: 'area' },
+            { title: 'cantididad' },
+            { title: 'Modificar' },
+            { title: 'Eliminar' }
+          ],
+          pageLength: 10,
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            paginate: { previous: "Anterior", next: "Siguiente" }
+          }
+        });
+      }
+    })
+    .catch(err => console.error("Error cargando servicios:", err));
+}
+ 
+// --- INSERTAR LIBRO ---
+function insertarLibro(event) {
+  event.preventDefault();
+  let Titulo = document.getElementById("titulo").value;
+  let Fecha_edi = document.getElementById("fecha_edi").value;
+  let Autores = document.getElementById("autores").value;
+  let Res_cus = document.getElementById("res_cus").value;
+  let Dep_res = document.getElementById("dep_res").value;
+  let Tipo = document.getElementById("tipo").value;
+  let Editora = document.getElementById("editora").value;
+  let ISBN = document.getElementById("ISBN").value;
+  let Area = document.getElementById("area").value;
+  let Cantidad = document.getElementById("cantidad").value;
+
+  fetch(`${API}?accion=insertar_libro`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "titulo=" + encodeURIComponent(Titulo) + "&fecha_edi=" + encodeURIComponent(Fecha_edi) + "&autores=" + encodeURIComponent(Autores) + "&res_cus=" + encodeURIComponent(Res_cus) + "&dep_res=" + encodeURIComponent(Dep_res) + "&tipo=" + encodeURIComponent(Tipo) + "&editora=" + encodeURIComponent(Editora) + "&ISBN=" + encodeURIComponent(ISBN) + "&area=" + encodeURIComponent(Area) + "&cantidad=" + encodeURIComponent(Cantidad)
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Respuesta insertar libro:", data);
+      alert(data.message);
+      window.location.href = "Libros.html";
+    })
+    .catch(err => console.error("Error insertando libro:", err));
+}
+ 
+// --- CARGAR DATOS PARA MODIFICAR ---
+function cargarDatosModificarLibro() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+ 
+  if (id) {
+    fetch(`${API}?accion=get_libro&id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("id").value = data.Id_libro;
+        document.getElementById("titulo").value = data.titulo;
+        document.getElementById("fecha_edi").value = data.fecha_edi;
+        document.getElementById("autores").value = data.autores;
+        document.getElementById("res_cus").value = data.res_cus;
+        document.getElementById("dep_res").value = data.dep_res;
+        document.getElementById("tipo").value = data.tipo;
+        document.getElementById("editora").value = data.editora;
+        document.getElementById("ISBN").value = data.ISBN;
+        document.getElementById("area").value = data.area;
+        document.getElementById("cantidad").value = data.cantidad;
+      })
+      .catch(err => console.error("Error cargando datos del libro:", err));
+  }
+}
+ 
+// --- ELIMINAR LIBRO ---
+function eliminarLibro(id) {
+  if (!confirm("¿Seguro que deseas eliminar este libro?")) return;
+ 
+  fetch(`${API}?accion=eliminar_libro`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "Id_libro=" + encodeURIComponent(id)
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      cargarLibros();
+    })
+    .catch(err => console.error("Error eliminando libro:", err));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarPartials();
   cargarCarreras();
   cargarServicios();
   cargarEstudiantes();
   cargarPrestamos();
-  // cargarDatosModificar();
-  // cargarDatosModificarServicio();
-  // cargarDatosModificarEstudiante();
-  // cargarDatosModificarPrestamo();
+  cargarLibros();
 
   if (document.getElementById("modificarCarr")) {
     cargarDatosModificar();
@@ -580,6 +710,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.getElementById("modificarPrestamo")) {
       cargarDatosModificarPrestamo();
+  }
+
+  if (document.getElementById("modificarLibros")) {
+      cargarDatosModificarLibro();
   }
 
   const formInsertar = document.getElementById("insertarCarrera");
@@ -605,6 +739,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const formInsertarSrv = document.getElementById("insertarSrv");
   if (formInsertarSrv) {
     formInsertarSrv.addEventListener("submit", insertarServicio);
+  }
+
+  const formInsertarLibro = document.getElementById("insertarLibro");
+  if (formInsertarLibro) {
+    formInsertarLibro.addEventListener("submit", insertarLibro);
   }
 
   const formModificar = document.getElementById("modificarCarr");
@@ -652,4 +791,35 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formModificarPrestamo) {
       formModificarPrestamo.addEventListener("submit", modificarPrestamos);
   }
+
+  const formModificarLib = document.getElementById("modificarLibro");
+  if (formModificarLib) {
+    formModificarLib.addEventListener("submit", function(event) {
+      event.preventDefault();
+      let titulo = document.getElementById("titulo").value;
+      let fecha_edi = document.getElementById("fecha_edi").value;
+      let autores = document.getElementById("autores").value;
+      let res_cus = document.getElementById("res_cus").value;
+      let dep_res = document.getElementById("dep_res").value;
+      let tipo = document.getElementById("tipo").value;
+      let editora = document.getElementById("editora").value;
+      let isbn = document.getElementById("isbn").value;
+      let area = document.getElementById("area").value;
+      let cantidad = document.getElementById("cantidad").value;
+
+      fetch(`${API}?accion=modificar_libro`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "titulo=" + encodeURIComponent(titulo) + "&fecha_edi=" + encodeURIComponent(fecha_edi) + "&autores=" + encodeURIComponent(autores) + "&res_cus=" + encodeURIComponent(res_cus) + "&dep_res=" + encodeURIComponent(dep_res) + "&tipo=" + encodeURIComponent(tipo) + "&editora=" + encodeURIComponent(editora) + "&ISBN=" + encodeURIComponent(isbn) + "&area=" + encodeURIComponent(area) + "&cantidad=" + encodeURIComponent(cantidad)
+
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message);
+          window.location.href = "Libros.html";
+        })
+        .catch(err => console.error("Error modificando libro:", err));
+    });
+  }
+
 });
