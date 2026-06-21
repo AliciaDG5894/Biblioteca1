@@ -688,6 +688,133 @@ function eliminarLibro(id) {
     .catch(err => console.error("Error eliminando libro:", err));
 }
 
+
+// Historial_Prestamos
+
+function cargarHistorialP() {
+  fetch(`${API}?accion=listar_HistorialP`)
+    .then(res => res.json())
+    .then(data => {
+      const filas = data.map(dato => [
+        dato.Id_historial,
+        dato.Nombre,               
+        dato.Descripcion,            
+        dato.Fecha,
+        dato.Estado,
+
+        `<a href="ModificarHistorialP.html?id=${dato.Id_historial}">
+           <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
+         </a>`,
+        `<a href="#" onclick="eliminarHistorialP(${dato.Id_historial}, this)">
+           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+         </a>`
+
+      ]);
+ 
+      if ($.fn.DataTable.isDataTable('#dataTableHistorialP')) {
+        let tabla = $('#dataTableHistorialP').DataTable();
+        tabla.clear();
+        tabla.rows.add(filas).draw();
+      } else {
+        $('#dataTableHistorialP').DataTable({
+          data: filas,
+          columns: [
+            { title: 'ID' },
+            { title: 'Nombre' },
+            { title: 'descripcion' },
+            { title: 'fecha' },
+            { title: 'estado' },
+            { title: 'Modificar' },
+            { title: 'Eliminar' }
+          ],
+          pageLength: 10,
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            paginate: { previous: "Anterior", next: "Siguiente" }
+          }
+        });
+      }
+    })
+    .catch(err => console.error("Error cargando servicios:", err));
+}
+
+// --- INSERTAR HistorialP ---
+function insertarHistorialP(event) {
+  event.preventDefault();
+  let Prestamo = document.getElementById("prestamo").value;
+  let Descripcion = document.getElementById("descripcion").value;
+  let Fecha = document.getElementById("fecha").value;
+  let Estado = document.getElementById("estado").value;
+
+  fetch(`${API}?accion=insertar_HistorialP`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "Prestamo=" + encodeURIComponent(Prestamo) + "&Descripcion=" + encodeURIComponent(Descripcion) + "&Fecha=" + encodeURIComponent(Fecha) + "&Estado=" + encodeURIComponent(Estado)
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Respuesta insertar historial del préstamo:", data);
+      alert(data.message);
+      window.location.href = "HistorialP.html";
+    })
+    .catch(err => console.error("Error insertando historial del préstamo:", err));
+}
+
+// Select
+function cargarPrestamosSelect() {
+    fetch(`${API}?accion=listar_prestamos_select`)
+        .then(res => res.json())
+        .then(data => {
+            const select = document.getElementById("prestamo");
+            data.forEach(p => {
+                const option = document.createElement("option");
+                option.value = p.Id_prestamo;
+                option.textContent = p.Id_prestamo + " - " + p.Nombre;
+                select.appendChild(option);
+            });
+        })
+        .catch(err => console.error("Error cargando préstamos:", err));
+}
+
+// --- CARGAR DATOS PARA MODIFICAR ---
+function cargarDatosModificarHistorialP() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+ 
+  if (id) {
+    fetch(`${API}?accion=get_HistorialP&id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("id").value = data.Id_historial;
+        document.getElementById("prestamo").value = data.Prestamo;
+        document.getElementById("descripcion").value = data.Descripcion;
+        document.getElementById("fecha").value = data.Fecha;
+        document.getElementById("estado").value = data.Estado;
+      })
+      .catch(err => console.error("Error cargando datos del historial de préstamo:", err));
+  }
+}
+ 
+
+// --- ELIMINAR HISTORIAL PRÉSTAMO ---
+function eliminarHistorialP(id) {
+  if (!confirm("¿Seguro que deseas eliminar este historial de prestamo?")) return;
+ 
+  fetch(`${API}?accion=eliminar_HistorialP`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "Id_historial=" + encodeURIComponent(id)
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      cargarHistorialP();
+    })
+    .catch(err => console.error("Error eliminando historial de préstamo:", err));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarPartials();
   cargarCarreras();
@@ -695,6 +822,18 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarEstudiantes();
   cargarPrestamos();
   cargarLibros();
+  cargarHistorialP();
+
+  if (document.getElementById("insertarHistorialP")) {
+      cargarPrestamosSelect();
+
+      // Restricción de fecha: no permitir fechas pasadas
+      const inputFecha = document.getElementById("fecha");
+      if (inputFecha) {
+          const hoy = new Date().toISOString().split("T")[0];
+          inputFecha.min = hoy;
+      }
+  }
 
   if (document.getElementById("modificarCarr")) {
     cargarDatosModificar();
@@ -714,6 +853,17 @@ document.addEventListener("DOMContentLoaded", () => {
 
   if (document.getElementById("modificarLibros")) {
       cargarDatosModificarLibro();
+  }
+
+  if (document.getElementById("modificarHistorialP")) {
+      cargarDatosModificarHistorialP();
+      cargarPrestamosSelect();
+
+      const inputFecha = document.getElementById("fecha");
+      if (inputFecha) {
+          const hoy = new Date().toISOString().split("T")[0];
+          inputFecha.min = hoy;
+      }
   }
 
   const formInsertar = document.getElementById("insertarCarrera");
@@ -745,6 +895,11 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formInsertarLibro) {
     formInsertarLibro.addEventListener("submit", insertarLibro);
   }
+
+  const formInsertarHistorialP = document.getElementById("insertarHistorialP");
+  if (formInsertarHistorialP) {
+    formInsertarHistorialP.addEventListener("submit", insertarHistorialP);
+  }  
 
   const formModificar = document.getElementById("modificarCarr");
   if (formModificar) {
@@ -820,6 +975,30 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.href = "Libros.html";
         })
         .catch(err => console.error("Error modificando libro:", err));
+    });
+  }
+
+  const formModificarHistorialP = document.getElementById("modificarHistorialP");
+  if (formModificarHistorialP) {
+    formModificarHistorialP.addEventListener("submit", function(event) {
+      event.preventDefault();
+      let id = document.getElementById("id").value;
+      let Prestamo = document.getElementById("prestamo").value;
+      let Descripcion = document.getElementById("descripcion").value;
+      let Fecha = document.getElementById("fecha").value;
+      let Estado = document.getElementById("estado").value;
+      
+      fetch(`${API}?accion=modificar_HistorialP`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "Id_historial=" + encodeURIComponent(id) + "&Prestamo=" + encodeURIComponent(Prestamo) + "&Descripcion=" + encodeURIComponent(Descripcion) + "&Fecha=" + encodeURIComponent(Fecha) + "&Estado=" + encodeURIComponent(Estado)
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message);
+          window.location.href = "HistorialP.html";
+        })
+        .catch(err => console.error("Error modificando historial de préstamos:", err));
     });
   }
 

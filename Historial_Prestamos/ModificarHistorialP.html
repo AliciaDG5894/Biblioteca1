@@ -14,7 +14,7 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
     <meta name="color-scheme" content="light">
-    <title>Registrar Servicio</title>
+    <title>Modificar Historial de préstamo</title>
 
     <!-- Custom fonts -->
     <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -45,20 +45,43 @@
                 <div id="topbar"></div>
                 <!-- End of Topbar -->
 
-                <h2>Registrar Servicio</h2>
+                <h2>Modificar Historial de préstamo</h2>
 
-                <form class="formulario mx-auto" id="insertarSrv" name="insertarSrv" autocomplete="off">
+                <form class="formulario mx-auto" id="modificarHistorialP" name="modificarHistorialP" autocomplete="off">
+                    <!-- ID oculto para saber qué registro actualizar -->
+                    <input type="hidden" id="id" name="id" />
                     <div class="row justify-content-center">
+                        <input type="hidden" id="id" name="id" />
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
-                                <label for="nombre">Nombre del Servicio</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" required minlength="10" maxlength="200" multipleSpaces="true" letters="true" />
+                                <label for="prestamo">Préstamo</label>
+                                <select id="prestamo" name="prestamo" class="form-control" required >
+                                    <option value="" disabled selected>Selecciona una opción</option>
+                                </select>
                             </div>
                         </div>
+                        <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                            <div class="mb-3">
+                                <label for="descripcion">Descripción</label>
+                                <input type="text" class="form-control" id="descripcion" name="descripcion" required minlength="10" maxlength="200" multipleSpaces="true" letters="true" />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                            <div class="mb-3">
+                                <label for="fecha">Fecha</label>
+                                <input type="date" class="form-control" id="fecha" name="fecha" required />
+                            </div>
+                        </div>
+                        <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                            <div class="mb-3">
+                                <label for="estado">Estado</label>
+                                <input type="text" class="form-control" id="estado" name="estado" required minlength="10" maxlength="200" multipleSpaces="true" letters="true" />
+                            </div>
+                        </div>       
                     </div>
                     <div class="d-flex justify-content-center mt-4 gap-3">
-                        <button class="botonAgregar mr-3" id="guardar" name="guardar" type="submit">Guardar</button>
-                        <a href="Servicios.html" class="botonAgregar">Regresar</a>
+                        <button class="botonAgregar mr-3" id="actualizar" name="actualizar" type="submit">Actualizar</button>
+                        <a href="HistorialP.html" class="botonAgregar">Regresar</a>
                     </div>
                 </form>
 
@@ -98,9 +121,10 @@
         integrity="sha256-/JqT3SQfawRcv/BIHPThkBvs0OEvtFFmqPF/lYI/Cxo=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
-    <!-- <script src="../js/Validaciones/Servicio_Insertar.js"></script> -->
+    <script src="../js/Validaciones/Servicio_Modificar.js"></script>
 
     <script src="cordova.js"></script>
     <script src="../js/index.js"></script>
+
 </body>
 </html>
