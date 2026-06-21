@@ -690,7 +690,6 @@ function eliminarLibro(id) {
 
 
 // Historial_Prestamos
-
 function cargarHistorialP() {
   fetch(`${API}?accion=listar_HistorialP`)
     .then(res => res.json())
@@ -815,6 +814,71 @@ function eliminarHistorialP(id) {
     .catch(err => console.error("Error eliminando historial de préstamo:", err));
 }
 
+// VISITAS
+function cargarVisitas() {
+  fetch(`${API}?accion=listar_Visitas`)
+    .then(res => res.json())
+    .then(data => {
+      const filas = data.map(dato => [
+        dato.Id_entrada_salida,
+        dato.NE,               
+        dato.NS,            
+        dato.Fecha,
+        dato.Hora_entrada,
+        dato.Hora_salida,
+
+        `<a href="#" onclick="eliminarVisitas(${dato.Id_entrada_salida}, this)">
+           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+         </a>`
+
+      ]);
+ 
+      if ($.fn.DataTable.isDataTable('#dataTableVisitas')) {
+        let tabla = $('#dataTableVisitas').DataTable();
+        tabla.clear();
+        tabla.rows.add(filas).draw();
+      } else {
+        $('#dataTableVisitas').DataTable({
+          data: filas,
+          columns: [
+            { title: 'ID' },
+            { title: 'NE' },
+            { title: 'NS' },
+            { title: 'Fecha' },
+            { title: 'Hora de entrada' },
+            { title: 'Hora de salida' },
+            { title: 'Eliminar' }
+          ],
+          pageLength: 10,
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            paginate: { previous: "Anterior", next: "Siguiente" }
+          }
+        });
+      }
+    })
+    .catch(err => console.error("Error cargando historial de prestamos:", err));
+}
+
+// --- ELIMINAR VISITAS ---
+function eliminarVisitas(id) {
+  if (!confirm("¿Seguro que deseas eliminar esta visita?")) return;
+ 
+  fetch(`${API}?accion=eliminar_Visitas`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "Id_entrada_salida=" + encodeURIComponent(id)
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      cargarVisitas();
+    })
+    .catch(err => console.error("Error eliminando visita:", err));
+}
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarPartials();
   cargarCarreras();
@@ -823,6 +887,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarPrestamos();
   cargarLibros();
   cargarHistorialP();
+  cargarVisitas();
 
   if (document.getElementById("insertarHistorialP")) {
       cargarPrestamosSelect();

@@ -14,7 +14,7 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
     <meta name="color-scheme" content="light">
-    <title>Servicios</title>
+    <title>Visitas</title>
 
     <!-- Custom fonts -->
     <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -58,41 +58,33 @@
                                     <h1 class="h3 mb-2 text-gray-800">Registros</h1>
                                 </div>
                             </div>
-                            <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
-                                <div class="col-auto">
-                                    <div class="mb-1">
-                                        <a href="InsertarServicios.html" class="botonAgregar">
-                                            <i class="fas fa-plus"></i>
-                                            <span class="d-none d-md-inline">Agregar</span>
-                                        </a>
-                                    </div>
-                                </div>
-                            </div>
                         </div>
                     </div>
 
                     <!-- DataTable -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary">Servicios</h6>
+                            <h6 class="m-0 font-weight-bold text-primary">Visitas</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                                <table class="table table-bordered" id="dataTableServicios" name="dataTableServicios" width="100%" cellspacing="0">
+                                <table class="table table-bordered" id="dataTableVisitas" name="dataTableVisitas" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
                                             <th>ID</th>
-                                            <th>Nombre</th>
-                                            <th>Modificar</th>
+                                            <th>Estudiante</th>
+                                            <th>Servicio</th>
+                                            <th>Fecha</th>
+                                            <th>Hora de entrada</th>
+                                            <th>Hora de salida</th>
                                             <th>Eliminar</th>
                                         </tr>
                                     </thead>
-                                    <tbody id="tablaServicios"></tbody>
+                                    <tbody id="tablaVisitas"></tbody>
                                 </table>
                             </div>
                         </div>
                     </div>
-
                 </div>
                 <!-- /.container-fluid -->
 
