@@ -592,16 +592,16 @@ function cargarLibros() {
           data: filas,
           columns: [
             { title: 'ID' },
-            { title: 'titulo' },
-            { title: 'fecha_edi' },
-            { title: 'autores' },
-            { title: 'res_cus' },
-            { title: 'dep_res' },
-            { title: 'tipo' },
-            { title: 'editora' },
-            { title: 'isbn' },
-            { title: 'area' },
-            { title: 'cantididad' },
+            { title: 'Título' },
+            { title: 'Fecha Edición' },
+            { title: 'Autores' },
+            { title: 'Responsable de Custodia' },
+            { title: 'Departamento del Responsable' },
+            { title: 'Tipo' },
+            { title: 'Editorial' },
+            { title: 'ISBN' },
+            { title: 'Área' },
+            { title: 'Cantidad' },
             { title: 'Modificar' },
             { title: 'Eliminar' }
           ],
@@ -719,10 +719,10 @@ function cargarHistorialP() {
           data: filas,
           columns: [
             { title: 'ID' },
-            { title: 'Nombre' },
-            { title: 'descripcion' },
-            { title: 'fecha' },
-            { title: 'estado' },
+            { title: 'Préstamo' },
+            { title: 'Descripción' },
+            { title: 'Fecha' },
+            { title: 'Estado' },
             { title: 'Modificar' },
             { title: 'Eliminar' }
           ],
@@ -814,6 +814,144 @@ function eliminarHistorialP(id) {
     .catch(err => console.error("Error eliminando historial de préstamo:", err));
 }
 
+// DETALLE PRESTAMOS
+function cargarDetalleP() {
+  fetch(`${API}?accion=listar_DetalleP`)
+    .then(res => res.json())
+    .then(data => {
+      const filas = data.map(dato => [
+        dato.Id_detalle_prestamo,
+        dato.Nombre,               
+        dato.Titulo,            
+        dato.Cantidad,
+
+        `<a href="ModificarDetalleP.html?id=${dato.Id_detalle_prestamo}">
+           <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
+         </a>`,
+        `<a href="#" onclick="eliminarDetalleP(${dato.Id_detalle_prestamo}, this)">
+           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+         </a>`
+
+      ]);
+ 
+      if ($.fn.DataTable.isDataTable('#dataTableDetalleP')) {
+        let tabla = $('#dataTableDetalleP').DataTable();
+        tabla.clear();
+        tabla.rows.add(filas).draw();
+      } else {
+        $('#dataTableDetalleP').DataTable({
+          data: filas,
+          columns: [
+            { title: 'ID' },
+            { title: 'Préstamo' },
+            { title: 'Libro' },
+            { title: 'Cantidad' },
+            { title: 'Modificar' },
+            { title: 'Eliminar' }
+          ],
+          pageLength: 10,
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            paginate: { previous: "Anterior", next: "Siguiente" }
+          }
+        });
+      }
+    })
+    .catch(err => console.error("Error cargando servicios:", err));
+}
+
+// --- INSERTAR DETALLEP ---
+function insertarDetalleP(event) {
+  event.preventDefault();
+  let Prestamo = document.getElementById("prestamo").value;
+  let Libro = document.getElementById("libro").value;
+  let Cantidad = document.getElementById("cantidad").value;
+
+  fetch(`${API}?accion=insertar_DetalleP`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "Prestamo=" + encodeURIComponent(Prestamo) + "&Libro=" + encodeURIComponent(document.getElementById("libroId").value) + "&Cantidad=" + encodeURIComponent(Cantidad)
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Respuesta insertar detalle del préstamo:", data);
+      alert(data.message);
+      window.location.href = "DetalleP.html";
+    })
+    .catch(err => console.error("Error insertando detalle del préstamo:", err));
+}
+
+function cargarLibrosDatalist() {
+    fetch(`${API}?accion=listar_libro`)
+        .then(res => res.json())
+        .then(data => {
+            const datalist = document.getElementById("listaLibros");
+            data.forEach(libro => {
+                const option = document.createElement("option");
+                option.value = libro.Titulo;
+                option.dataset.id = libro.Id_libro;
+                datalist.appendChild(option);
+            });
+
+            // Cuando el usuario selecciona una opción, guarda el ID en el hidden
+            document.getElementById("libro").addEventListener("input", function() {
+                const opciones = datalist.querySelectorAll("option");
+                opciones.forEach(op => {
+                    if (op.value === this.value) {
+                        document.getElementById("libroId").value = op.dataset.id;
+                    }
+                });
+            });
+        });
+}
+
+// --- CARGAR DATOS PARA MODIFICAR ---
+function cargarDatosModificarDetalleP() {
+    const params = new URLSearchParams(window.location.search);
+    const id = params.get("id");
+
+    if (id) {
+        fetch(`${API}?accion=get_DetalleP&id=${id}`)
+            .then(res => res.json())
+            .then(data => {
+                document.getElementById("id").value       = data.Id_detalle_prestamo;
+                document.getElementById("prestamo").value = data.Prestamo;  // select por ID
+                document.getElementById("cantidad").value = data.Cantidad;
+
+                // Para el libro, primero carga el datalist y luego pon el título
+                fetch(`${API}?accion=listar_libro`)
+                    .then(res => res.json())
+                    .then(libros => {
+                        const libro = libros.find(l => l.Id_libro == data.Libro);
+                        if (libro) {
+                            document.getElementById("libro").value   = libro.Titulo;
+                            document.getElementById("libroId").value = libro.Id_libro;
+                        }
+                    });
+            })
+            .catch(err => console.error("Error cargando datos:", err));
+    }
+}
+
+// --- ELIMINAR DETALLE PRÉSTAMO ---
+function eliminarDetalleP(id) {
+  if (!confirm("¿Seguro que deseas eliminar este detalle de prestamo?")) return;
+ 
+  fetch(`${API}?accion=eliminar_DetalleP`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "Id_detalle_prestamo=" + encodeURIComponent(id)
+  })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      cargarDetalleP();
+    })
+    .catch(err => console.error("Error eliminando detalle de préstamo:", err));
+}
+
 // VISITAS
 function cargarVisitas() {
   fetch(`${API}?accion=listar_Visitas`)
@@ -842,8 +980,8 @@ function cargarVisitas() {
           data: filas,
           columns: [
             { title: 'ID' },
-            { title: 'NE' },
-            { title: 'NS' },
+            { title: 'Estudiante' },
+            { title: 'Servicio' },
             { title: 'Fecha' },
             { title: 'Hora de entrada' },
             { title: 'Hora de salida' },
@@ -887,6 +1025,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarPrestamos();
   cargarLibros();
   cargarHistorialP();
+  cargarDetalleP();
   cargarVisitas();
 
   if (document.getElementById("insertarHistorialP")) {
@@ -898,6 +1037,11 @@ document.addEventListener("DOMContentLoaded", () => {
           const hoy = new Date().toISOString().split("T")[0];
           inputFecha.min = hoy;
       }
+  }
+
+  if (document.getElementById("insertarDetalleP")) {
+      cargarPrestamosSelect();
+      cargarLibrosDatalist();
   }
 
   if (document.getElementById("modificarCarr")) {
@@ -930,6 +1074,13 @@ document.addEventListener("DOMContentLoaded", () => {
           inputFecha.min = hoy;
       }
   }
+
+  if (document.getElementById("modificarDetalleP")) {
+      cargarPrestamosSelect();
+      cargarLibrosDatalist();  
+      cargarDatosModificarDetalleP();
+  }
+
 
   const formInsertar = document.getElementById("insertarCarrera");
   if (formInsertar) {
@@ -964,6 +1115,11 @@ document.addEventListener("DOMContentLoaded", () => {
   const formInsertarHistorialP = document.getElementById("insertarHistorialP");
   if (formInsertarHistorialP) {
     formInsertarHistorialP.addEventListener("submit", insertarHistorialP);
+  }  
+
+  const formInsertarDetalleP = document.getElementById("insertarDetalleP");
+  if (formInsertarDetalleP) {
+    formInsertarDetalleP.addEventListener("submit", insertarDetalleP);
   }  
 
   const formModificar = document.getElementById("modificarCarr");
@@ -1064,6 +1220,29 @@ document.addEventListener("DOMContentLoaded", () => {
           window.location.href = "HistorialP.html";
         })
         .catch(err => console.error("Error modificando historial de préstamos:", err));
+    });
+  }
+
+  const formModificarDetalleP = document.getElementById("modificarDetalleP");
+  if (formModificarDetalleP) {
+    formModificarDetalleP.addEventListener("submit", function(event) {
+      event.preventDefault();
+      let id = document.getElementById("id").value;
+      let Prestamo = document.getElementById("prestamo").value;
+      let Libro = document.getElementById("libro").value;
+      let Cantidad = document.getElementById("cantidad").value;
+      
+      fetch(`${API}?accion=modificar_DetalleP`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "Id_detalle_prestamo=" + encodeURIComponent(id) + "&Prestamo=" + encodeURIComponent(Prestamo) + "&Libro=" + encodeURIComponent(document.getElementById("libroId").value) + "&Cantidad=" + encodeURIComponent(Cantidad)
+      })
+        .then(res => res.json())
+        .then(data => {
+          alert(data.message);
+          window.location.href = "DetalleP.html";
+        })
+        .catch(err => console.error("Error modificando detalle de préstamos:", err));
     });
   }
 
