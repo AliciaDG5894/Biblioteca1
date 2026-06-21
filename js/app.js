@@ -1,5 +1,5 @@
-const API = "https://slideshow-been-incurred-lived.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://slideshow-been-incurred-lived.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://jennifer-thou-hostels-pasta.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://jennifer-thou-hostels-pasta.trycloudflare.com/test/api/Estudiantes.php";
 
 function cargarCarreras() {
   fetch(`${API}?accion=listar`)
@@ -656,16 +656,16 @@ function cargarDatosModificarLibro() {
       .then(res => res.json())
       .then(data => {
         document.getElementById("id").value = data.Id_libro;
-        document.getElementById("titulo").value = data.titulo;
-        document.getElementById("fecha_edi").value = data.fecha_edi;
-        document.getElementById("autores").value = data.autores;
-        document.getElementById("res_cus").value = data.res_cus;
-        document.getElementById("dep_res").value = data.dep_res;
-        document.getElementById("tipo").value = data.tipo;
-        document.getElementById("editora").value = data.editora;
+        document.getElementById("titulo").value = data.Titulo;
+        document.getElementById("fecha_edi").value = data.Fecha_edicion;
+        document.getElementById("autores").value = data.Autores;
+        document.getElementById("res_cus").value = data.Responsable_custodia;
+        document.getElementById("dep_res").value = data.Departamento_responsable;
+        document.getElementById("tipo").value = data.Tipo;
+        document.getElementById("editora").value = data.Editora;
         document.getElementById("ISBN").value = data.ISBN;
-        document.getElementById("area").value = data.area;
-        document.getElementById("cantidad").value = data.cantidad;
+        document.getElementById("area").value = data.Area;
+        document.getElementById("cantidad").value = data.Cantidad;
       })
       .catch(err => console.error("Error cargando datos del libro:", err));
   }
@@ -792,25 +792,26 @@ document.addEventListener("DOMContentLoaded", () => {
       formModificarPrestamo.addEventListener("submit", modificarPrestamos);
   }
 
-  const formModificarLib = document.getElementById("modificarLibro");
+  const formModificarLib = document.getElementById("modificarLibros");
   if (formModificarLib) {
     formModificarLib.addEventListener("submit", function(event) {
       event.preventDefault();
-      let titulo = document.getElementById("titulo").value;
-      let fecha_edi = document.getElementById("fecha_edi").value;
-      let autores = document.getElementById("autores").value;
-      let res_cus = document.getElementById("res_cus").value;
-      let dep_res = document.getElementById("dep_res").value;
-      let tipo = document.getElementById("tipo").value;
-      let editora = document.getElementById("editora").value;
-      let isbn = document.getElementById("isbn").value;
-      let area = document.getElementById("area").value;
-      let cantidad = document.getElementById("cantidad").value;
+      let id = document.getElementById("id").value;
+      let Titulo = document.getElementById("titulo").value;
+      let Fecha_edi = document.getElementById("fecha_edi").value;
+      let Autores = document.getElementById("autores").value;
+      let Res_cus = document.getElementById("res_cus").value;
+      let Dep_res = document.getElementById("dep_res").value;
+      let Tipo = document.getElementById("tipo").value;
+      let Editora = document.getElementById("editora").value;
+      let ISBN = document.getElementById("ISBN").value;
+      let Area = document.getElementById("area").value;
+      let Cantidad = document.getElementById("cantidad").value;
 
       fetch(`${API}?accion=modificar_libro`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "titulo=" + encodeURIComponent(titulo) + "&fecha_edi=" + encodeURIComponent(fecha_edi) + "&autores=" + encodeURIComponent(autores) + "&res_cus=" + encodeURIComponent(res_cus) + "&dep_res=" + encodeURIComponent(dep_res) + "&tipo=" + encodeURIComponent(tipo) + "&editora=" + encodeURIComponent(editora) + "&ISBN=" + encodeURIComponent(isbn) + "&area=" + encodeURIComponent(area) + "&cantidad=" + encodeURIComponent(cantidad)
+        body: "Id_libro=" + encodeURIComponent(id) +"&Titulo=" + encodeURIComponent(Titulo) + "&Fecha_edicion=" + encodeURIComponent(Fecha_edi) + "&Autores=" + encodeURIComponent(Autores) + "&Responsable_custodia=" + encodeURIComponent(Res_cus) + "&Departamento_responsable=" + encodeURIComponent(Dep_res) + "&Tipo=" + encodeURIComponent(Tipo) + "&Editora=" + encodeURIComponent(Editora) + "&ISBN=" + encodeURIComponent(ISBN) + "&Area=" + encodeURIComponent(Area) + "&Cantidad=" + encodeURIComponent(Cantidad)
 
       })
         .then(res => res.json())

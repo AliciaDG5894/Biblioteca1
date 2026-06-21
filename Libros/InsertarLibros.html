@@ -50,9 +50,9 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <!-- <link rel="stylesheet" href="css/index.css"> -->
-    <title>Insertar Carrera</title>
+    <title>Registrar Libro</title>
 
     <!-- Custom fonts for this template -->
     <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -62,6 +62,7 @@
 
     <!-- Custom styles for this page -->
     <link href="../css/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
 
     <script src="../js/jquery.min.js"></script>
 
@@ -98,67 +99,67 @@
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="titulo">Título</label>
-                                <input type="text" id="titulo" name="titulo" required minlength="3" maxlength="200" multipleSpaces="true"/>
+                                <input type="text" class="form-control" id="titulo" name="titulo" required minlength="3" maxlength="200" multipleSpaces="true"/>
                             </div>
                         </div>
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="fecha_edi">Fecha Edición</label>
-                                <input type="text" id="fecha_edi" name="fecha_edi" required minlength="4" maxlength="30" multipleSpaces="true"/>
+                                <input type="text" class="form-control" id="fecha_edi" name="fecha_edi" required minlength="4" maxlength="30" multipleSpaces="true"/>
                             </div>
                         </div>
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                        
                                 <label for="autores">Autores</label>
-                                <input type="text" id="autores" name="autores" required minlength="5" maxlength="200" multipleSpaces="true" letrasYCaracteres="true"/>
+                                <input type="text" class="form-control" id="autores" name="autores" required minlength="5" maxlength="200" multipleSpaces="true" letrasYCaracteres="true"/>
                             </div>
                         </div>
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                        
                                 <label for="res_cus">Responsable de custodia</label>
-                                <input type="text" id="res_cus" name="res_cus" required minlength="10" maxlength="200" multipleSpaces="true" letrasYCaracteres="true"/>
+                                <input type="text" class="form-control" id="res_cus" name="res_cus" required minlength="10" maxlength="200" multipleSpaces="true" letrasYCaracteres="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="dep_res">Departamento del responsable</label>
-                                <input type="text" id="dep_res" name="dep_res" required minlength="5" maxlength="100" multipleSpaces="true" letters="true"/>  
+                                <input type="text" class="form-control" id="dep_res" name="dep_res" required minlength="5" maxlength="100" multipleSpaces="true" letters="true"/>  
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="tipo">Tipo</label>
-                                <input type="text" id="tipo" name="tipo" required minlength="5" maxlength="50" multipleSpaces="true" letters="true"/>
+                                <input type="text" class="form-control" id="tipo" name="tipo" required minlength="5" maxlength="50" multipleSpaces="true" letters="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="editora">Editorial</label>
-                                <input type="text" id="editora" name="editora" required minlength="5" maxlength="50" multipleSpaces="true" letrasYCaracteres="true"/>
+                                <input type="text" class="form-control" id="editora" name="editora" required minlength="5" maxlength="50" multipleSpaces="true" letrasYCaracteres="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="isbn">ISBN</label>
-                                <input type="text" id="ISBN" name="ISBN" required minlength="1" maxlength="20"  noSpaces="true" numeros="true"/>
+                                <input type="text" class="form-control" id="ISBN" name="ISBN" required minlength="1" maxlength="20"  noSpaces="true" numeros="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="area">Área</label>
-                                <input type="text" id="area" name="area" required minlength="5" maxlength="50" multipleSpaces="true" letters="true"/>
+                                <input type="text" class="form-control" id="area" name="area" required minlength="5" maxlength="50" multipleSpaces="true" letters="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="cantidad">Cantidad</label>
-                                <input type="text" id="cantidad" name="cantidad" required  minlength="1" maxlength="5" noSpaces="true" numero="true" integer="true"/>
+                                <input type="text" class="form-control" id="cantidad" name="cantidad" required  minlength="1" maxlength="5" noSpaces="true" numero="true" integer="true"/>
                             </div>
                         </div>
                         
