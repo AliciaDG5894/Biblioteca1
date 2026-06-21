@@ -14,3 +14,229 @@ html, body {
 #accordionSidebar {
   min-height: 100vh; /* sidebar azul hasta abajo */
 }
+
+/* ===== MÓDULO ESTUDIANTE ===== */
+.estudiante-pantalla {
+    background-color: #eaf7ff;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 30px 20px;
+    font-family: 'Poppins', sans-serif;
+}
+
+.estudiante-pantalla h1 {
+    color: #1E40AF;
+    text-align: center;
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin: 10px 0 5px 0;
+}
+
+.estudiante-pantalla h5 {
+    font-weight: 400;
+    text-align: center;
+    color: #555;
+    margin-bottom: 30px;
+}
+
+.estudiante-icono {
+    font-size: 40px;
+    color: #1E40AF;
+    background-color: #3b5fe2;
+    color: white;
+    padding: 12px 14px;
+    border-radius: 10px;
+    margin-bottom: 10px;
+}
+
+.estudiante-caja {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    margin-top: 10px;
+}
+
+.estudiante-escanear {
+    background-color: white;
+    width: 320px;
+    padding: 40px 50px;
+    border-radius: 12px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+}
+
+.estudiante-escanear h3 {
+    color: #1E40AF;
+    font-weight: 600;
+    margin-bottom: 20px;
+}
+
+.estudiante-input {
+    border: none;
+    border-bottom: 2px solid rgb(220, 220, 220);
+    background-color: transparent;
+    color: #000;
+    outline: none;
+    padding: 5px;
+    width: 200px;
+    text-align: center;
+    font-size: 1rem;
+    font-family: 'Poppins', sans-serif;
+}
+
+.estudiante-input:focus {
+    border-bottom: 2px solid #1E40AF;
+}
+
+/* Encabezado de servicios */
+.estudiante-encabezado {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 30px;
+    width: 100%;
+}
+
+.estudiante-encabezado i {
+    font-size: 28px;
+    color: white;
+    background-color: #3b5fe2;
+    padding: 12px 14px;
+    border-radius: 10px;
+}
+
+.estudiante-encabezado h2 {
+    font-size: 24px;
+    margin: 0;
+    font-weight: 700;
+    color: #1a1a1a;
+}
+
+.estudiante-encabezado p {
+    margin: 0;
+    font-size: 13px;
+    color: #6b7280;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* Grid de servicios */
+.estudiante-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 20px;
+    width: 100%;
+    padding: 0 20px;
+}
+
+.estudiante-card {
+    background: white;
+    border-radius: 12px;
+    padding: 30px 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 180px;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.estudiante-card:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 20px rgba(0,0,0,0.12);
+}
+
+.estudiante-card i {
+    font-size: 28px;
+    color: white;
+    background-color: #3b5fe2;
+    padding: 10px 12px;
+    border-radius: 8px;
+    margin-bottom: 15px;
+}
+
+.estudiante-card h3 {
+    font-size: 1rem;
+    color: #1a1a1a;
+    font-weight: 600;
+    margin: 0;
+}
+
+/* Colores borde superior por posición */
+.estudiante-card:nth-child(1) { border-top: 5px solid #1a73e8; }
+.estudiante-card:nth-child(2) { border-top: 5px solid #36bc31; }
+.estudiante-card:nth-child(3) { border-top: 5px solid #7c4dff; }
+.estudiante-card:nth-child(4) { border-top: 5px solid #e53935; }
+.estudiante-card:nth-child(5) { border-top: 5px solid #fbc02d; }
+.estudiante-card:nth-child(6) { border-top: 5px solid #00897b; }
+.estudiante-card:nth-child(7) { border-top: 5px solid #cc1f9b; }
+.estudiante-card:nth-child(8) { border-top: 5px solid #00897b; }
+
+/* Mensaje */
+.estudiante-mensaje {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    width: 100%;
+    background-color: #eaf7ff;
+}
+
+.estudiante-mensaje-caja {
+    background: white;
+    border-radius: 16px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.1);
+    max-width: 380px;
+    width: 100%;
+    padding: 40px 35px;
+}
+
+.estudiante-mensaje-caja .encabezado {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 20px;
+}
+
+.estudiante-mensaje-caja .encabezado i {
+    font-size: 32px;
+    padding: 10px;
+    border-radius: 10px;
+    flex-shrink: 0;
+}
+
+.estudiante-mensaje-caja .encabezado i.success {
+    color: #28a745;
+    background-color: #e9fef2;
+}
+
+.estudiante-mensaje-caja .encabezado i.error {
+    color: #dc3545;
+    background-color: #fdecef;
+}
+
+.estudiante-mensaje-caja h2 {
+    font-size: 1.8rem;
+    font-weight: 700;
+    margin: 0;
+    line-height: 1.2;
+}
+
+.estudiante-mensaje-caja h2.success { color: #28a745; }
+.estudiante-mensaje-caja h2.error   { color: #dc3545; }
+
+.estudiante-mensaje-caja p {
+    color: #555;
+    margin-top: 8px;
+    font-size: 14px;
+}

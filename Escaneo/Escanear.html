@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
+    <meta name="color-scheme" content="light">
+    <title>Biblioteca UTNC</title>
+
+    <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
+    <link href="../css/sb-admin-2.css" rel="stylesheet">
+    <link rel="stylesheet" href="../css/styles.css">
+</head>
+<body id="page-top">
+
+    <!-- PANTALLA: ESCANEAR -->
+    <div id="pantallaEscanear" class="estudiante-pantalla">
+        <i class="fas fa-book estudiante-icono"></i>
+        <h1>BIBLIOTECA UTNC</h1>
+        <h5>Bienvenido correcaminos a tu biblioteca</h5>
+        <div class="estudiante-caja">
+            <h3>Escanea tu gafete</h3>
+            <input type="text" id="matricula" class="form-control estudiante-input" 
+                   placeholder="Matrícula" autofocus autocomplete="off"/>
+        </div>
+    </div>
+
+    <!-- PANTALLA: SELECCIONAR SERVICIO -->
+    <div id="pantallaServicios" class="estudiante-pantalla" style="display:none;">
+        <div class="estudiante-encabezado">
+            <i class="fas fa-book"></i>
+            <div>
+                <h2>Selecciona el servicio</h2>
+                <p id="nombreEstudiante"></p>
+            </div>
+        </div>
+        <div id="contenedorServicios" class="estudiante-grid"></div>
+    </div>
+
+    <!-- PANTALLA: MENSAJE -->
+    <div id="pantallaMensaje" class="estudiante-pantalla" style="display:none;">
+        <div class="estudiante-mensaje">
+            <i id="mensajeIcono" class="fas fa-check-circle"></i>
+            <h2 id="mensajeTitulo"></h2>
+            <p id="mensajeTexto"></p>
+        </div>
+    </div>
+
+    <script src="../js/jquery.min.js"></script>
+    <script src="../js/Escaneo.js"></script>
+</body>
+</html>
