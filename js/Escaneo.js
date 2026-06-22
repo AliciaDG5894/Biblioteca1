@@ -1,4 +1,4 @@
-const API = "https://rentals-dollars-exhaust-qualifying.trycloudflare.com/test/api/index.php";
+const API = "https://approximately-removable-mary-guardian.trycloudflare.com/test/api/index.php";
 
 // Bloquear navegación hacia atrás
 history.pushState(null, null, location.href);

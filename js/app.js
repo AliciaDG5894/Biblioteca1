@@ -1,5 +1,5 @@
-const API = "https://rentals-dollars-exhaust-qualifying.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://rentals-dollars-exhaust-qualifying.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://approximately-removable-mary-guardian.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://approximately-removable-mary-guardian.trycloudflare.com/test/api/Estudiantes.php";
 
 function cargarCarreras() {
   fetch(`${API}?accion=listar`)
