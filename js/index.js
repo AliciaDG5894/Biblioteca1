@@ -103,6 +103,9 @@ function esperarFirebasePlugin() {
 
 let fbOnPushNotification = function (mensaje) {
     alert(mensaje);
+    if (typeof cargarVisitas === "function" && document.getElementById("dataTableVisitas")) {
+        cargarVisitas();
+    }
 };
 
 function enviarToken(token) {

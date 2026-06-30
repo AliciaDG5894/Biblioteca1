@@ -42,12 +42,13 @@ html, body {
 }
 
 .estudiante-icono {
-    font-size: 40px;
-    color: #1E40AF;
-    background-color: #3b5fe2;
-    color: white;
-    padding: 12px 14px;
-    border-radius: 10px;
+    font-size: 48px !important;
+    color: #1E40AF !important;
+    background-color: transparent !important;
+    background: none !important;
+    box-shadow: none !important;
+    padding: 0 !important;
+    border-radius: 0 !important;
     margin-bottom: 10px;
 }
 
@@ -57,14 +58,15 @@ html, body {
     align-items: center;
     width: 100%;
     margin-top: 10px;
+    flex-direction: column;
 }
 
 .estudiante-escanear {
-    background-color: white;
-    width: 320px;
-    padding: 40px 50px;
+    background-color: white !important;
+    width: 260px;          /* antes 320px */
+    padding: 40px 40px;    /* antes 40px 50px */
     border-radius: 12px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;  /* sombra más suave */
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -72,22 +74,18 @@ html, body {
 }
 
 .estudiante-escanear h3 {
-    color: #1E40AF;
-    font-weight: 600;
-    margin-bottom: 20px;
+    color: #1E40AF !important;
+    font-weight: 600 !important;
+    margin-bottom: 20px !important;
 }
 
 .estudiante-input {
-    border: none;
-    border-bottom: 2px solid rgb(220, 220, 220);
-    background-color: transparent;
-    color: #000;
-    outline: none;
-    padding: 5px;
-    width: 200px;
-    text-align: center;
-    font-size: 1rem;
-    font-family: 'Poppins', sans-serif;
+    border: none !important;
+    border-bottom: 2px solid rgb(220, 220, 220) !important;
+    border-radius: 0 !important;
+    box-shadow: none !important;
+    background-color: transparent !important;
+    width: 200px !important;
 }
 
 .estudiante-input:focus {

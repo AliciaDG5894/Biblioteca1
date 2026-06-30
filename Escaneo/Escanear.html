@@ -18,9 +18,10 @@
         <h1>BIBLIOTECA UTNC</h1>
         <h5>Bienvenido correcaminos a tu biblioteca</h5>
         <div class="estudiante-caja">
-            <h3>Escanea tu gafete</h3>
-            <input type="text" id="matricula" class="estudiante-input" 
-                   placeholder="Matrícula" autofocus autocomplete="off"/>
+            <div class="estudiante-escanear">   <!-- ← este div es la caja blanca -->
+                <h3>Escanea tu gafete</h3>
+                <input type="text" id="matricula" class="estudiante-input" placeholder="Matrícula" autofocus autocomplete="off" style="border:none; border-bottom:2px solid #ddd; border-radius:0; box-shadow:none; outline:none;"/>
+            </div>
         </div>
     </div>
 
@@ -39,9 +40,13 @@
     <!-- PANTALLA: MENSAJE -->
     <div id="pantallaMensaje" class="estudiante-pantalla" style="display:none;">
         <div class="estudiante-mensaje">
-            <i id="mensajeIcono" class="fas fa-check-circle"></i>
-            <h2 id="mensajeTitulo"></h2>
-            <p id="mensajeTexto"></p>
+            <div class="estudiante-mensaje-caja">  <!-- ← este div faltaba -->
+                <div class="encabezado">
+                    <i id="mensajeIcono" class="fas fa-check-circle success"></i>
+                    <h2 id="mensajeTitulo" class="success"></h2>
+                </div>
+                <p id="mensajeTexto"></p>
+            </div>
         </div>
     </div>
 
