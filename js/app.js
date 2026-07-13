@@ -1,6 +1,44 @@
 const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
 const API_ESTUDIANTES = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/Estudiantes.php";
 
+const modalErrorLogin = new bootstrap.Modal("#exampleModal", {
+    keyboard: false
+})
+ 
+// Añade a toda petición que se realice, el header que contiene el JWT, obtenido de un almacenamiento muy persistente
+$.ajaxSetup({
+    headers: {
+        Authorization: `Bearer ${localStorage.getItem("jwt")}`
+    }
+})
+ 
+// Endpoint combinado con la API para comprobar si se inició sesión
+$.get(`${API}/servicio.php?sesion`, function (sesion) {
+    if (sesion.length) {
+        // Si inició sesión
+ 
+        return
+    }
+ 
+    // Si no inició sesión
+    // Podrías añadir un redireccionamiento si lo crees prudente
+})
+
+$("#frmLogin").submit(function (event) {
+    event.preventDefault()
+ 
+    // Endpoint combinado con la API para iniciar sesión
+    $.post(`${API}/index.php?iniciarSesion`, $(this).serialize(), function (respuesta) {
+        if (respuesta == "error") {
+            modalErrorLogin.show()
+            return
+        }
+ 
+        localStorage.setItem("jwt", respuesta)
+        window.location = "index.html"
+    })
+})
+
 function cargarCarreras() {
   fetch(`${API}?accion=listar`)
     .then(res => res.json())
