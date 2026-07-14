@@ -1,5 +1,5 @@
-const API = "https://therefore-lawn-drama-determination.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://therefore-lawn-drama-determination.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://urls-optimal-discovered-alabama.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://urls-optimal-discovered-alabama.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const headers = {
@@ -30,6 +30,50 @@ $("#frmLogin").submit(function (event) {
         window.location = "../index.html"
     })
 })
+
+function manejarPIN() {
+  let pin = document.getElementById("inputPIN").value;
+
+  if (pin === "") {
+    fetchConAuth(`${API}?eliminarPIN`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" }
+    })
+    .then(res => res.json())
+    .then(data => {
+      alert(data.message);
+      $('#modalPIN').modal('hide');
+    })
+    .catch(err => console.error("Error eliminando PIN:", err));
+    return;
+  }
+
+  if(!/^\d{4}$/.test(pin)){
+    alert("El PIN debe ser numérico y tener exactamente 4 dígitos.");
+    return;
+  }
+
+  localStorage.setItem("pinSeguridad", pin);
+
+  fetchConAuth(`${API}?guardarPIN`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "pin=" + encodeURIComponent(pin)
+  })
+  .then(res => res.json())
+  .then(data => {
+    alert(data.message);
+    $('#modalPIN').modal('hide');
+  })
+  .catch(err => console.error("Error guardando PIN:", err));
+}
+
+// function ManejoQR() {
+//   $("#divQR").html("<p>Cargando QR...</p>");
+//   $.get(API + "?generarQR", function(qrHTML) {
+//     $("#divQR").html(qrHTML);
+//   });
+// }
 
 function obtenerNombreUsuario() {
     const jwt = localStorage.getItem("jwt");
@@ -1088,6 +1132,43 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarHistorialP();
   cargarDetalleP();
   cargarVisitas();
+
+  const btnPIN = document.getElementById("btnPINSeguridad");
+  $(document).on("click", "#btnPINSeguridad", function() {
+    $('#modalPIN').modal('show');
+  });
+
+  document.addEventListener("click", function(event) {
+    if (event.target && event.target.id === "guardarPIN") {
+      manejarPIN();
+    }
+  });
+
+  // Cuando se presione el botón QR
+  $("#btnUsarQR").on("click", function() {
+    $("#modalQR").modal("show");
+      ManejoQR();
+  });
+
+
+  //Manejo de cajas
+  document.getElementById("btnUsarPIN").addEventListener("click", () => {
+    document.getElementById("loginPassword").style.display = "none";
+    document.getElementById("loginPIN").style.display = "block";
+    document.getElementById("txtContrasena").value = "";
+
+    document.getElementById("btnUsarPIN").style.display = "none";
+    document.getElementById("btnUsarPassword").style.display = "block";
+  });
+
+  document.getElementById("btnUsarPassword").addEventListener("click", () => {
+    document.getElementById("loginPassword").style.display = "block";
+    document.getElementById("loginPIN").style.display = "none";
+    document.getElementById("txtPIN").value = "";
+
+    document.getElementById("btnUsarPassword").style.display = "none";
+    document.getElementById("btnUsarPIN").style.display = "block";
+  });
 
   if (document.getElementById("insertarHistorialP")) {
       cargarPrestamosSelect();

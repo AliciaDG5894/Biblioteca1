@@ -37,11 +37,18 @@
                                                 <input type="text" id="txtUsuario" name="txtUsuario" class="form-control" placeholder="Ingresa tu usuario">
                                             </div>
                                         </div>
-                                        <div class="mb-3">
+                                        <div class="mb-3" id="loginPassword">
                                             <label for="txtContrasena" class="form-label">Contraseña</label>
                                             <div class="input-group">
                                                 <span class="input-group-text bg-light"><i class="fas fa-lock text-gray-400"></i></span>
                                                 <input type="password" id="txtContrasena" name="txtContrasena" class="form-control" placeholder="Ingresa tu contraseña">
+                                            </div>
+                                        </div>
+                                        <div class="mb-3" id="loginPIN" style="display:none;">
+                                            <label for="txtPIN" class="form-label">PIN</label>
+                                            <div class="input-group">
+                                            <span class="input-group-text bg-light"><i class="fas fa-key text-gray-400"></i></span>
+                                            <input type="password" id="txtPIN" name="txtPIN" class="form-control" maxlength="4" placeholder="Ingresa tu PIN">
                                             </div>
                                         </div>
                                         <div class="d-grid gap-2 mt-4">
@@ -49,6 +56,26 @@
                                                 <i class="fas fa-sign-in-alt me-1"></i> Iniciar Sesión
                                             </button>
                                             <button type="reset" class="btn btn-outline-secondary">Cancelar</button>
+                                        </div>
+                                        <br>
+                                        <div class="text-center">
+                                        <h1 class="h5 text-gray-500 mb-4">¿Olvidaste tu contraseña?</h1>
+                                            <div class="row">
+                                                <div class="col-6">
+                                                <!-- Botón PIN (visible al inicio) -->
+                                                <button type="button" class="btn btn-outline-primary w-100" id="btnUsarPIN">
+                                                    <i class="fas fa-key fa-sm fa-fw mr-2 text-gray-400"></i> PIN
+                                                </button>
+                                                <button type="button" class="btn btn-outline-secondary w-100" id="btnUsarPassword" style="display:none;">
+                                                    <i class="fas fa-lock fa-sm fa-fw mr-2 text-gray-400"></i> Usar Contraseña
+                                                </button>
+                                                </div>
+                                                <div class="col-6">
+                                                <button type="button" class="btn btn-outline-success w-100" id="btnUsarQR">
+                                                    <i class="fas fa-qrcode fa-sm fa-fw mr-2 text-gray-400"></i> QR
+                                                </button>
+                                                </div>
+                                            </div>
                                         </div>
                                     </form>
                                 </div>
@@ -77,5 +104,25 @@
             </div>
         </div>
     </div>
+
+        <!-- Modal QR -->
+    <div class="modal fade" id="modalQR" tabindex="-1" role="dialog" aria-labelledby="modalQRLabel" aria-hidden="true">
+    <div class="modal-dialog modal-sm modal-dialog-centered" role="document">
+        <div class="modal-content text-center">
+        <div class="modal-header">
+            <h5 class="modal-title" id="modalQRLabel">Iniciar sesión con QR</h5>
+            <button type="button" class="close" data-dismiss="modal" aria-label="Cerrar">
+            <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+        <div class="modal-body">
+            <!-- Aquí se cargará el QR -->
+            <div id="divQR"></div>
+        </div>
+        </div>
+    </div>
+    </div>
+
+    <script src="qr.js"></script>
 </body>
 </html>
