@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             const respuesta = await fetch(
-                "https://thought-readily-surprising-machinery.trycloudflare.com/test/api/index.php?accion=buscar_estudiantes&nombre=" + encodeURIComponent(nombre)
+                "https://area-punk-stem-watches.trycloudflare.com/test/api/index.php?accion=buscar_estudiantes&nombre=" + encodeURIComponent(nombre)
             );
 
             const estudiantes = await respuesta.json();

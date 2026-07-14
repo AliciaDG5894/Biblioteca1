@@ -1,5 +1,5 @@
-const API = "https://thought-readily-surprising-machinery.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://thought-readily-surprising-machinery.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://area-punk-stem-watches.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://area-punk-stem-watches.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
 
@@ -31,20 +31,36 @@ $("#frmLogin").submit(function (event) {
 
     $.post(`${API}?iniciarSesion`, $(this).serialize(), function (respuesta) {
 
-        if (respuesta === "error") {
-            if (modalErrorLogin) modalErrorLogin.show();
-            return;
-        }
+      respuesta = respuesta.trim();
 
-        // Validar que realmente sea un JWT
-        if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
-            console.error("Respuesta inválida:", respuesta);
-            alert("No fue posible iniciar sesión. El servidor devolvió un error.");
-            return;
-        }
+      if (respuesta === "error") {
+          if (modalErrorLogin) modalErrorLogin.show();
+          return;
+      }
 
-        localStorage.setItem("jwt", respuesta);
-        window.location = "../index.html";
+      if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
+          console.error("Respuesta inválida:", respuesta);
+          alert("No fue posible iniciar sesión. El servidor devolvió un error.");
+          return;
+      }
+
+      localStorage.setItem("jwt", respuesta);
+      window.location = "../index.html";
+
+        // if (respuesta === "error") {
+        //     if (modalErrorLogin) modalErrorLogin.show();
+        //     return;
+        // }
+
+        // // Validar que realmente sea un JWT
+        // if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
+        //     console.error("Respuesta inválida:", respuesta);
+        //     alert("No fue posible iniciar sesión. El servidor devolvió un error.");
+        //     return;
+        // }
+
+        // localStorage.setItem("jwt", respuesta);
+        // window.location = "../index.html";
     });
     
 })
