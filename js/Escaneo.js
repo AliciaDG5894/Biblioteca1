@@ -1,4 +1,4 @@
-const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
+const API = "https://guides-attributes-elect-network.trycloudflare.com/test/api/index.php";
 
 // Bloquear navegación hacia atrás
 history.pushState(null, null, location.href);

@@ -1,4 +1,4 @@
-const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
+// const API = "https://guides-attributes-elect-network.trycloudflare.com/test/api/index.php";
 
 $.ajaxSetup({
     headers: {
@@ -12,21 +12,21 @@ $.get(API + "?sesion", function (sesion) {
     if ((sesion.length == 0) && (location.pathname.indexOf("login.html") == -1)) {
         localStorage.removeItem("jwt")
         setTimeout(function() {
-            window.location.href = "login.html"
-        }, 500)
+            window.location.href = "../Usuarios/login.html"
+        }, 100)
     }
     else if (sesion.length && (location.pathname.indexOf("login.html") != -1)) {
-        window.location.href = "index.html"
+        window.location.href = "../index.html"
     }
  
 })
 
 
-$(".btnCerrarSesion").click(function(event) {
+$(document).on("click", "#btnCerrarSesion", function(event) {
     if (confirm("¿Está seguro que desea cerrar sesión?")) {
         localStorage.removeItem("jwt");
         setTimeout(function() {
-            window.location.href = "login.html"
+            window.location.href = "../Usuarios/login.html"
         }, 500)
     }
 })

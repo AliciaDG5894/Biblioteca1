@@ -238,3 +238,25 @@ html, body {
     margin-top: 8px;
     font-size: 14px;
 }
+
+.login-panel-izq {
+    background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 3rem 2rem;
+}
+
+.login-panel-izq i {
+    font-size: 3.5rem;
+    margin-bottom: 1rem;
+}
+
+body.pagina-login {
+    background-color: #f8f9fc;
+    min-height: 100vh;
+    display: flex;
+    align-items: center;
+}
