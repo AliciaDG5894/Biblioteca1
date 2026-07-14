@@ -1,10 +1,19 @@
-const API = "https://therefore-lawn-drama-determination.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://therefore-lawn-drama-determination.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://thought-readily-surprising-machinery.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://thought-readily-surprising-machinery.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
+
+    const jwt = localStorage.getItem("jwt");
+
+    if (jwt && !jwt.startsWith("eyJ")) {
+        localStorage.removeItem("jwt");
+        window.location.href = "../Usuarios/login.html";
+        return;
+    }
+
     const headers = {
         ...opciones.headers,
-        Authorization: `Bearer ${localStorage.getItem("jwt")}`
+        Authorization: `Bearer ${jwt || ""}`
     };
 
     return fetch(url, { ...opciones, headers });
@@ -21,14 +30,23 @@ $("#frmLogin").submit(function (event) {
     event.preventDefault()
 
     $.post(`${API}?iniciarSesion`, $(this).serialize(), function (respuesta) {
-        if (respuesta == "error") {
-            if (modalErrorLogin) modalErrorLogin.show()
-            return
+
+        if (respuesta === "error") {
+            if (modalErrorLogin) modalErrorLogin.show();
+            return;
         }
 
-        localStorage.setItem("jwt", respuesta)
-        window.location = "../index.html"
-    })
+        // Validar que realmente sea un JWT
+        if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
+            console.error("Respuesta inválida:", respuesta);
+            alert("No fue posible iniciar sesión. El servidor devolvió un error.");
+            return;
+        }
+
+        localStorage.setItem("jwt", respuesta);
+        window.location = "../index.html";
+    });
+    
 })
 
 function obtenerNombreUsuario() {
