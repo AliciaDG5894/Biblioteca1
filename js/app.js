@@ -1,5 +1,5 @@
-const API = "https://guides-attributes-elect-network.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://guides-attributes-elect-network.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://therefore-lawn-drama-determination.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://therefore-lawn-drama-determination.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const headers = {
@@ -30,6 +30,20 @@ $("#frmLogin").submit(function (event) {
         window.location = "../index.html"
     })
 })
+
+function obtenerNombreUsuario() {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) return null;
+
+    try {
+        const payloadBase64 = jwt.split(".")[1];
+        const payload = JSON.parse(atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/")));
+        const partes = payload.sub.split("|");
+        return partes[1];
+    } catch (error) {
+        return null;
+    }
+}
 
 function cargarCarreras() {
   fetchConAuth(`${API}?accion=listar`)
@@ -490,6 +504,12 @@ function cargarPartials() {
     .then(res => res.text())
     .then(html => {
       document.getElementById("topbar").outerHTML = html;
+
+      const nombreUsuario = obtenerNombreUsuario();
+      if (nombreUsuario) {
+        document.getElementById("nombreUsuarioTopbar").textContent = nombreUsuario;
+      }
+
       const toggleBtn = document.getElementById("sidebarToggleTop");
       if (toggleBtn) {
         toggleBtn.addEventListener("click", function () {
