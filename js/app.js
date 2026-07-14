@@ -1,8 +1,70 @@
-const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
-const API_ESTUDIANTES = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/Estudiantes.php";
+const API = "https://thought-readily-surprising-machinery.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://thought-readily-surprising-machinery.trycloudflare.com/test/api/Estudiantes.php";
+
+function fetchConAuth(url, opciones = {}) {
+
+    const jwt = localStorage.getItem("jwt");
+
+    if (jwt && !jwt.startsWith("eyJ")) {
+        localStorage.removeItem("jwt");
+        window.location.href = "../Usuarios/login.html";
+        return;
+    }
+
+    const headers = {
+        ...opciones.headers,
+        Authorization: `Bearer ${jwt || ""}`
+    };
+
+    return fetch(url, { ...opciones, headers });
+}
+
+let modalErrorLogin = null;
+if (document.getElementById("exampleModal")) {
+    modalErrorLogin = new bootstrap.Modal("#exampleModal", {
+        keyboard: false
+    });
+}
+
+$("#frmLogin").submit(function (event) {
+    event.preventDefault()
+
+    $.post(`${API}?iniciarSesion`, $(this).serialize(), function (respuesta) {
+
+        if (respuesta === "error") {
+            if (modalErrorLogin) modalErrorLogin.show();
+            return;
+        }
+
+        // Validar que realmente sea un JWT
+        if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
+            console.error("Respuesta inválida:", respuesta);
+            alert("No fue posible iniciar sesión. El servidor devolvió un error.");
+            return;
+        }
+
+        localStorage.setItem("jwt", respuesta);
+        window.location = "../index.html";
+    });
+    
+})
+
+function obtenerNombreUsuario() {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) return null;
+
+    try {
+        const payloadBase64 = jwt.split(".")[1];
+        const payload = JSON.parse(atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/")));
+        const partes = payload.sub.split("|");
+        return partes[1];
+    } catch (error) {
+        return null;
+    }
+}
 
 function cargarCarreras() {
-  fetch(`${API}?accion=listar`)
+  fetchConAuth(`${API}?accion=listar`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
@@ -43,7 +105,7 @@ function cargarCarreras() {
 }
 
 function cargarEstudiantes() {
-  fetch(`${API_ESTUDIANTES}?accion=listar`)
+  fetchConAuth(`${API_ESTUDIANTES}?accion=listar`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
@@ -96,7 +158,7 @@ function cargarEstudiantes() {
 }
 
 function cargarPrestamos() {
-  fetch(`${API}?accion=prestamos`)
+  fetchConAuth(`${API}?accion=prestamos`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => {
@@ -180,7 +242,7 @@ function insertarCarrera(event) {
   event.preventDefault();
   let nombre = document.getElementById("nombre").value;
 
-  fetch(`${API}?accion=insertar`, {
+  fetchConAuth(`${API}?accion=insertar`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Nombre=" + encodeURIComponent(nombre)
@@ -205,7 +267,7 @@ function insertarEstudiante(event) {
   let carrera = document.getElementById("carrera").value;
   let contacto = document.getElementById("contacto").value;
 
-  fetch(`${API_ESTUDIANTES}?accion=insertar`, {
+  fetchConAuth(`${API_ESTUDIANTES}?accion=insertar`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `matricula=${encodeURIComponent(matricula)}&nombre=${encodeURIComponent(nombre)}&grado=${encodeURIComponent(grado)}&seccion=${encodeURIComponent(seccion)}&genero=${encodeURIComponent(genero)}&carrera=${encodeURIComponent(carrera)}&contacto=${encodeURIComponent(contacto)}`
@@ -229,7 +291,7 @@ function insertarPrestamo(event) {
   let fecha_devolucion = document.getElementById("fecha_devolucion").value;
   let estado = document.getElementById("estado").value;
 
-  fetch(`${API}?accion=insertar_prestamo`, {
+  fetchConAuth(`${API}?accion=insertar_prestamo`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `estudiante=${encodeURIComponent(estudiante)}&fecha_prestamo=${encodeURIComponent(fecha_prestamo)}&fecha_entrega=${encodeURIComponent(fecha_entrega)}&fecha_devolucion=${encodeURIComponent(fecha_devolucion)}&estado=${encodeURIComponent(estado)}`
@@ -254,7 +316,7 @@ function modificarPrestamos(event) {
   let fecha_devolucion = document.getElementById("fecha_devolucion").value;
   let estado = document.getElementById("estado").value;
 
-  fetch(`${API}?accion=modificar_prestamo`, {
+  fetchConAuth(`${API}?accion=modificar_prestamo`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `id_prestamo=${encodeURIComponent(id)}&estudiante=${encodeURIComponent(estudiante)}&fecha_prestamo=${encodeURIComponent(fecha_prestamo)}&fecha_entrega=${encodeURIComponent(fecha_entrega)}&fecha_devolucion=${encodeURIComponent(fecha_devolucion)}&estado=${encodeURIComponent(estado)}`
@@ -270,7 +332,7 @@ function modificarPrestamos(event) {
 function eliminarPrestamo(id_prestamo) {
   if (!confirm("¿Seguro que deseas eliminar este préstamo?")) return;
 
-  fetch(`${API}?accion=eliminar_prestamo`, {
+  fetchConAuth(`${API}?accion=eliminar_prestamo`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "id_prestamo=" + encodeURIComponent(id_prestamo)
@@ -289,7 +351,7 @@ function cargarDatosModificarPrestamo() {
   const id = params.get("id");
  
   if (id) {
-    fetch(`${API}?accion=get_prestamo&id=${id}`)
+    fetchConAuth(`${API}?accion=get_prestamo&id=${id}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("id_prestamo").value = data.Id_prestamo;
@@ -313,7 +375,7 @@ function cargarDatosModificar() {
   const id = params.get("id");
 
   if (id) {
-    fetch(`${API}?accion=carrera&id=${id}`)
+    fetchConAuth(`${API}?accion=carrera&id=${id}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("id").value = data.Id_carrera;
@@ -327,7 +389,7 @@ function cargarDatosModificarEstudiante() {
   const id = params.get("id");
 
   if (id) {
-    fetch(`${API_ESTUDIANTES}?accion=estudiante&id=${id}`)
+    fetchConAuth(`${API_ESTUDIANTES}?accion=estudiante&id=${id}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("id").value = data.Id_estudiante;
@@ -346,7 +408,7 @@ function buscarPorMatricula() {
   let matricula = document.getElementById("matricula").value;
 
   if (matricula) {
-    fetch(`${API_ESTUDIANTES}?accion=buscarMatricula`, {
+    fetchConAuth(`${API_ESTUDIANTES}?accion=buscarMatricula`, {
       method: "POST",
       headers: { "Content-Type": "application/x-www-form-urlencoded" },
       body: "matricula=" + encodeURIComponent(matricula)
@@ -392,7 +454,7 @@ function modificarEstudiante(event) {
   let carrera = document.getElementById("carrera").value;
   let contacto = document.getElementById("contacto").value;
 
-  fetch(`${API_ESTUDIANTES}?accion=modificar`, {
+  fetchConAuth(`${API_ESTUDIANTES}?accion=modificar`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: `Id_estudiante=${encodeURIComponent(id)}&matricula=${encodeURIComponent(matricula)}&nombre=${encodeURIComponent(nombre)}&grado=${encodeURIComponent(grado)}&seccion=${encodeURIComponent(seccion)}&genero=${encodeURIComponent(genero)}&carrera=${encodeURIComponent(carrera)}&contacto=${encodeURIComponent(contacto)}`
@@ -408,7 +470,7 @@ function modificarEstudiante(event) {
 function eliminarEstudiante(id) {
   if (!confirm("¿Seguro que deseas eliminar este estudiante?")) return;
 
-  fetch(`${API_ESTUDIANTES}?accion=eliminar`, {
+  fetchConAuth(`${API_ESTUDIANTES}?accion=eliminar`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_estudiante=" + encodeURIComponent(id)
@@ -424,7 +486,7 @@ function eliminarEstudiante(id) {
 function eliminarCarrera(id) {
   if (!confirm("¿Seguro que deseas eliminar esta carrera?")) return;
 
-  fetch(`${API}?accion=eliminar`, {
+  fetchConAuth(`${API}?accion=eliminar`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_carrera=" + encodeURIComponent(id)
@@ -443,12 +505,29 @@ function cargarPartials() {
     .then(res => res.text())
     .then(html => {
       document.getElementById("sidebar").outerHTML = html;
+
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", function () {
+          document.body.classList.toggle("sidebar-toggled");
+          document.querySelector(".sidebar").classList.toggle("toggled");
+          if (document.querySelector(".sidebar").classList.contains("toggled")) {
+            $('.sidebar .collapse').collapse('hide');
+          }
+        });
+      }
     });
 
   fetch("../partials/topbar.html")
     .then(res => res.text())
     .then(html => {
       document.getElementById("topbar").outerHTML = html;
+
+      const nombreUsuario = obtenerNombreUsuario();
+      if (nombreUsuario) {
+        document.getElementById("nombreUsuarioTopbar").textContent = nombreUsuario;
+      }
+
       const toggleBtn = document.getElementById("sidebarToggleTop");
       if (toggleBtn) {
         toggleBtn.addEventListener("click", function () {
@@ -463,7 +542,7 @@ function cargarPartials() {
 // SERVICIOS
 
 function cargarServicios() {
-  fetch(`${API}?accion=listar_servicios`)
+  fetchConAuth(`${API}?accion=listar_servicios`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
@@ -508,7 +587,7 @@ function insertarServicio(event) {
   event.preventDefault();
   let nombre = document.getElementById("nombre").value;
  
-  fetch(`${API}?accion=insertar_servicio`, {
+  fetchConAuth(`${API}?accion=insertar_servicio`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Nombre=" + encodeURIComponent(nombre)
@@ -528,7 +607,7 @@ function cargarDatosModificarServicio() {
   const id = params.get("id");
  
   if (id) {
-    fetch(`${API}?accion=get_servicio&id=${id}`)
+    fetchConAuth(`${API}?accion=get_servicio&id=${id}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("id").value = data.Id_servicio;
@@ -542,7 +621,7 @@ function cargarDatosModificarServicio() {
 function eliminarServicio(id) {
   if (!confirm("¿Seguro que deseas eliminar este servicio?")) return;
  
-  fetch(`${API}?accion=eliminar_servicio`, {
+  fetchConAuth(`${API}?accion=eliminar_servicio`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_servicio=" + encodeURIComponent(id)
@@ -558,7 +637,7 @@ function eliminarServicio(id) {
 // LIBROS
 
 function cargarLibros() {
-  fetch(`${API}?accion=listar_libro`)
+  fetchConAuth(`${API}?accion=listar_libro`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
@@ -632,7 +711,7 @@ function insertarLibro(event) {
   let Area = document.getElementById("area").value;
   let Cantidad = document.getElementById("cantidad").value;
 
-  fetch(`${API}?accion=insertar_libro`, {
+  fetchConAuth(`${API}?accion=insertar_libro`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Titulo=" + encodeURIComponent(Titulo) + "&Fecha_edicion=" + encodeURIComponent(Fecha_edi) + "&Autores=" + encodeURIComponent(Autores) + "&Responsable_custodia=" + encodeURIComponent(Res_cus) + "&Departamento_responsable=" + encodeURIComponent(Dep_res) + "&Tipo=" + encodeURIComponent(Tipo) + "&Editora=" + encodeURIComponent(Editora) + "&ISBN=" + encodeURIComponent(ISBN) + "&Area=" + encodeURIComponent(Area) + "&Cantidad=" + encodeURIComponent(Cantidad)
@@ -652,7 +731,7 @@ function cargarDatosModificarLibro() {
   const id = params.get("id");
  
   if (id) {
-    fetch(`${API}?accion=get_libro&id=${id}`)
+    fetchConAuth(`${API}?accion=get_libro&id=${id}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("id").value = data.Id_libro;
@@ -675,7 +754,7 @@ function cargarDatosModificarLibro() {
 function eliminarLibro(id) {
   if (!confirm("¿Seguro que deseas eliminar este libro?")) return;
  
-  fetch(`${API}?accion=eliminar_libro`, {
+  fetchConAuth(`${API}?accion=eliminar_libro`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_libro=" + encodeURIComponent(id)
@@ -691,7 +770,7 @@ function eliminarLibro(id) {
 
 // Historial_Prestamos
 function cargarHistorialP() {
-  fetch(`${API}?accion=listar_HistorialP`)
+  fetchConAuth(`${API}?accion=listar_HistorialP`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
@@ -747,7 +826,7 @@ function insertarHistorialP(event) {
   let Fecha = document.getElementById("fecha").value;
   let Estado = document.getElementById("estado").value;
 
-  fetch(`${API}?accion=insertar_HistorialP`, {
+  fetchConAuth(`${API}?accion=insertar_HistorialP`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Prestamo=" + encodeURIComponent(Prestamo) + "&Descripcion=" + encodeURIComponent(Descripcion) + "&Fecha=" + encodeURIComponent(Fecha) + "&Estado=" + encodeURIComponent(Estado)
@@ -763,7 +842,7 @@ function insertarHistorialP(event) {
 
 // Select
 function cargarPrestamosSelect() {
-    fetch(`${API}?accion=listar_prestamos_select`)
+    fetchConAuth(`${API}?accion=listar_prestamos_select`)
         .then(res => res.json())
         .then(data => {
             const select = document.getElementById("prestamo");
@@ -783,7 +862,7 @@ function cargarDatosModificarHistorialP() {
   const id = params.get("id");
  
   if (id) {
-    fetch(`${API}?accion=get_HistorialP&id=${id}`)
+    fetchConAuth(`${API}?accion=get_HistorialP&id=${id}`)
       .then(res => res.json())
       .then(data => {
         document.getElementById("id").value = data.Id_historial;
@@ -801,7 +880,7 @@ function cargarDatosModificarHistorialP() {
 function eliminarHistorialP(id) {
   if (!confirm("¿Seguro que deseas eliminar este historial de prestamo?")) return;
  
-  fetch(`${API}?accion=eliminar_HistorialP`, {
+  fetchConAuth(`${API}?accion=eliminar_HistorialP`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_historial=" + encodeURIComponent(id)
@@ -816,7 +895,7 @@ function eliminarHistorialP(id) {
 
 // DETALLE PRESTAMOS
 function cargarDetalleP() {
-  fetch(`${API}?accion=listar_DetalleP`)
+  fetchConAuth(`${API}?accion=listar_DetalleP`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
@@ -869,7 +948,7 @@ function insertarDetalleP(event) {
   let Libro = document.getElementById("libro").value;
   let Cantidad = document.getElementById("cantidad").value;
 
-  fetch(`${API}?accion=insertar_DetalleP`, {
+  fetchConAuth(`${API}?accion=insertar_DetalleP`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Prestamo=" + encodeURIComponent(Prestamo) + "&Libro=" + encodeURIComponent(document.getElementById("libroId").value) + "&Cantidad=" + encodeURIComponent(Cantidad)
@@ -884,7 +963,7 @@ function insertarDetalleP(event) {
 }
 
 function cargarLibrosDatalist() {
-    fetch(`${API}?accion=listar_libro`)
+    fetchConAuth(`${API}?accion=listar_libro`)
         .then(res => res.json())
         .then(data => {
             const datalist = document.getElementById("listaLibros");
@@ -913,7 +992,7 @@ function cargarDatosModificarDetalleP() {
     const id = params.get("id");
 
     if (id) {
-        fetch(`${API}?accion=get_DetalleP&id=${id}`)
+        fetchConAuth(`${API}?accion=get_DetalleP&id=${id}`)
             .then(res => res.json())
             .then(data => {
                 document.getElementById("id").value       = data.Id_detalle_prestamo;
@@ -921,7 +1000,7 @@ function cargarDatosModificarDetalleP() {
                 document.getElementById("cantidad").value = data.Cantidad;
 
                 // Para el libro, primero carga el datalist y luego pon el título
-                fetch(`${API}?accion=listar_libro`)
+                fetchConAuth(`${API}?accion=listar_libro`)
                     .then(res => res.json())
                     .then(libros => {
                         const libro = libros.find(l => l.Id_libro == data.Libro);
@@ -939,7 +1018,7 @@ function cargarDatosModificarDetalleP() {
 function eliminarDetalleP(id) {
   if (!confirm("¿Seguro que deseas eliminar este detalle de prestamo?")) return;
  
-  fetch(`${API}?accion=eliminar_DetalleP`, {
+  fetchConAuth(`${API}?accion=eliminar_DetalleP`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_detalle_prestamo=" + encodeURIComponent(id)
@@ -954,7 +1033,7 @@ function eliminarDetalleP(id) {
 
 // VISITAS
 function cargarVisitas() {
-  fetch(`${API}?accion=listar_Visitas`)
+  fetchConAuth(`${API}?accion=listar_Visitas`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
@@ -1004,7 +1083,7 @@ function cargarVisitas() {
 function eliminarVisitas(id) {
   if (!confirm("¿Seguro que deseas eliminar esta visita?")) return;
  
-  fetch(`${API}?accion=eliminar_Visitas`, {
+  fetchConAuth(`${API}?accion=eliminar_Visitas`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_entrada_salida=" + encodeURIComponent(id)
@@ -1129,7 +1208,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let id = document.getElementById("id").value;
       let nombre = document.getElementById("nombre").value;
 
-      fetch(`${API}?accion=modificar`, {
+      fetchConAuth(`${API}?accion=modificar`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "Id_carrera=" + encodeURIComponent(id) + "&Nombre=" + encodeURIComponent(nombre)
@@ -1149,7 +1228,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let id     = document.getElementById("id").value;
       let nombre = document.getElementById("nombreSrv").value;
 
-      fetch(`${API}?accion=modificar_servicio`, {
+      fetchConAuth(`${API}?accion=modificar_servicio`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "Id_servicio=" + encodeURIComponent(id) + "&Nombre=" + encodeURIComponent(nombre)
@@ -1184,7 +1263,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let Area = document.getElementById("area").value;
       let Cantidad = document.getElementById("cantidad").value;
 
-      fetch(`${API}?accion=modificar_libro`, {
+      fetchConAuth(`${API}?accion=modificar_libro`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "Id_libro=" + encodeURIComponent(id) +"&Titulo=" + encodeURIComponent(Titulo) + "&Fecha_edicion=" + encodeURIComponent(Fecha_edi) + "&Autores=" + encodeURIComponent(Autores) + "&Responsable_custodia=" + encodeURIComponent(Res_cus) + "&Departamento_responsable=" + encodeURIComponent(Dep_res) + "&Tipo=" + encodeURIComponent(Tipo) + "&Editora=" + encodeURIComponent(Editora) + "&ISBN=" + encodeURIComponent(ISBN) + "&Area=" + encodeURIComponent(Area) + "&Cantidad=" + encodeURIComponent(Cantidad)
@@ -1209,7 +1288,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let Fecha = document.getElementById("fecha").value;
       let Estado = document.getElementById("estado").value;
       
-      fetch(`${API}?accion=modificar_HistorialP`, {
+      fetchConAuth(`${API}?accion=modificar_HistorialP`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "Id_historial=" + encodeURIComponent(id) + "&Prestamo=" + encodeURIComponent(Prestamo) + "&Descripcion=" + encodeURIComponent(Descripcion) + "&Fecha=" + encodeURIComponent(Fecha) + "&Estado=" + encodeURIComponent(Estado)
@@ -1232,7 +1311,7 @@ document.addEventListener("DOMContentLoaded", () => {
       let Libro = document.getElementById("libro").value;
       let Cantidad = document.getElementById("cantidad").value;
       
-      fetch(`${API}?accion=modificar_DetalleP`, {
+      fetchConAuth(`${API}?accion=modificar_DetalleP`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: "Id_detalle_prestamo=" + encodeURIComponent(id) + "&Prestamo=" + encodeURIComponent(Prestamo) + "&Libro=" + encodeURIComponent(document.getElementById("libroId").value) + "&Cantidad=" + encodeURIComponent(Cantidad)
