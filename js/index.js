@@ -19,12 +19,17 @@
 
 // Wait for the deviceready event before using any of Cordova's device APIs.
 // See https://cordova.apache.org/docs/en/latest/cordova/events/events.html#deviceready
-// document.addEventListener('deviceready', onDeviceReady, false);
 
 document.addEventListener('deviceready', onDeviceReady, false);
 document.addEventListener("pause", function() { console.log("App en segundo plano"); }, false);
-document.addEventListener("online", function() { console.log("Conectado a internet"); }, false);
 document.addEventListener("offline", function() { console.log("Sin conexión"); }, false);
+document.addEventListener("online", function() {
+  console.log("Conectado a internet");
+  let token = localStorage.getItem("FBToken");
+  if (token) {
+    enviarToken(token);
+  }
+}, false);
 
 function onDeviceReady() {
 
