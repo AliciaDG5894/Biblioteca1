@@ -1510,6 +1510,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarDetalleP();
   cargarVisitas();
   graficarGenero();
+  graficarVisitas();
   graficarVisitasServicio();
 
   const btnPIN = document.getElementById("btnPINSeguridad");
