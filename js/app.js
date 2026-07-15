@@ -316,6 +316,156 @@ function graficarVisitas() {
     }, "json");
 }
 
+function graficarVisitasServicio() {
+
+  $.get(API + "?accion=graficarVisitasServicio", function(respuesta) {
+
+        let labels = [];
+        let values = [];
+
+        respuesta.forEach(function(item){
+            labels.push(item.Servicio);
+            values.push(parseInt(item.Total));
+        });
+
+
+        let colores = [
+            "#e74a3b",
+            "#e77a3b",
+            "#f6c23e",
+            "#4e73df",
+            "#36b9cc",
+            "#1cc88a"
+        ];
+
+
+        let shapes = [];
+        let annotations = [];
+        let coloresPorPunto = []; // para el borde del tooltip por color de barra
+
+        values.forEach(function(valor, index){
+
+            let color = colores[index % colores.length];
+            let rowY = -index;
+
+            coloresPorPunto.push(color);
+
+            shapes.push({
+                type: "rect",
+                x0: 0,
+                x1: valor,
+                y0: rowY - 0.35,
+                y1: rowY + 0.05,
+                fillcolor: color,
+                line: { width: 0 },
+                layer: "below"
+            });
+
+            annotations.push({
+                x: 0,
+                y: rowY + 0.10,
+                xref: "x",
+                yref: "y",
+                text: labels[index],
+                showarrow: false,
+                xanchor: "left",
+                yanchor: "bottom",
+                font: {
+                    size: 11,
+                    color: "#5a5c69"
+                }
+            });
+
+            annotations.push({
+                x: valor,
+                y: rowY - 0.15,
+                xref: "x",
+                yref: "y",
+                text: valor + "%",
+                showarrow: false,
+                xanchor: "left",
+                yanchor: "middle",
+                font: {
+                    size: 10,
+                    color: color
+                }
+            });
+
+        });
+
+
+        var data = [{
+            x: values,
+            y: values.map((_, index) => -index),
+            type: "bar",
+            orientation: "h",
+            marker: {
+                color: "rgba(0,0,0,0)"
+            },
+            text: labels,
+
+            // Un solo texto limpio: "Nombre: valor%"
+            hovertemplate: "<b>%{text}</b><br>%{x}% de visitas<extra></extra>",
+
+            // Borde del tooltip con el color de cada barra
+            hoverlabel: {
+                bgcolor: coloresPorPunto,
+                bordercolor: coloresPorPunto,
+                font: {
+                    color: "white",
+                    size: 12,
+                    family: "Segoe UI, Arial, sans-serif"
+                }
+            }
+
+        }];
+
+
+        let n = labels.length;
+
+        var layout = {
+
+            height: n * 65 + 40,
+
+            shapes: shapes,
+            annotations: annotations,
+
+            paper_bgcolor: "white",
+            plot_bgcolor: "white",
+
+            margin: {
+                l: 10,
+                r: 40,
+                t: 0,
+                b: 20
+            },
+
+            showlegend: false,
+
+            xaxis: {
+                visible: false,
+                rangemode: "tozero"
+            },
+
+            yaxis: {
+                visible: false,
+                range: [-(n - 1) - 0.6, 0.6]
+            }
+        };
+
+
+        Plotly.newPlot(
+            "divGraficaVisitasServicio",
+            data,
+            layout,
+            {
+                responsive: true,
+                displayModeBar: false
+            }
+        );
+    }, "json");
+}
+
 function cargarCarreras() {
   fetchConAuth(`${API}?accion=listar`)
     .then(res => res.json())
@@ -1360,7 +1510,7 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarDetalleP();
   cargarVisitas();
   graficarGenero();
-  graficarVisitas();
+  graficarVisitasServicio();
 
   const btnPIN = document.getElementById("btnPINSeguridad");
   $(document).on("click", "#btnPINSeguridad", function() {
