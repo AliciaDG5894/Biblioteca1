@@ -1,5 +1,5 @@
-const API = "https://area-punk-stem-watches.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://area-punk-stem-watches.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://touch-examining-chronicles-appeared.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://touch-examining-chronicles-appeared.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
 
@@ -121,6 +121,199 @@ function obtenerNombreUsuario() {
     } catch (error) {
         return null;
     }
+}
+
+// GRAFICAS
+
+function graficarGenero() {
+
+    $.get(API_ESTUDIANTES + "?accion=graficarGenero", function(respuesta) {
+
+        let labels = [];
+        let values = [];
+
+        respuesta.forEach(function(item) {
+            labels.push(item.Genero);
+            values.push(parseInt(item.Total));
+        });
+
+        var data = [{
+            values: values,
+            labels: labels,
+            type: "pie",
+
+            hole: 0.75,
+
+            marker: {
+                colors: [
+                    "#1cc88a",
+                    "#36b9cc"
+                ],
+                line: {
+                    color: "white",
+                    width: 2
+                }
+            },
+
+            textinfo: "none",
+
+            hoverlabel: {
+                bgcolor: "#ffffff",
+                bordercolor: "#dddfeb",
+                font: {
+                    family: "Nunito, sans-serif",
+                    size: 13,
+                    color: "#858796"
+                },
+                align: "left"
+            },
+
+            hovertemplate:
+                "<b>%{label}</b><br>" +
+                "%{value} estudiantes<br>" +
+                "%{percent}<extra></extra>"
+        }];
+
+        var layout = {
+
+            height: 260,
+            autosize: true,
+
+            paper_bgcolor: "white",
+            plot_bgcolor: "white",
+
+            showlegend: false,
+
+            margin: {
+                l: 15,
+                r: 15,
+                t: 10,
+                b: 10
+            },
+
+            font: {
+                family: "Nunito, sans-serif",
+                size: 13,
+                color: "#858796"
+            }
+        };
+
+        Plotly.newPlot(
+            "divGraficaGenero",
+            data,
+            layout,
+            {
+                responsive: true,
+                displayModeBar: false
+            }
+        )
+    }, "json");
+}
+
+function graficarVisitas() {
+
+    $.get(API + "?accion=graficarVisitas", function(respuesta) {
+
+        let labels = [];
+        let values = [];
+
+        respuesta.forEach(function(item) {
+            labels.push(item.Fecha);
+            values.push(parseInt(item.Total));
+        })
+
+        var data = [{
+            x: labels,
+            y: values,
+            type: "scatter",
+            mode: "lines+markers",
+            name: "Visitas",
+            line: {
+                color: "#1cc88a",
+                width: 3,
+                shape: "spline"
+            },
+            marker: {
+                size: 6,
+                color: "#1cc88a",
+                line: {
+                    color: "#1cc88a",
+                    width: 2
+                }
+            },
+            fill: "tozeroy",
+            fillcolor: "rgba(78,115,223,0.05)",
+
+            hovertemplate:
+                "<b>%{x}</b><br>" +
+                "Visitas: %{y}" +
+                "<extra></extra>"
+        }]
+
+        var layout = {
+            height: 300,
+            autosize: true,
+            paper_bgcolor: "white",
+            plot_bgcolor: "white",
+            showlegend: false,
+
+            margin: {
+                l: 55,
+                r: 25,
+                t: 25,
+                b: 45
+            },
+
+            font: {
+                family: "Nunito, sans-serif",
+                size: 13,
+                color: "#858796"
+            },
+
+            xaxis: {
+                showgrid: false,
+                zeroline: false,
+                tickfont: {
+                    color: "#858796"
+                },
+                tickangle: -45
+            },
+
+            yaxis: {
+                title: {
+                    text: "Cantidad de visitas",
+                    font: {
+                        size: 12,
+                        color: "#858796"
+                    }
+                },
+
+                showgrid: true,
+                gridcolor: "rgba(234,236,244,1)",
+                griddash: "dot",
+                zeroline: false,
+                tickfont: {
+                    color: "#858796"
+                }
+            },
+
+            hoverlabel: {
+                bgcolor: "#ffffff",
+                bordercolor: "#dddfeb",
+
+                font: {
+                    family: "Nunito, sans-serif",
+                    size: 13,
+                    color: "#858796"
+                }
+            }
+        }
+        Plotly.newPlot("divGraficaVisitas",data,layout,{
+                responsive:true,
+                displayModeBar:false
+            }
+        )
+    }, "json");
 }
 
 function cargarCarreras() {
@@ -1166,6 +1359,8 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarHistorialP();
   cargarDetalleP();
   cargarVisitas();
+  graficarGenero();
+  graficarVisitas();
 
   const btnPIN = document.getElementById("btnPINSeguridad");
   $(document).on("click", "#btnPINSeguridad", function() {
