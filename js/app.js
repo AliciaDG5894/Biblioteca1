@@ -1,5 +1,5 @@
-const API = "https://touch-examining-chronicles-appeared.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://touch-examining-chronicles-appeared.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://marker-important-connection-tennessee.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://marker-important-connection-tennessee.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
 

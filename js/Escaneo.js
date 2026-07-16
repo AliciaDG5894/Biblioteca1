@@ -1,4 +1,4 @@
-const API = "https://touch-examining-chronicles-appeared.trycloudflare.com/test/api/index.php";
+const API = "https://marker-important-connection-tennessee.trycloudflare.com/test/api/index.php";
 
 // Bloquear navegación hacia atrás
 history.pushState(null, null, location.href);
