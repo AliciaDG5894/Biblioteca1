@@ -1,5 +1,5 @@
-const API = "https://andy-telephone-filter-comment.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://andy-telephone-filter-comment.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://tile-airfare-orange-want.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://tile-airfare-orange-want.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
 
