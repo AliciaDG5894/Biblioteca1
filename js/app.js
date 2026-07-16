@@ -28,7 +28,6 @@ if (document.getElementById("exampleModal")) {
 
 $("#frmLogin").submit(function (event) {
     event.preventDefault()
-
     $.post(`${API}?iniciarSesion`, $(this).serialize(), function (respuesta) {
 
       respuesta = respuesta.trim();
@@ -101,13 +100,6 @@ function manejarPIN() {
   })
   .catch(err => console.error("Error guardando PIN:", err));
 }
-
-// function ManejoQR() {
-//   $("#divQR").html("<p>Cargando QR...</p>");
-//   $.get(API + "?generarQR", function(qrHTML) {
-//     $("#divQR").html(qrHTML);
-//   });
-// }
 
 function obtenerNombreUsuario() {
     const jwt = localStorage.getItem("jwt");
@@ -1499,6 +1491,20 @@ function eliminarVisitas(id) {
     .catch(err => console.error("Error eliminando visita:", err));
 }
 
+let qrPollingInterval = null;
+let qrPollingTimeout  = null;
+
+function detenerPollingQR() {
+    if (qrPollingInterval) {
+      clearInterval(qrPollingInterval);
+      qrPollingInterval = null;
+    }
+    if (qrPollingTimeout) {
+      clearTimeout(qrPollingTimeout);
+      qrPollingTimeout = null;
+    }
+  }
+
 document.addEventListener("DOMContentLoaded", () => {
   cargarPartials();
   cargarCarreras();
@@ -1524,12 +1530,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  // Cuando se presione el botón QR
-  $("#btnUsarQR").on("click", function() {
+  $(document).on("click", "#btnUsarQR", function () {
+    const usuario = $("#txtUsuario").val();
+    if (!usuario) {
+      alert("Primero escribe tu usuario");
+      return;
+    }
+
     $("#modalQR").modal("show");
-      ManejoQR();
+    $("#divQR").html("<p>Cargando QR...</p>");
+
+    $.get(`${API}?qrIniciarSesion&usuario=${encodeURIComponent(usuario)}`, function (resp) {
+      if (typeof resp === "string") resp = JSON.parse(resp);
+
+      if (resp.error) {
+        $("#divQR").html(`<p>${resp.error}</p>`);
+        return;
+      }
+
+      $("#divQR").html(`
+        <img src="${resp.src}" class="img-fluid" alt="Código QR">
+        <input type="hidden" id="QRToken" value="${resp.token}">
+      `);
+
+      const qrToken = resp.token;
+
+      detenerPollingQR();
+
+      qrPollingInterval = setInterval(() => {
+        $.post(`${API}?iniciarSesion&QRToken=${qrToken}`, function (jwt) {
+          if (typeof jwt === "string") jwt = jwt.trim();
+          if (jwt && jwt !== "error" && jwt.startsWith("eyJ")) {
+            detenerPollingQR();
+            localStorage.setItem("jwt", jwt);
+            window.location = "../index.html";
+          }
+        });
+      }, 3000);
+
+      qrPollingTimeout = setTimeout(() => {
+        detenerPollingQR();
+        $("#divQR").append("<p class='text-muted mt-2'>El código expiró, vuelve a intentarlo.</p>");
+      }, 120000);
+    });
   });
 
+  $("#modalQR").on("hidden.bs.modal", function () {
+    detenerPollingQR();
+  });
 
   //Manejo de cajas
   document.getElementById("btnUsarPIN").addEventListener("click", () => {
@@ -1602,7 +1650,6 @@ document.addEventListener("DOMContentLoaded", () => {
       cargarLibrosDatalist();  
       cargarDatosModificarDetalleP();
   }
-
 
   const formInsertar = document.getElementById("insertarCarrera");
   if (formInsertar) {
@@ -1767,5 +1814,4 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(err => console.error("Error modificando detalle de préstamos:", err));
     });
   }
-
 });

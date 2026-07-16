@@ -17,6 +17,7 @@ document.addEventListener("DOMContentLoaded", () => {
 
             const respuesta = await fetch(
                 "https://marker-important-connection-tennessee.trycloudflare.com/test/api/index.php?accion=buscar_estudiantes&nombre=" + encodeURIComponent(nombre)
+
             );
 
             const estudiantes = await respuesta.json();
