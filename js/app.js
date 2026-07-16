@@ -1,5 +1,5 @@
-const API = "https://marker-important-connection-tennessee.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://marker-important-connection-tennessee.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://tent-assess-roller-actually.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://tent-assess-roller-actually.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
 
@@ -176,6 +176,7 @@ function graficarGenero() {
 
             showlegend: false,
 
+            autosize: true,
             margin: {
                 l: 15,
                 r: 15,
@@ -201,6 +202,39 @@ function graficarGenero() {
         )
     }, "json");
 }
+
+// function obtenerLayout() {
+
+//     const movil = window.innerWidth < 768;
+
+//     return {
+//         autosize: true,
+//         height: movil ? 220 : 300,
+
+//         margin: {
+//             l: movil ? 40 : 55,
+//             r: 10,
+//             t: 20,
+//             b: movil ? 70 : 45
+//         },
+
+//         xaxis: {
+//             tickangle: movil ? -90 : -45,
+//             tickfont: {
+//                 size: movil ? 9 : 12
+//             }
+//         },
+
+//         yaxis: {
+//             title: {
+//                 text: "Cantidad de visitas"
+//             },
+//             tickfont: {
+//                 size: movil ? 9 : 12
+//             }
+//         }
+//     };
+// }
 
 function graficarVisitas() {
 
@@ -242,18 +276,20 @@ function graficarVisitas() {
                 "<extra></extra>"
         }]
 
+        const movil = window.innerWidth < 768;
+
         var layout = {
-            height: 300,
+            height: movil ? 230 : 300,
             autosize: true,
             paper_bgcolor: "white",
             plot_bgcolor: "white",
             showlegend: false,
 
             margin: {
-                l: 55,
+                l: movil ? 40 : 55,
                 r: 25,
                 t: 25,
-                b: 45
+                b: movil ? 80 : 45
             },
 
             font: {
@@ -265,17 +301,20 @@ function graficarVisitas() {
             xaxis: {
                 showgrid: false,
                 zeroline: false,
+                automargin: true,
                 tickfont: {
-                    color: "#858796"
+                    color: "#858796",
+                    size: movil ? 9 : 12
                 },
-                tickangle: -45
+                tickangle: movil ? -90 : -45,
             },
 
             yaxis: {
+               automargin: true,
                 title: {
                     text: "Cantidad de visitas",
                     font: {
-                        size: 12,
+                        size: movil ? 9 : 12,
                         color: "#858796"
                     }
                 },
@@ -300,11 +339,13 @@ function graficarVisitas() {
                 }
             }
         }
-        Plotly.newPlot("divGraficaVisitas",data,layout,{
-                responsive:true,
-                displayModeBar:false
-            }
-        )
+
+        // var layout = obtenerLayout();
+
+        Plotly.newPlot("divGraficaVisitas", data, layout, {
+            responsive: true,
+            displayModeBar: false
+        })
     }, "json");
 }
 
@@ -422,6 +463,7 @@ function graficarVisitasServicio() {
             shapes: shapes,
             annotations: annotations,
 
+            autosize: true,
             paper_bgcolor: "white",
             plot_bgcolor: "white",
 
@@ -1504,6 +1546,10 @@ function detenerPollingQR() {
       qrPollingTimeout = null;
     }
   }
+
+window.addEventListener("resize", () => {
+    graficarVisitas();
+});
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarPartials();

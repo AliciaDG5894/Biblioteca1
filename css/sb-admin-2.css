@@ -12097,10 +12097,21 @@ a:focus {
   content: '\f105';
 }
 
-.chart-area {
+/* .chart-area {
   position: relative;
   height: 10rem;
   width: 100%;
+} */
+
+#divGraficaVisitas {
+    width: 100%;
+    height: 300px;
+}
+
+.chart-area {
+    position: relative;
+    width: 100%;
+    min-height: 300px;
 }
 
 @media (min-width: 768px) {
