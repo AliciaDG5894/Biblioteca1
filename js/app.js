@@ -30,20 +30,36 @@ $("#frmLogin").submit(function (event) {
     event.preventDefault()
     $.post(`${API}?iniciarSesion`, $(this).serialize(), function (respuesta) {
 
-        if (respuesta === "error") {
-            if (modalErrorLogin) modalErrorLogin.show();
-            return;
-        }
+      respuesta = respuesta.trim();
 
-        // Validar que realmente sea un JWT
-        if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
-            console.error("Respuesta inválida:", respuesta);
-            alert("No fue posible iniciar sesión. El servidor devolvió un error.");
-            return;
-        }
+      if (respuesta === "error") {
+          if (modalErrorLogin) modalErrorLogin.show();
+          return;
+      }
 
-        localStorage.setItem("jwt", respuesta);
-        window.location = "../index.html";
+      if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
+          console.error("Respuesta inválida:", respuesta);
+          alert("No fue posible iniciar sesión. El servidor devolvió un error.");
+          return;
+      }
+
+      localStorage.setItem("jwt", respuesta);
+      window.location = "../index.html";
+
+        // if (respuesta === "error") {
+        //     if (modalErrorLogin) modalErrorLogin.show();
+        //     return;
+        // }
+
+        // // Validar que realmente sea un JWT
+        // if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
+        //     console.error("Respuesta inválida:", respuesta);
+        //     alert("No fue posible iniciar sesión. El servidor devolvió un error.");
+        //     return;
+        // }
+
+        // localStorage.setItem("jwt", respuesta);
+        // window.location = "../index.html";
     });
     
 })
@@ -97,6 +113,349 @@ function obtenerNombreUsuario() {
     } catch (error) {
         return null;
     }
+}
+
+// GRAFICAS
+
+function graficarGenero() {
+
+    $.get(API_ESTUDIANTES + "?accion=graficarGenero", function(respuesta) {
+
+        let labels = [];
+        let values = [];
+
+        respuesta.forEach(function(item) {
+            labels.push(item.Genero);
+            values.push(parseInt(item.Total));
+        });
+
+        var data = [{
+            values: values,
+            labels: labels,
+            type: "pie",
+
+            hole: 0.75,
+
+            marker: {
+                colors: [
+                    "#1cc88a",
+                    "#36b9cc"
+                ],
+                line: {
+                    color: "white",
+                    width: 2
+                }
+            },
+
+            textinfo: "none",
+
+            hoverlabel: {
+                bgcolor: "#ffffff",
+                bordercolor: "#dddfeb",
+                font: {
+                    family: "Nunito, sans-serif",
+                    size: 13,
+                    color: "#858796"
+                },
+                align: "left"
+            },
+
+            hovertemplate:
+                "<b>%{label}</b><br>" +
+                "%{value} estudiantes<br>" +
+                "%{percent}<extra></extra>"
+        }];
+
+        var layout = {
+
+            height: 260,
+            autosize: true,
+
+            paper_bgcolor: "white",
+            plot_bgcolor: "white",
+
+            showlegend: false,
+
+            margin: {
+                l: 15,
+                r: 15,
+                t: 10,
+                b: 10
+            },
+
+            font: {
+                family: "Nunito, sans-serif",
+                size: 13,
+                color: "#858796"
+            }
+        };
+
+        Plotly.newPlot(
+            "divGraficaGenero",
+            data,
+            layout,
+            {
+                responsive: true,
+                displayModeBar: false
+            }
+        )
+    }, "json");
+}
+
+function graficarVisitas() {
+
+    $.get(API + "?accion=graficarVisitas", function(respuesta) {
+
+        let labels = [];
+        let values = [];
+
+        respuesta.forEach(function(item) {
+            labels.push(item.Fecha);
+            values.push(parseInt(item.Total));
+        })
+
+        var data = [{
+            x: labels,
+            y: values,
+            type: "scatter",
+            mode: "lines+markers",
+            name: "Visitas",
+            line: {
+                color: "#1cc88a",
+                width: 3,
+                shape: "spline"
+            },
+            marker: {
+                size: 6,
+                color: "#1cc88a",
+                line: {
+                    color: "#1cc88a",
+                    width: 2
+                }
+            },
+            fill: "tozeroy",
+            fillcolor: "rgba(78,115,223,0.05)",
+
+            hovertemplate:
+                "<b>%{x}</b><br>" +
+                "Visitas: %{y}" +
+                "<extra></extra>"
+        }]
+
+        var layout = {
+            height: 300,
+            autosize: true,
+            paper_bgcolor: "white",
+            plot_bgcolor: "white",
+            showlegend: false,
+
+            margin: {
+                l: 55,
+                r: 25,
+                t: 25,
+                b: 45
+            },
+
+            font: {
+                family: "Nunito, sans-serif",
+                size: 13,
+                color: "#858796"
+            },
+
+            xaxis: {
+                showgrid: false,
+                zeroline: false,
+                tickfont: {
+                    color: "#858796"
+                },
+                tickangle: -45
+            },
+
+            yaxis: {
+                title: {
+                    text: "Cantidad de visitas",
+                    font: {
+                        size: 12,
+                        color: "#858796"
+                    }
+                },
+
+                showgrid: true,
+                gridcolor: "rgba(234,236,244,1)",
+                griddash: "dot",
+                zeroline: false,
+                tickfont: {
+                    color: "#858796"
+                }
+            },
+
+            hoverlabel: {
+                bgcolor: "#ffffff",
+                bordercolor: "#dddfeb",
+
+                font: {
+                    family: "Nunito, sans-serif",
+                    size: 13,
+                    color: "#858796"
+                }
+            }
+        }
+        Plotly.newPlot("divGraficaVisitas",data,layout,{
+                responsive:true,
+                displayModeBar:false
+            }
+        )
+    }, "json");
+}
+
+function graficarVisitasServicio() {
+
+  $.get(API + "?accion=graficarVisitasServicio", function(respuesta) {
+
+        let labels = [];
+        let values = [];
+
+        respuesta.forEach(function(item){
+            labels.push(item.Servicio);
+            values.push(parseInt(item.Total));
+        });
+
+
+        let colores = [
+            "#e74a3b",
+            "#e77a3b",
+            "#f6c23e",
+            "#4e73df",
+            "#36b9cc",
+            "#1cc88a"
+        ];
+
+
+        let shapes = [];
+        let annotations = [];
+        let coloresPorPunto = []; // para el borde del tooltip por color de barra
+
+        values.forEach(function(valor, index){
+
+            let color = colores[index % colores.length];
+            let rowY = -index;
+
+            coloresPorPunto.push(color);
+
+            shapes.push({
+                type: "rect",
+                x0: 0,
+                x1: valor,
+                y0: rowY - 0.35,
+                y1: rowY + 0.05,
+                fillcolor: color,
+                line: { width: 0 },
+                layer: "below"
+            });
+
+            annotations.push({
+                x: 0,
+                y: rowY + 0.10,
+                xref: "x",
+                yref: "y",
+                text: labels[index],
+                showarrow: false,
+                xanchor: "left",
+                yanchor: "bottom",
+                font: {
+                    size: 11,
+                    color: "#5a5c69"
+                }
+            });
+
+            annotations.push({
+                x: valor,
+                y: rowY - 0.15,
+                xref: "x",
+                yref: "y",
+                text: valor + "%",
+                showarrow: false,
+                xanchor: "left",
+                yanchor: "middle",
+                font: {
+                    size: 10,
+                    color: color
+                }
+            });
+
+        });
+
+
+        var data = [{
+            x: values,
+            y: values.map((_, index) => -index),
+            type: "bar",
+            orientation: "h",
+            marker: {
+                color: "rgba(0,0,0,0)"
+            },
+            text: labels,
+
+            // Un solo texto limpio: "Nombre: valor%"
+            hovertemplate: "<b>%{text}</b><br>%{x}% de visitas<extra></extra>",
+
+            // Borde del tooltip con el color de cada barra
+            hoverlabel: {
+                bgcolor: coloresPorPunto,
+                bordercolor: coloresPorPunto,
+                font: {
+                    color: "white",
+                    size: 12,
+                    family: "Segoe UI, Arial, sans-serif"
+                }
+            }
+
+        }];
+
+
+        let n = labels.length;
+
+        var layout = {
+
+            height: n * 65 + 40,
+
+            shapes: shapes,
+            annotations: annotations,
+
+            paper_bgcolor: "white",
+            plot_bgcolor: "white",
+
+            margin: {
+                l: 10,
+                r: 40,
+                t: 0,
+                b: 20
+            },
+
+            showlegend: false,
+
+            xaxis: {
+                visible: false,
+                rangemode: "tozero"
+            },
+
+            yaxis: {
+                visible: false,
+                range: [-(n - 1) - 0.6, 0.6]
+            }
+        };
+
+
+        Plotly.newPlot(
+            "divGraficaVisitasServicio",
+            data,
+            layout,
+            {
+                responsive: true,
+                displayModeBar: false
+            }
+        );
+    }, "json");
 }
 
 function cargarCarreras() {
@@ -1156,6 +1515,9 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarHistorialP();
   cargarDetalleP();
   cargarVisitas();
+  graficarGenero();
+  graficarVisitas();
+  graficarVisitasServicio();
 
   const btnPIN = document.getElementById("btnPINSeguridad");
   $(document).on("click", "#btnPINSeguridad", function() {
