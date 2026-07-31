@@ -1,8 +1,3 @@
-// Agregar nuevas validaciones personalizadas
-$.validator.addMethod("email", function(value, element) {
-    return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(value);
-}, "Por favor, ingrese un correo válido");
-
 $.validator.addMethod("numeros", function(value, element) {
     return this.optional(element) || /^[0-9.]+$/.test(value);
 }, "Por favor, ingresa solo números");
@@ -41,24 +36,25 @@ $.validator.addMethod("letrasYCaracteres", function(value, element) {
 
 
 // Validación del formulario
-$("#insertarPres").validate({
+$("#insertarPrestamo").validate({
     errorClass: "v_error", // Estilo para errores
     validClass: "v_correcto",   // Estilo para válidos
     messages: {
-        estudiante_nombre: {
+        nombre: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 10 caracteres",
-            maxlength: "Por favor, no ingrese más de 50 caracteres",
-            multipleSpaces: "Por favor, no ingrese múltiples espacios"
+            minlength: "Por favor, ingrese más de 8 caracteres",
+            maxlength: "Por favor, no ingrese más de 20 caracteres",
+            noSpaces: "Por favor, no ingrese espacios",
+            integer: "Por favor, ingresa un número entero"
         },
-        fecha_ent: {
+        fecha_entrega: {
             required: "Por favor, llene este campo"
         },
-        fecha_dev: {
-            required: "Por favor, llene este campo"
+        fecha_devolucion: {
+            required: "Por favor, seleccione una opción"
         },
         estado: {
-            required: "Por favor, llene este campo"
+            required: "Por favor, seleccione una opción"
         }
     },
     errorPlacement: function(error, element) {

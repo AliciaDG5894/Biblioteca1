@@ -109,6 +109,11 @@ body {
   background-color: #fff;
 }
 
+.swal-pequeno {
+    width: 300px !important;
+    font-size: 0.85rem !important;
+}
+
 [tabindex="-1"]:focus:not(:focus-visible) {
   outline: 0 !important;
 }
@@ -12142,6 +12147,11 @@ a:focus {
   .chart-pie {
     height: calc(20rem - 43px) !important;
   }
+}
+
+#divGraficaVisitasServicio {
+    width: 100%;
+    overflow: hidden;
 }
 
 .bg-login-image {

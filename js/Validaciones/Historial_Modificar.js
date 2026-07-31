@@ -41,11 +41,14 @@ $.validator.addMethod("letrasYCaracteres", function(value, element) {
 
 
 // Validación del formulario
-$("#modificarHis").validate({
+$("#modificarHistorialP").validate({
     errorClass: "v_error", // Estilo para errores
     validClass: "v_correcto",   // Estilo para válidos
     messages: {
         prestamo: {
+            required: "Por favor, llene este campo"
+        },
+        fecha: {
             required: "Por favor, llene este campo"
         },
         descripcion:

@@ -41,20 +41,23 @@ $.validator.addMethod("letrasYCaracteres", function(value, element) {
 
 
 // Validación del formulario
-$("#modificarPres").validate({
+$("#modificarPrestamo").validate({
     errorClass: "v_error", // Estilo para errores
     validClass: "v_correcto",   // Estilo para válidos
     messages: {
-        estudiante: {
+        id_estudiante: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 10 caracteres",
             maxlength: "Por favor, no ingrese más de 50 caracteres",
             multipleSpaces: "Por favor, no ingrese múltiples espacios"
         },
-        fecha_ent: {
+        fecha_prestamo: {
             required: "Por favor, llene este campo"
         },
-        fecha_dev: {
+        fecha_entrega: {
+            required: "Por favor, llene este campo"
+        },
+        fecha_devolucion: {
             required: "Por favor, llene este campo"
         },
         estado: {

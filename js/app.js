@@ -1,5 +1,5 @@
-const API = "https://tent-assess-roller-actually.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://tent-assess-roller-actually.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://roof-brussels-application-steady.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://roof-brussels-application-steady.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
 
@@ -16,7 +16,34 @@ function fetchConAuth(url, opciones = {}) {
         Authorization: `Bearer ${jwt || ""}`
     };
 
-    return fetch(url, { ...opciones, headers });
+    return fetch(url, { ...opciones, headers })
+        .then(res => {
+            if (!res.ok) {
+                Swal.fire({
+                    icon: "error",
+                    title: "Error de servidor",
+                    text: "El servidor no está disponible en este momento. Intenta más tarde.",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#4e73df",
+                    customClass: { popup: 'swal-pequeno' }
+                });
+                throw new Error("Error de servidor: " + res.status);
+            }
+            return res;
+        })
+        .catch(err => {
+            if (err.message === "Failed to fetch") {
+                Swal.fire({
+                    icon: "warning",
+                    title: "Sin conexión",
+                    text: "No se pudo conectar con la base de datos. Verifica tu conexión.",
+                    confirmButtonText: "Aceptar",
+                    confirmButtonColor: "#4e73df",
+                    customClass: { popup: 'swal-pequeno' }
+                });
+            }
+            throw err;
+        });
 }
 
 let modalErrorLogin = null;
@@ -115,8 +142,47 @@ function obtenerNombreUsuario() {
     }
 }
 
-// GRAFICAS
+// Cargar plantillas sidebar y topbar
+function cargarPartials() {
+  fetch("../partials/sidebar.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("sidebar").outerHTML = html;
 
+      const sidebarToggle = document.getElementById("sidebarToggle");
+      if (sidebarToggle) {
+        sidebarToggle.addEventListener("click", function () {
+          document.body.classList.toggle("sidebar-toggled");
+          document.querySelector(".sidebar").classList.toggle("toggled");
+          if (document.querySelector(".sidebar").classList.contains("toggled")) {
+            $('.sidebar .collapse').collapse('hide');
+          }
+        });
+      }
+    });
+
+  fetch("../partials/topbar.html")
+    .then(res => res.text())
+    .then(html => {
+      document.getElementById("topbar").outerHTML = html;
+
+      const nombreUsuario = obtenerNombreUsuario();
+      if (nombreUsuario) {
+        document.getElementById("nombreUsuarioTopbar").textContent = nombreUsuario;
+      }
+
+      const toggleBtn = document.getElementById("sidebarToggleTop");
+      if (toggleBtn) {
+        toggleBtn.addEventListener("click", function () {
+          document.body.classList.toggle("sidebar-toggled");
+          document.querySelector(".sidebar").classList.toggle("toggled");
+          console.log("Toggle ejecutado");
+        });
+      }
+    });
+}
+
+// GRAFICAS
 function graficarGenero() {
 
     $.get(API_ESTUDIANTES + "?accion=graficarGenero", function(respuesta) {
@@ -237,8 +303,9 @@ function graficarGenero() {
 // }
 
 function graficarVisitas() {
-
-    $.get(API + "?accion=graficarVisitas", function(respuesta) {
+    const mes = document.getElementById("filtroMes")?.value || "";
+    const anio = document.getElementById("filtroAnio")?.value || "";
+    $.get(API + "?accion=graficarVisitas&mes=" + mes + "&anio=" + anio, function(respuesta) {
 
         let labels = [];
         let values = [];
@@ -350,7 +417,6 @@ function graficarVisitas() {
 }
 
 function graficarVisitasServicio() {
-
   $.get(API + "?accion=graficarVisitasServicio", function(respuesta) {
 
         let labels = [];
@@ -375,6 +441,7 @@ function graficarVisitasServicio() {
         let shapes = [];
         let annotations = [];
         let coloresPorPunto = []; // para el borde del tooltip por color de barra
+        const movil = window.innerWidth < 768;
 
         values.forEach(function(valor, index){
 
@@ -399,33 +466,16 @@ function graficarVisitasServicio() {
                 y: rowY + 0.10,
                 xref: "x",
                 yref: "y",
-                text: labels[index],
+                text: movil ? labels[index].substring(0, 20) + "..." : labels[index],
                 showarrow: false,
                 xanchor: "left",
                 yanchor: "bottom",
                 font: {
-                    size: 11,
+                    size: movil ? 9 : 11,
                     color: "#5a5c69"
                 }
             });
-
-            annotations.push({
-                x: valor,
-                y: rowY - 0.15,
-                xref: "x",
-                yref: "y",
-                text: valor + "%",
-                showarrow: false,
-                xanchor: "left",
-                yanchor: "middle",
-                font: {
-                    size: 10,
-                    color: color
-                }
-            });
-
         });
-
 
         var data = [{
             x: values,
@@ -457,19 +507,16 @@ function graficarVisitasServicio() {
         let n = labels.length;
 
         var layout = {
-
             height: n * 65 + 40,
-
             shapes: shapes,
             annotations: annotations,
-
             autosize: true,
             paper_bgcolor: "white",
             plot_bgcolor: "white",
 
             margin: {
                 l: 10,
-                r: 40,
+                r: movil ? 10 : 40,
                 t: 0,
                 b: 20
             },
@@ -478,7 +525,8 @@ function graficarVisitasServicio() {
 
             xaxis: {
                 visible: false,
-                rangemode: "tozero"
+                rangemode: "tozero",
+                range: [0, Math.max(...values) * (movil ? 1.4 : 1.2)]
             },
 
             yaxis: {
@@ -486,7 +534,6 @@ function graficarVisitasServicio() {
                 range: [-(n - 1) - 0.6, 0.6]
             }
         };
-
 
         Plotly.newPlot(
             "divGraficaVisitasServicio",
@@ -500,6 +547,131 @@ function graficarVisitasServicio() {
     }, "json");
 }
 
+function cargarTotales() {
+    $.get(API + "?accion=totalEntradas", function(data) {
+        document.getElementById("cardEntradas").textContent = data.total;
+    }, "json");
+
+    $.get(API + "?accion=totalLibros", function(data) {
+        document.getElementById("cardLibros").textContent = data.total;
+    }, "json");
+
+    $.get(API + "?accion=totalEstudiantes", function(data) {
+        document.getElementById("cardEstudiantes").textContent = data.total;
+    }, "json");
+
+    $.get(API + "?accion=totalPrestamos", function(data) {
+        document.getElementById("cardPrestamos").textContent = data.total;
+    }, "json");
+}
+
+// Generar archivos
+function exportarExcelVisitas() {
+    const tabla = $('#dataTableVisitas').DataTable();
+    const filas = tabla.rows({ search: 'applied' }).data().toArray();
+    
+    const datos = filas.map(d => ({
+        ID: d[0],
+        Estudiante: d[1],
+        Servicio: d[2],
+        Fecha: d[3],
+        "Hora entrada": d[4],
+        "Hora salida": d[5]
+    }));
+
+    const ws = XLSX.utils.json_to_sheet(datos);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Visitas");
+    XLSX.writeFile(wb, "Visitas.xlsx");
+}
+
+function exportarPDFVisitas() {
+    const tabla = $('#dataTableVisitas').DataTable();
+    const filas = tabla.rows({ search: 'applied' }).data().toArray();
+
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF();
+    doc.text("Reporte de Visitas", 14, 15);
+    doc.autoTable({
+        startY: 20,
+        head: [["ID", "Estudiante", "Servicio", "Fecha", "Hora entrada", "Hora salida"]],
+        body: filas.map(d => [d[0], d[1], d[2], d[3], d[4], d[5]])
+    });
+    doc.save("Visitas.pdf");
+}
+
+function exportarExcelDashboard() {
+    const wb = XLSX.utils.book_new();
+
+    $.when(
+        $.get(API + "?accion=graficarVisitas"),
+        $.get(API_ESTUDIANTES + "?accion=graficarGenero"),
+        $.get(API + "?accion=graficarVisitasServicio")
+    ).done(function(visitas, genero, servicios) {
+
+        const wsVisitas = XLSX.utils.json_to_sheet(visitas[0].map(d => ({
+            Fecha: d.Fecha,
+            Total: d.Total
+        })));
+
+        const wsGenero = XLSX.utils.json_to_sheet(genero[0].map(d => ({
+            Genero: d.Genero,
+            Total: d.Total
+        })));
+
+        const wsServicios = XLSX.utils.json_to_sheet(servicios[0].map(d => ({
+            Servicio: d.Servicio,
+            Total: d.Total
+        })));
+
+        XLSX.utils.book_append_sheet(wb, wsVisitas, "Visitas por Día");
+        XLSX.utils.book_append_sheet(wb, wsGenero, "Género");
+        XLSX.utils.book_append_sheet(wb, wsServicios, "Servicios");
+
+        XLSX.writeFile(wb, "Graficas_Biblioteca.xlsx");
+    });
+}
+
+async function exportarPDFDashboard() {
+    const { jsPDF } = window.jspdf;
+    const doc = new jsPDF('l', 'mm', 'a4');
+
+    doc.setFontSize(20);
+    doc.text("Graficas Biblioteca", 14, 15);
+
+    const graficas = [
+        { id: "divGraficaVisitas", titulo: "Visitas por Día" },
+        { id: "divGraficaGenero", titulo: "Género Estudiantes" },
+        { id: "divGraficaVisitasServicio", titulo: "Servicios" }
+    ];
+
+    let y = 25;
+
+    for (const g of graficas) {
+        const el = document.getElementById(g.id);
+        const canvas = await html2canvas(el, { scale: 1.5 });
+        const img = canvas.toDataURL("image/png");
+
+        doc.setFontSize(12);
+        doc.text(g.titulo, 14, y);
+        y += 5;
+
+        const ancho = 130;
+        const alto = (canvas.height * ancho) / canvas.width;
+
+        if (y + alto > 195) {
+            doc.addPage();
+            y = 15;
+        }
+
+        doc.addImage(img, "PNG", 14, y, ancho, alto);
+        y += alto + 10;
+    }
+
+    doc.save("Graficas_Biblioteca.pdf");
+}
+
+// Carreras
 function cargarCarreras() {
   fetchConAuth(`${API}?accion=listar`)
     .then(res => res.json())
@@ -541,6 +713,76 @@ function cargarCarreras() {
     .catch(err => console.error("Error cargando carreras:", err));
 }
 
+function insertarCarrera(event) {
+  event.preventDefault();
+  let nombre = document.getElementById("nombre").value;
+
+  fetchConAuth(`${API}?accion=insertar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: "Nombre=" + encodeURIComponent(nombre)
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Respuesta insertar carrera:", data);
+      Swal.fire({
+          icon: data.status === "success" ? "success" : "error", 
+          title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: {popup: 'swal-pequeno'}
+      })
+      .then(() => {
+        if (data.status === "success") {
+          window.location.href = "Carreras.html";
+        }
+      });
+    })
+    .catch(err => console.error("Error insertando carrera:", err));
+}
+
+function cargarDatosModificar() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (id) {
+    fetchConAuth(`${API}?accion=carrera&id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("id").value = data.Id_carrera;
+        document.getElementById("nombre").value = data.Nombre;
+      });
+  }
+}
+
+function eliminarCarrera(id) {
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar carrera?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    fetchConAuth(`${API}?accion=eliminar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "Id_carrera=" + encodeURIComponent(id)
+    })
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === "success" ? "success" : "error",
+          title: data.status === "success" ? "¡Eliminado!" : "Error",
+          text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: { popup: 'swal-pequeno' }
+        }).then(() => cargarCarreras());
+      })
+      .catch(err => console.error("Error eliminando carrera:", err));
+  });
+}
+
+// ESTUDIANTES
 function cargarEstudiantes() {
   fetchConAuth(`${API_ESTUDIANTES}?accion=listar`)
     .then(res => res.json())
@@ -594,6 +836,160 @@ function cargarEstudiantes() {
     .catch(err => console.error("Error cargando estudiantes:", err));
 }
 
+function insertarEstudiante(event) {
+  event.preventDefault();
+
+  let matricula = document.getElementById("matricula").value;
+  let nombre = document.getElementById("nombre").value;
+  let grado = document.getElementById("grado").value;
+  let seccion = document.getElementById("seccion").value;
+  let genero = document.getElementById("genero").value;
+  let carrera = document.getElementById("carrera").value;
+  let contacto = document.getElementById("contacto").value;
+
+  fetchConAuth(`${API_ESTUDIANTES}?accion=insertar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `matricula=${encodeURIComponent(matricula)}&nombre=${encodeURIComponent(nombre)}&grado=${encodeURIComponent(grado)}&seccion=${encodeURIComponent(seccion)}&genero=${encodeURIComponent(genero)}&carrera=${encodeURIComponent(carrera)}&contacto=${encodeURIComponent(contacto)}`
+  })
+    .then(res => res.json())
+    .then(data => {
+      console.log("Respuesta insertar estudiante:", data);
+      Swal.fire({
+          icon: data.status === "success" ? "success" : "error", 
+          title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: {popup: 'swal-pequeno'}
+      })
+      .then(() => {
+        if (data.status === "success") {
+          window.location.href = "Estudiantes.html";
+        }
+      });
+    })
+    .catch(err => console.error("Error insertando estudiante:", err));
+}
+
+function buscarPorMatricula() {
+  let matricula = document.getElementById("matricula").value;
+
+  if (matricula) {
+    fetchConAuth(`${API_ESTUDIANTES}?accion=buscarMatricula`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "matricula=" + encodeURIComponent(matricula)
+    })
+      .then(res => res.json())
+      .then(data => {
+        console.log("JSON parseado:", data);
+
+        if (Array.isArray(data) && data.length >= 2) {
+          const datosPersonales = data[0];
+          const datosAcademicos = data[1];
+
+          document.getElementById("nombre").value = datosPersonales.nombreCompleto || "";
+          document.getElementById("genero").value = datosPersonales.genero || "";
+          document.getElementById("grado").value = datosAcademicos.grado || "";
+          document.getElementById("seccion").value = datosAcademicos.seccion || "";
+          document.getElementById("carrera").value = datosAcademicos.carrera || "";
+          document.getElementById("contacto").value = "";
+        } else {
+          alert("No se encontraron datos para esa matrícula");
+        }
+      })
+      .catch(err => console.error("Error buscando matrícula:", err));
+  }
+}
+
+document.addEventListener("DOMContentLoaded", () => {
+  const matriculaInput = document.getElementById("matricula");
+  if (matriculaInput) {
+    matriculaInput.addEventListener("blur", buscarPorMatricula);
+  }
+});
+
+function cargarDatosModificarEstudiante() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+
+  if (id) {
+    fetchConAuth(`${API_ESTUDIANTES}?accion=estudiante&id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("id").value = data.Id_estudiante;
+        document.getElementById("matricula").value = data.Matricula;
+        document.getElementById("nombre").value = data.Nombre;
+        document.getElementById("grado").value = data.Grado;
+        document.getElementById("seccion").value = data.Seccion;
+        document.getElementById("genero").value = data.Genero;
+        document.getElementById("carrera").value = data.Carrera;
+        document.getElementById("contacto").value = data.Contacto;
+      });
+  }
+}
+
+function modificarEstudiante(event) {
+  event.preventDefault();
+
+  let id = document.getElementById("id").value;
+  let matricula = document.getElementById("matricula").value;
+  let nombre = document.getElementById("nombre").value;
+  let grado = document.getElementById("grado").value;
+  let seccion = document.getElementById("seccion").value;
+  let genero = document.getElementById("genero").value;
+  let carrera = document.getElementById("carrera").value;
+  let contacto = document.getElementById("contacto").value;
+
+  fetchConAuth(`${API_ESTUDIANTES}?accion=modificar`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: `Id_estudiante=${encodeURIComponent(id)}&matricula=${encodeURIComponent(matricula)}&nombre=${encodeURIComponent(nombre)}&grado=${encodeURIComponent(grado)}&seccion=${encodeURIComponent(seccion)}&genero=${encodeURIComponent(genero)}&carrera=${encodeURIComponent(carrera)}&contacto=${encodeURIComponent(contacto)}`
+  })
+    .then(res => res.json())
+    .then(data => {
+        Swal.fire({
+            icon: data.status === "success" ? "success" : "error", 
+            title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+            confirmButtonColor: "#4e73df",
+            customClass: { popup: 'swal-pequeno' }
+        }).then(() => {
+            if (data.status === "success") {
+                window.location.href = "Estudiantes.html";
+            }
+        });
+    })
+    .catch(err => console.error("Error modificando estudiante:", err));
+}
+
+function eliminarEstudiante(id) {
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar estudiante?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    fetchConAuth(`${API_ESTUDIANTES}?accion=eliminar`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "Id_estudiante=" + encodeURIComponent(id)
+    })
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === "success" ? "success" : "error",
+          title: data.status === "success" ? "¡Eliminado!" : "Error",
+          text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: { popup: 'swal-pequeno' }
+        }).then(() => cargarEstudiantes());
+      })
+      .catch(err => console.error("Error eliminando estudiante:", err));
+  });
+}
+
+// PRESTAMOS
 function cargarPrestamos() {
   fetchConAuth(`${API}?accion=prestamos`)
     .then(res => res.json())
@@ -674,51 +1070,6 @@ function cargarPrestamos() {
     .catch(err => console.error("Error cargando préstamos:", err));
 }
 
-// Insertar carreras
-function insertarCarrera(event) {
-  event.preventDefault();
-  let nombre = document.getElementById("nombre").value;
-
-  fetchConAuth(`${API}?accion=insertar`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Nombre=" + encodeURIComponent(nombre)
-  })
-    .then(res => res.json())
-    .then(data => {
-      console.log("Respuesta insertar:", data);
-      cargarCarreras();
-      document.getElementById("insertarCarrera").reset();
-    })
-    .catch(err => console.error("Error insertando carrera:", err));
-}
-
-function insertarEstudiante(event) {
-  event.preventDefault();
-
-  let matricula = document.getElementById("matricula").value;
-  let nombre = document.getElementById("nombre").value;
-  let grado = document.getElementById("grado").value;
-  let seccion = document.getElementById("seccion").value;
-  let genero = document.getElementById("genero").value;
-  let carrera = document.getElementById("carrera").value;
-  let contacto = document.getElementById("contacto").value;
-
-  fetchConAuth(`${API_ESTUDIANTES}?accion=insertar`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `matricula=${encodeURIComponent(matricula)}&nombre=${encodeURIComponent(nombre)}&grado=${encodeURIComponent(grado)}&seccion=${encodeURIComponent(seccion)}&genero=${encodeURIComponent(genero)}&carrera=${encodeURIComponent(carrera)}&contacto=${encodeURIComponent(contacto)}`
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      cargarEstudiantes();
-      document.getElementById("insertarEstudiante").reset();
-    })
-    .catch(err => console.error("Error insertando estudiante:", err));
-}
-
-// PRESTAMOS
 function insertarPrestamo(event) {
   event.preventDefault();
 
@@ -740,46 +1091,6 @@ function insertarPrestamo(event) {
       document.getElementById("insertarPrestamo").reset();
     })
     .catch(err => console.error("Error insertando prestamo:", err));
-}
-
-// MODIFICAR PRESTAMOS Y ELIMINAR
-function modificarPrestamos(event) {
-  event.preventDefault();
-
-  let id = document.getElementById("id_prestamo").value;
-  let estudiante = document.getElementById("id_estudiante_real").value;
-  let fecha_prestamo = document.getElementById("fecha_prestamo").value;
-  let fecha_entrega = document.getElementById("fecha_entrega").value;
-  let fecha_devolucion = document.getElementById("fecha_devolucion").value;
-  let estado = document.getElementById("estado").value;
-
-  fetchConAuth(`${API}?accion=modificar_prestamo`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `id_prestamo=${encodeURIComponent(id)}&estudiante=${encodeURIComponent(estudiante)}&fecha_prestamo=${encodeURIComponent(fecha_prestamo)}&fecha_entrega=${encodeURIComponent(fecha_entrega)}&fecha_devolucion=${encodeURIComponent(fecha_devolucion)}&estado=${encodeURIComponent(estado)}`
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      window.location.href = "Prestamos.html";
-    })
-    .catch(err => console.error("Error modificando préstamo:", err));
-}
-
-function eliminarPrestamo(id_prestamo) {
-  if (!confirm("¿Seguro que deseas eliminar este préstamo?")) return;
-
-  fetchConAuth(`${API}?accion=eliminar_prestamo`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "id_prestamo=" + encodeURIComponent(id_prestamo)
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      cargarPrestamos();
-    })
-    .catch(err => console.error("Error eliminando préstamo:", err));
 }
 
 // --- CARGAR DATOS PARA MODIFICAR PRESTAMOS ---
@@ -806,178 +1117,66 @@ function cargarDatosModificarPrestamo() {
   }
 }
 
-// Modificar carreras
-function cargarDatosModificar() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-
-  if (id) {
-    fetchConAuth(`${API}?accion=carrera&id=${id}`)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("id").value = data.Id_carrera;
-        document.getElementById("nombre").value = data.Nombre;
-      });
-  }
-}
-
-function cargarDatosModificarEstudiante() {
-  const params = new URLSearchParams(window.location.search);
-  const id = params.get("id");
-
-  if (id) {
-    fetchConAuth(`${API_ESTUDIANTES}?accion=estudiante&id=${id}`)
-      .then(res => res.json())
-      .then(data => {
-        document.getElementById("id").value = data.Id_estudiante;
-        document.getElementById("matricula").value = data.Matricula;
-        document.getElementById("nombre").value = data.Nombre;
-        document.getElementById("grado").value = data.Grado;
-        document.getElementById("seccion").value = data.Seccion;
-        document.getElementById("genero").value = data.Genero;
-        document.getElementById("carrera").value = data.Carrera;
-        document.getElementById("contacto").value = data.Contacto;
-      });
-  }
-}
-
-function buscarPorMatricula() {
-  let matricula = document.getElementById("matricula").value;
-
-  if (matricula) {
-    fetchConAuth(`${API_ESTUDIANTES}?accion=buscarMatricula`, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: "matricula=" + encodeURIComponent(matricula)
-    })
-      .then(res => res.json())
-      .then(data => {
-        console.log("JSON parseado:", data);
-
-        if (Array.isArray(data) && data.length >= 2) {
-          const datosPersonales = data[0];
-          const datosAcademicos = data[1];
-
-          document.getElementById("nombre").value = datosPersonales.nombreCompleto || "";
-          document.getElementById("genero").value = datosPersonales.genero || "";
-          document.getElementById("grado").value = datosAcademicos.grado || "";
-          document.getElementById("seccion").value = datosAcademicos.seccion || "";
-          document.getElementById("carrera").value = datosAcademicos.carrera || "";
-          document.getElementById("contacto").value = "";
-        } else {
-          alert("No se encontraron datos para esa matrícula");
-        }
-      })
-      .catch(err => console.error("Error buscando matrícula:", err));
-  }
-}
-
-document.addEventListener("DOMContentLoaded", () => {
-  const matriculaInput = document.getElementById("matricula");
-  if (matriculaInput) {
-    matriculaInput.addEventListener("blur", buscarPorMatricula);
-  }
-});
-
-function modificarEstudiante(event) {
+function modificarPrestamos(event) {
   event.preventDefault();
 
-  let id = document.getElementById("id").value;
-  let matricula = document.getElementById("matricula").value;
-  let nombre = document.getElementById("nombre").value;
-  let grado = document.getElementById("grado").value;
-  let seccion = document.getElementById("seccion").value;
-  let genero = document.getElementById("genero").value;
-  let carrera = document.getElementById("carrera").value;
-  let contacto = document.getElementById("contacto").value;
+  let id = document.getElementById("id_prestamo").value;
+  let estudiante = document.getElementById("id_estudiante_real").value;
+  let fecha_prestamo = document.getElementById("fecha_prestamo").value;
+  let fecha_entrega = document.getElementById("fecha_entrega").value;
+  let fecha_devolucion = document.getElementById("fecha_devolucion").value;
+  let estado = document.getElementById("estado").value;
 
-  fetchConAuth(`${API_ESTUDIANTES}?accion=modificar`, {
+  fetchConAuth(`${API}?accion=modificar_prestamo`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: `Id_estudiante=${encodeURIComponent(id)}&matricula=${encodeURIComponent(matricula)}&nombre=${encodeURIComponent(nombre)}&grado=${encodeURIComponent(grado)}&seccion=${encodeURIComponent(seccion)}&genero=${encodeURIComponent(genero)}&carrera=${encodeURIComponent(carrera)}&contacto=${encodeURIComponent(contacto)}`
+    body: `id_prestamo=${encodeURIComponent(id)}&estudiante=${encodeURIComponent(estudiante)}&fecha_prestamo=${encodeURIComponent(fecha_prestamo)}&fecha_entrega=${encodeURIComponent(fecha_entrega)}&fecha_devolucion=${encodeURIComponent(fecha_devolucion)}&estado=${encodeURIComponent(estado)}`
   })
     .then(res => res.json())
     .then(data => {
-      alert(data.message);
-      window.location.href = "Estudiantes.html";
-    })
-    .catch(err => console.error("Error modificando estudiante:", err));
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error", 
+                title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => {
+                if (data.status === "success") {
+                    window.location.href = "Prestamos.html";
+                }
+            });
+        })
+    .catch(err => console.error("Error modificando préstamo:", err));
 }
 
-function eliminarEstudiante(id) {
-  if (!confirm("¿Seguro que deseas eliminar este estudiante?")) return;
+function eliminarPrestamo(id_prestamo) {
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar préstamo?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
 
-  fetchConAuth(`${API_ESTUDIANTES}?accion=eliminar`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Id_estudiante=" + encodeURIComponent(id)
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      cargarEstudiantes();
+    fetchConAuth(`${API}?accion=eliminar_prestamo`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "id_prestamo=" + encodeURIComponent(id_prestamo)
     })
-    .catch(err => console.error("Error eliminando estudiante:", err));
-}
-
-function eliminarCarrera(id) {
-  if (!confirm("¿Seguro que deseas eliminar esta carrera?")) return;
-
-  fetchConAuth(`${API}?accion=eliminar`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Id_carrera=" + encodeURIComponent(id)
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      cargarCarreras();
-    })
-    .catch(err => console.error("Error eliminando carrera:", err));
-}
-
-// Cargar plantillas sidebar y topbar
-function cargarPartials() {
-  fetch("../partials/sidebar.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("sidebar").outerHTML = html;
-
-      const sidebarToggle = document.getElementById("sidebarToggle");
-      if (sidebarToggle) {
-        sidebarToggle.addEventListener("click", function () {
-          document.body.classList.toggle("sidebar-toggled");
-          document.querySelector(".sidebar").classList.toggle("toggled");
-          if (document.querySelector(".sidebar").classList.contains("toggled")) {
-            $('.sidebar .collapse').collapse('hide');
-          }
-        });
-      }
-    });
-
-  fetch("../partials/topbar.html")
-    .then(res => res.text())
-    .then(html => {
-      document.getElementById("topbar").outerHTML = html;
-
-      const nombreUsuario = obtenerNombreUsuario();
-      if (nombreUsuario) {
-        document.getElementById("nombreUsuarioTopbar").textContent = nombreUsuario;
-      }
-
-      const toggleBtn = document.getElementById("sidebarToggleTop");
-      if (toggleBtn) {
-        toggleBtn.addEventListener("click", function () {
-          document.body.classList.toggle("sidebar-toggled");
-          document.querySelector(".sidebar").classList.toggle("toggled");
-          console.log("Toggle ejecutado");
-        });
-      }
-    });
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === "success" ? "success" : "error",
+          title: data.status === "success" ? "¡Eliminado!" : "Error",
+          text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: { popup: 'swal-pequeno' }
+        }).then(() => cargarPrestamos());
+      })
+      .catch(err => console.error("Error eliminando préstamos:", err));
+  });
 }
 
 // SERVICIOS
-
 function cargarServicios() {
   fetchConAuth(`${API}?accion=listar_servicios`)
     .then(res => res.json())
@@ -1019,7 +1218,6 @@ function cargarServicios() {
     .catch(err => console.error("Error cargando servicios:", err));
 }
  
-// --- INSERTAR SERVICIO ---
 function insertarServicio(event) {
   event.preventDefault();
   let nombre = document.getElementById("nombre").value;
@@ -1032,13 +1230,21 @@ function insertarServicio(event) {
     .then(res => res.json())
     .then(data => {
       console.log("Respuesta insertar servicio:", data);
-      alert(data.message);
-      window.location.href = "Servicios.html";
+      Swal.fire({
+          icon: data.status === "success" ? "success" : "error", 
+          title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: {popup: 'swal-pequeno'}
+      })
+      .then(() => {
+        if (data.status === "success") {
+          window.location.href = "Servicios.html";
+        }
+      });
     })
     .catch(err => console.error("Error insertando servicio:", err));
 }
- 
-// --- CARGAR DATOS PARA MODIFICAR ---
+
 function cargarDatosModificarServicio() {
   const params = new URLSearchParams(window.location.search);
   const id = params.get("id");
@@ -1053,26 +1259,36 @@ function cargarDatosModificarServicio() {
       .catch(err => console.error("Error cargando datos del servicio:", err));
   }
 }
- 
-// --- ELIMINAR SERVICIO ---
+
 function eliminarServicio(id) {
-  if (!confirm("¿Seguro que deseas eliminar este servicio?")) return;
- 
-  fetchConAuth(`${API}?accion=eliminar_servicio`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Id_servicio=" + encodeURIComponent(id)
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      cargarServicios();
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar servicio?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    fetchConAuth(`${API}?accion=eliminar_servicio`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "Id_servicio=" + encodeURIComponent(id)
     })
-    .catch(err => console.error("Error eliminando servicio:", err));
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === "success" ? "success" : "error",
+          title: data.status === "success" ? "¡Eliminado!" : "Error",
+          text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: { popup: 'swal-pequeno' }
+        }).then(() => cargarServicios());
+      })
+      .catch(err => console.error("Error eliminando servicio:", err));
+  });
 }
 
 // LIBROS
-
 function cargarLibros() {
   fetchConAuth(`${API}?accion=listar_libro`)
     .then(res => res.json())
@@ -1156,9 +1372,18 @@ function insertarLibro(event) {
     .then(res => res.json())
     .then(data => {
       console.log("Respuesta insertar libro:", data);
-      alert(data.message);
-      window.location.href = "Libros.html";
-    })
+      Swal.fire({
+          icon: data.status === "success" ? "success" : "error", 
+          title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: {popup: 'swal-pequeno'}
+      })
+      .then(() => {
+        if (data.status === "success") {
+          window.location.href = "Libros.html";
+        }
+      });
+    })  
     .catch(err => console.error("Error insertando libro:", err));
 }
  
@@ -1189,7 +1414,13 @@ function cargarDatosModificarLibro() {
  
 // --- ELIMINAR LIBRO ---
 function eliminarLibro(id) {
-  if (!confirm("¿Seguro que deseas eliminar este libro?")) return;
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar libro?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
  
   fetchConAuth(`${API}?accion=eliminar_libro`, {
     method: "POST",
@@ -1198,12 +1429,17 @@ function eliminarLibro(id) {
   })
     .then(res => res.json())
     .then(data => {
-      alert(data.message);
-      cargarLibros();
+      Swal.fire({
+        icon: data.status === "success" ? "success" : "error",
+        title: data.status === "success" ? "¡Eliminado!" : "Error",
+        text: data.message, confirmButtonText: "Aceptar",
+        confirmButtonColor: "#4e73df",
+        customClass: { popup: 'swal-pequeno' }
+      }).then(() => cargarLibros());
     })
     .catch(err => console.error("Error eliminando libro:", err));
+  });
 }
-
 
 // Historial_Prestamos
 function cargarHistorialP() {
@@ -1271,8 +1507,17 @@ function insertarHistorialP(event) {
     .then(res => res.json())
     .then(data => {
       console.log("Respuesta insertar historial del préstamo:", data);
-      alert(data.message);
-      window.location.href = "HistorialP.html";
+      Swal.fire({
+          icon: data.status === "success" ? "success" : "error", 
+          title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: {popup: 'swal-pequeno'}
+      })
+      .then(() => {
+        if (data.status === "success") {
+          window.location.href = "HistorialP.html";
+        }
+      });
     })
     .catch(err => console.error("Error insertando historial del préstamo:", err));
 }
@@ -1312,22 +1557,33 @@ function cargarDatosModificarHistorialP() {
   }
 }
  
-
 // --- ELIMINAR HISTORIAL PRÉSTAMO ---
 function eliminarHistorialP(id) {
-  if (!confirm("¿Seguro que deseas eliminar este historial de prestamo?")) return;
- 
-  fetchConAuth(`${API}?accion=eliminar_HistorialP`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Id_historial=" + encodeURIComponent(id)
-  })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      cargarHistorialP();
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar historial de préstamo?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    fetchConAuth(`${API}?accion=eliminar_HistorialP`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "Id_historial=" + encodeURIComponent(id)
     })
-    .catch(err => console.error("Error eliminando historial de préstamo:", err));
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === "success" ? "success" : "error",
+          title: data.status === "success" ? "¡Eliminado!" : "Error",
+          text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: { popup: 'swal-pequeno' }
+        }).then(() => cargarHistorialP());
+      })
+      .catch(err => console.error("Error eliminando historial de préstamo:", err));
+  });
 }
 
 // DETALLE PRESTAMOS
@@ -1392,10 +1648,19 @@ function insertarDetalleP(event) {
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Respuesta insertar detalle del préstamo:", data);
-      alert(data.message);
-      window.location.href = "DetalleP.html";
-    })
+          console.log("Respuesta insertar detalle del préstamo:", data);
+          Swal.fire({
+              icon: data.status === "success" ? "success" : "error", 
+              title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+              confirmButtonColor: "#4e73df",
+              customClass: {popup: 'swal-pequeno'}
+          })
+          .then(() => {
+            if (data.status === "success") {
+              window.location.href = "DetalleP.html";
+            }
+          });
+        })
     .catch(err => console.error("Error insertando detalle del préstamo:", err));
 }
 
@@ -1453,19 +1718,162 @@ function cargarDatosModificarDetalleP() {
 
 // --- ELIMINAR DETALLE PRÉSTAMO ---
 function eliminarDetalleP(id) {
-  if (!confirm("¿Seguro que deseas eliminar este detalle de prestamo?")) return;
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar detalle de préstamo?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
+    fetchConAuth(`${API}?accion=eliminar_DetalleP`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "Id_detalle_prestamo=" + encodeURIComponent(id)
+    })
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === "success" ? "success" : "error",
+          title: data.status === "success" ? "¡Eliminado!" : "Error",
+          text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: { popup: 'swal-pequeno' }
+        }).then(() => cargarDetalleP());
+      })
+      .catch(err => console.error("Error eliminando detalle de préstamo:", err));
+  });
+}
+
+// USUARIOS
+function cargarUsuarios() {
+  fetchConAuth(`${API}?accion=listar_Usuarios`)
+    .then(res => res.json())
+    .then(data => {
+      const filas = data.map(dato => [
+        dato.Id_Usuario,
+        dato.Nombre_Usuario,
+        dato.Contrasena,
+        dato.Tipo_Usuario,
+        dato.PIN,
+        dato.Token,
+
+        `<a href="ModificarUsuarios.html?id=${dato.Id_Usuario}">
+          <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
+        </a>`,
+        `<a href="#" onclick="eliminarUsuario(${dato.Id_Usuario}, this)">
+          <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+        </a>`
+
+      ]);
  
-  fetchConAuth(`${API}?accion=eliminar_DetalleP`, {
+      if ($.fn.DataTable.isDataTable('#dataTableUsuarios')) {
+        let tabla = $('#dataTableUsuarios').DataTable();
+        tabla.clear();
+        tabla.rows.add(filas).draw();
+      } else {
+        $('#dataTableUsuarios').DataTable({
+          data: filas,
+          columns: [
+            { title: 'ID' },
+            { title: 'Nombre' },
+            { title: 'Contraseña' },
+            { title: 'Tipo de usuario' },
+            { title: 'Pin' },
+            { title: 'Token' },
+            { title: 'Modificar' },
+            { title: 'Eliminar' }
+          ],
+          pageLength: 10,
+          language: {
+            search: "Buscar:",
+            lengthMenu: "Mostrar _MENU_ registros",
+            info: "Mostrando _START_ a _END_ de _TOTAL_ registros",
+            paginate: { previous: "Anterior", next: "Siguiente" }
+          }
+        });
+      }
+    })
+    .catch(err => console.error("Error cargando usuarios:", err));
+}
+
+function insertarUsuario(event) {
+  event.preventDefault();
+  let nombre = document.getElementById("nombre").value;
+  let contrasena = document.getElementById("contrasena").value;
+  let tipo = document.getElementById("tipo").value;
+
+  fetchConAuth(`${API}?accion=insertar_usuario`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Id_detalle_prestamo=" + encodeURIComponent(id)
+    body: "Nombre_Usuario=" + encodeURIComponent(nombre) + "&Contrasena=" + encodeURIComponent(contrasena) + "&Tipo_Usuario=" + encodeURIComponent(tipo)
   })
     .then(res => res.json())
     .then(data => {
-      alert(data.message);
-      cargarDetalleP();
+      console.log("Respuesta insertar usuario:", data);
+      Swal.fire({
+          icon: data.status === "success" ? "success" : "error", 
+          title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: {popup: 'swal-pequeno'}
+      })
+      .then(() => {
+        if (data.status === "success") {
+          window.location.href = "Usuarios.html";
+        }
+      });
     })
-    .catch(err => console.error("Error eliminando detalle de préstamo:", err));
+    .catch(err => console.error("Error insertando usuario:", err));
+}
+
+function cargarDatosModificarUsuario() {
+  const params = new URLSearchParams(window.location.search);
+  const id = params.get("id");
+ 
+  if (id) {
+    fetchConAuth(`${API}?accion=get_usuario&id=${id}`)
+      .then(res => res.json())
+      .then(data => {
+        document.getElementById("id").value = data.Id_Usuario;
+        document.getElementById("nombre").value = data.Nombre_Usuario;
+        document.getElementById("contrasena").value = data.Contrasena;
+        document.getElementById("tipo").value = data.Tipo_Usuario;
+      })
+      .catch(err => console.error("Error cargando datos del usuario:", err));
+  }
+}
+
+function eliminarUsuario(id) {
+    Swal.fire({
+        icon: "warning",
+        title: "¿Eliminar usuario?",
+        text: "Esta acción no se puede deshacer.",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#4e73df",
+        cancelButtonColor: "#e53935",
+        customClass: { popup: 'swal-pequeno' }
+    }).then((result) => {
+        if (!result.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_usuario`, {
+            method: "POST",
+            headers: { "Content-Type": "application/x-www-form-urlencoded" },
+            body: "Id_Usuario=" + encodeURIComponent(id)
+        })
+        .then(res => res.json())
+        .then(data => {
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error",
+                title: data.status === "success" ? "¡Eliminado!" : "Error",
+                text: data.message,
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => cargarUsuarios());
+        })
+        .catch(err => console.error("Error eliminando usuario:", err));
+    });
 }
 
 // VISITAS
@@ -1518,19 +1926,31 @@ function cargarVisitas() {
 
 // --- ELIMINAR VISITAS ---
 function eliminarVisitas(id) {
-  if (!confirm("¿Seguro que deseas eliminar esta visita?")) return;
- 
+  Swal.fire({
+    icon: "warning", title: "¿Eliminar visita?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    confirmButtonColor: "#4e73df",
+    cancelButtonColor: "#e53935",
+    customClass: { popup: 'swal-pequeno' }
+  }).then((result) => {
+    if (!result.isConfirmed) return;
+
   fetchConAuth(`${API}?accion=eliminar_Visitas`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: "Id_entrada_salida=" + encodeURIComponent(id)
   })
-    .then(res => res.json())
-    .then(data => {
-      alert(data.message);
-      cargarVisitas();
-    })
-    .catch(err => console.error("Error eliminando visita:", err));
+      .then(res => res.json())
+      .then(data => {
+        Swal.fire({
+          icon: data.status === "success" ? "success" : "error",
+          title: data.status === "success" ? "¡Eliminado!" : "Error",
+          text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: { popup: 'swal-pequeno' }
+        }).then(() => cargarVisitas());
+      })
+      .catch(err => console.error("Error eliminando visita:", err));
+  });
 }
 
 let qrPollingInterval = null;
@@ -1553,17 +1973,18 @@ window.addEventListener("resize", () => {
 
 document.addEventListener("DOMContentLoaded", () => {
   cargarPartials();
-  cargarCarreras();
-  cargarServicios();
-  cargarEstudiantes();
-  cargarPrestamos();
-  cargarLibros();
-  cargarHistorialP();
-  cargarDetalleP();
-  cargarVisitas();
-  graficarGenero();
-  graficarVisitas();
-  graficarVisitasServicio();
+  if (document.getElementById("dataTableCarreras")) cargarCarreras();
+  if (document.getElementById("dataTableServicios")) cargarServicios();
+  if (document.getElementById("dataTableEstudiantes")) cargarEstudiantes();
+  if (document.getElementById("dataTablePrestamos")) cargarPrestamos();
+  if (document.getElementById("dataTableLibros")) cargarLibros();
+  if (document.getElementById("dataTableHistorialP")) cargarHistorialP();
+  if (document.getElementById("dataTableDetalleP")) cargarDetalleP();
+  if (document.getElementById("dataTableUsuarios")) cargarUsuarios();
+  if (document.getElementById("dataTableVisitas")) cargarVisitas();
+  if (document.getElementById("divGraficaGenero")) graficarGenero();
+  if (document.getElementById("divGraficaVisitas")) graficarVisitas();
+  if (document.getElementById("divGraficaVisitasServicio")) graficarVisitasServicio();
 
   const btnPIN = document.getElementById("btnPINSeguridad");
   $(document).on("click", "#btnPINSeguridad", function() {
@@ -1626,23 +2047,29 @@ document.addEventListener("DOMContentLoaded", () => {
   });
 
   //Manejo de cajas
-  document.getElementById("btnUsarPIN").addEventListener("click", () => {
-    document.getElementById("loginPassword").style.display = "none";
-    document.getElementById("loginPIN").style.display = "block";
-    document.getElementById("txtContrasena").value = "";
+  const btnUsarPIN = document.getElementById("btnUsarPIN");
+  if (btnUsarPIN) {
+      btnUsarPIN.addEventListener("click", () => {
+          document.getElementById("loginPassword").style.display = "none";
+          document.getElementById("loginPIN").style.display = "block";
+          document.getElementById("txtContrasena").value = "";
+          document.getElementById("btnUsarPIN").style.display = "none";
+          document.getElementById("btnUsarPassword").style.display = "block";
+      });
+  }
 
-    document.getElementById("btnUsarPIN").style.display = "none";
-    document.getElementById("btnUsarPassword").style.display = "block";
-  });
+  const btnUsarPassword = document.getElementById("btnUsarPassword");
+  if (btnUsarPassword) {
+      btnUsarPassword.addEventListener("click", () => {
+          document.getElementById("loginPassword").style.display = "block";
+          document.getElementById("loginPIN").style.display = "none";
+          document.getElementById("txtPIN").value = "";
+          document.getElementById("btnUsarPassword").style.display = "none";
+          document.getElementById("btnUsarPIN").style.display = "block";
+      });
+  }
 
-  document.getElementById("btnUsarPassword").addEventListener("click", () => {
-    document.getElementById("loginPassword").style.display = "block";
-    document.getElementById("loginPIN").style.display = "none";
-    document.getElementById("txtPIN").value = "";
 
-    document.getElementById("btnUsarPassword").style.display = "none";
-    document.getElementById("btnUsarPIN").style.display = "block";
-  });
 
   if (document.getElementById("insertarHistorialP")) {
       cargarPrestamosSelect();
@@ -1697,6 +2124,10 @@ document.addEventListener("DOMContentLoaded", () => {
       cargarDatosModificarDetalleP();
   }
 
+  if (document.getElementById("modificarUsuarios")) {
+      cargarDatosModificarUsuario();
+  } 
+
   const formInsertar = document.getElementById("insertarCarrera");
   if (formInsertar) {
     formInsertar.addEventListener("submit", insertarCarrera);
@@ -1735,8 +2166,13 @@ document.addEventListener("DOMContentLoaded", () => {
   const formInsertarDetalleP = document.getElementById("insertarDetalleP");
   if (formInsertarDetalleP) {
     formInsertarDetalleP.addEventListener("submit", insertarDetalleP);
-  }  
+  } 
 
+  const formInsertarUsuario = document.getElementById("insertarUsuario");
+  if (formInsertarUsuario) {
+    formInsertarUsuario.addEventListener("submit", insertarUsuario);
+  } 
+  
   const formModificar = document.getElementById("modificarCarr");
   if (formModificar) {
     formModificar.addEventListener("submit", function (event) {
@@ -1751,9 +2187,18 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then(res => res.json())
         .then(data => {
-          alert(data.message);
-          window.location.href = "Carreras.html";
-        });
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error", 
+                title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => {
+                if (data.status === "success") {
+                    window.location.href = "Carreras.html";
+                }
+            });
+        })
+        .catch(err => console.error("Error modificando carrera:", err));
     });
   }
 
@@ -1771,8 +2216,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then(res => res.json())
         .then(data => {
-          alert(data.message);
-          window.location.href = "Servicios.html";
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error", 
+                title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => {
+                if (data.status === "success") {
+                    window.location.href = "Servicios.html";
+                }
+            });
         })
         .catch(err => console.error("Error modificando servicio:", err));
     });
@@ -1807,8 +2260,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then(res => res.json())
         .then(data => {
-          alert(data.message);
-          window.location.href = "Libros.html";
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error", 
+                title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => {
+                if (data.status === "success") {
+                    window.location.href = "Libros.html";
+                }
+            });
         })
         .catch(err => console.error("Error modificando libro:", err));
     });
@@ -1831,8 +2292,16 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then(res => res.json())
         .then(data => {
-          alert(data.message);
-          window.location.href = "HistorialP.html";
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error", 
+                title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => {
+                if (data.status === "success") {
+                    window.location.href = "HistorialP.html";
+                }
+            });
         })
         .catch(err => console.error("Error modificando historial de préstamos:", err));
     });
@@ -1854,10 +2323,53 @@ document.addEventListener("DOMContentLoaded", () => {
       })
         .then(res => res.json())
         .then(data => {
-          alert(data.message);
-          window.location.href = "DetalleP.html";
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error", 
+                title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => {
+                if (data.status === "success") {
+                    window.location.href = "DetalleP.html";
+                }
+            });
         })
         .catch(err => console.error("Error modificando detalle de préstamos:", err));
     });
   }
+
+  const formModificarUsuario = document.getElementById("modificarUsuarios");
+  if (formModificarUsuario) {
+    formModificarUsuario.addEventListener("submit", function(event) {
+      event.preventDefault();
+      let id     = document.getElementById("id").value;
+      let nombre = document.getElementById("nombre").value;
+      let contrasena = document.getElementById("contrasena").value;
+      let tipo = document.getElementById("tipo").value;
+
+      fetchConAuth(`${API}?accion=modificar_usuario`, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: "Id_Usuario=" + encodeURIComponent(id) + "&Nombre_Usuario=" + encodeURIComponent(nombre) + "&Contrasena=" + encodeURIComponent(contrasena) + "&Tipo_Usuario=" + encodeURIComponent(tipo)
+      })
+        .then(res => res.json())
+        .then(data => {
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error", 
+                title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => {
+                if (data.status === "success") {
+                    window.location.href = "Usuarios.html";
+                }
+            });
+        })
+        .catch(err => console.error("Error modificando usuario:", err));
+    });
+  }
+
+if (document.getElementById("cardEntradas")) {
+    cargarTotales();
+}
 });

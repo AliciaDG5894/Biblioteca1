@@ -41,7 +41,7 @@ $.validator.addMethod("letrasYCaracteres", function(value, element) {
 
 
 // Validación del formulario
-$("#modificarLib").validate({
+$("#modificarLibros").validate({
     errorClass: "v_error", // Estilo para errores
     validClass: "v_correcto",   // Estilo para válidos
     messages: {
@@ -95,7 +95,7 @@ $("#modificarLib").validate({
             multipleSpaces: "Por favor, no ingrese múltiples espacios",
             letrasYCaracteres: "Por favor, solo se permiten letras, espacios, punto, guiones"
         },
-        isbn: {
+        ISBN: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 1 caracteres",
             maxlength: "Por favor, no ingrese más de 20 caracteres",

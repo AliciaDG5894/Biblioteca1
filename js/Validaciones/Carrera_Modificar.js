@@ -36,7 +36,7 @@ $.validator.addMethod("alphanumeric", function (value, element) {
 }, "Por favor, solo ingrese letras y números");
 
 // Validación del formulario
-$("#modificarCarr").validate({
+$("#modificarCarrera").validate({
     errorClass: "v_error", // Estilo para errores
     validClass: "v_correcto",   // Estilo para válidos
     messages: {
