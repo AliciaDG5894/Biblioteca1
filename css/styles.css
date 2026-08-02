@@ -1,57 +1,43 @@
-html, body {
-  height: 100%;
-}
+/* ===== MÓDULO ESCANEO ===== */
 
-#wrapper {
-  display: flex;
-  min-height: 100vh; /* ocupa toda la pantalla */
-}
-
-#content-wrapper {
-  flex: 1; /* el contenido se estira al lado derecho */
-}
-
-#accordionSidebar {
-  min-height: 100vh; /* sidebar azul hasta abajo */
-}
-
-/* ===== MÓDULO ESTUDIANTE ===== */
+/* Pantalla base */
 .estudiante-pantalla {
-    background-color: #eaf7ff;
+    background-color: #eef4ff;
     min-height: 100vh;
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 30px 20px;
-    font-family: 'Poppins', sans-serif;
+    padding: 20px 20px;
+    font-family: 'Segoe UI', sans-serif;
 }
 
+/* Ícono libro */
+.estudiante-icono-img {
+    width: 70px;
+    height: 70px;
+    object-fit: contain;
+    margin-bottom: 8px;
+}
+
+/* Título */
 .estudiante-pantalla h1 {
-    color: #1E40AF;
+    color: #1E3A8A;
     text-align: center;
-    font-size: 2.5rem;
+    font-size: 2rem;
     font-weight: 800;
-    margin: 10px 0 5px 0;
+    margin: 0 0 4px 0;
 }
 
+/* Subtítulo */
 .estudiante-pantalla h5 {
     font-weight: 400;
     text-align: center;
     color: #555;
     margin-bottom: 30px;
+    font-size: 0.95rem;
 }
 
-.estudiante-icono {
-    font-size: 48px !important;
-    color: #1E40AF !important;
-    background-color: transparent !important;
-    background: none !important;
-    box-shadow: none !important;
-    padding: 0 !important;
-    border-radius: 0 !important;
-    margin-bottom: 10px;
-}
-
+/* Caja centrada */
 .estudiante-caja {
     display: flex;
     justify-content: center;
@@ -59,14 +45,16 @@ html, body {
     width: 100%;
     margin-top: 10px;
     flex-direction: column;
+    max-width: 400px;
 }
 
+/* Tarjeta de escaneo */
 .estudiante-escanear {
-    background-color: white !important;
-    width: 260px;          /* antes 320px */
-    padding: 40px 40px;    /* antes 40px 50px */
-    border-radius: 12px;
-    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.08) !important;  /* sombra más suave */
+    background-color: white;
+    width: 100%;
+    padding: 180px 60px;
+    border-radius: 16px;
+    box-shadow: 0 2px 12px rgba(0, 0, 0, 0.08);
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -74,44 +62,50 @@ html, body {
 }
 
 .estudiante-escanear h3 {
-    color: #1E40AF !important;
-    font-weight: 600 !important;
-    margin-bottom: 20px !important;
+    color: #1E3A8A;
+    font-weight: 600;
+    margin-bottom: 20px;
+    font-size: 1.1rem;
 }
 
+/* Input matrícula */
 .estudiante-input {
     border: none !important;
-    border-bottom: 2px solid rgb(220, 220, 220) !important;
+    border-bottom: 2px solid #ddd !important;
     border-radius: 0 !important;
     box-shadow: none !important;
     background-color: transparent !important;
-    width: 200px !important;
+    width: 100% !important;
+    text-align: center;
+    font-size: 1rem;
+    padding: 5px;
+    outline: none;
 }
 
 .estudiante-input:focus {
-    border-bottom: 2px solid #1E40AF;
+    border-bottom: 2px solid #1E3A8A !important;
+    outline: none !important;
 }
 
-/* Encabezado de servicios */
+/* ===== PANTALLA SERVICIOS ===== */
 .estudiante-encabezado {
     display: flex;
     align-items: center;
-    justify-content: center;
     gap: 15px;
     margin-bottom: 30px;
     width: 100%;
+    padding: 0 20px;
 }
 
 .estudiante-encabezado i {
-    font-size: 28px;
-    color: white;
-    background-color: #3b5fe2;
-    padding: 12px 14px;
-    border-radius: 10px;
+    font-size: 24px;
+    color: #1E3A8A;
+    background: none;
+    padding: 0;
 }
 
 .estudiante-encabezado h2 {
-    font-size: 24px;
+    font-size: 1.4rem;
     margin: 0;
     font-weight: 700;
     color: #1a1a1a;
@@ -119,32 +113,40 @@ html, body {
 
 .estudiante-encabezado p {
     margin: 0;
-    font-size: 13px;
+    font-size: 12px;
     color: #6b7280;
     text-transform: uppercase;
     letter-spacing: 0.5px;
 }
 
-/* Grid de servicios */
+/* Grid de servicios - 3 columnas */
 .estudiante-grid {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 20px;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
     width: 100%;
     padding: 0 20px;
+    max-width: 900px;
 }
 
+@media (max-width: 600px) {
+    .estudiante-grid {
+        grid-template-columns: repeat(2, 1fr);
+    }
+}
+
+/* Cards de servicios */
 .estudiante-card {
+    border-top: 4px solid transparent;
     background: white;
     border-radius: 12px;
-    padding: 30px 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+    padding: 50px 40px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.06);
     display: flex;
     flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    min-height: 180px;
-    text-align: center;
+    justify-content: flex-start;
+    align-items: flex-start;
+    text-align: left;
     cursor: pointer;
     transition: transform 0.2s, box-shadow 0.2s;
 }
@@ -155,39 +157,49 @@ html, body {
 }
 
 .estudiante-card i {
-    font-size: 28px;
-    color: white;
-    background-color: #3b5fe2;
-    padding: 10px 12px;
-    border-radius: 8px;
-    margin-bottom: 15px;
+    font-size: 22px;
+    color: #1E3A8A;
+    background: none;
+    padding: 0;
+    margin-bottom: 10px;
 }
 
 .estudiante-card h3 {
-    font-size: 1rem;
+    font-size: 0.95rem;
     color: #1a1a1a;
     font-weight: 600;
+    margin: 0 0 6px 0;
+}
+
+.estudiante-card p {
+    font-size: 0.78rem;
+    color: #6b7280;
     margin: 0;
 }
 
-/* Colores borde superior por posición */
-.estudiante-card:nth-child(1) { border-top: 5px solid #1a73e8; }
-.estudiante-card:nth-child(2) { border-top: 5px solid #36bc31; }
-.estudiante-card:nth-child(3) { border-top: 5px solid #7c4dff; }
-.estudiante-card:nth-child(4) { border-top: 5px solid #e53935; }
-.estudiante-card:nth-child(5) { border-top: 5px solid #fbc02d; }
-.estudiante-card:nth-child(6) { border-top: 5px solid #00897b; }
-.estudiante-card:nth-child(7) { border-top: 5px solid #cc1f9b; }
-.estudiante-card:nth-child(8) { border-top: 5px solid #00897b; }
+/* Colores borde superior */
+.estudiante-card:nth-child(1) { border-top-color: #1a4ae8; }
+.estudiante-card:nth-child(2) { border-top-color: #36bc31; }
+.estudiante-card:nth-child(3) { border-top-color: #cc1f7e; }
+.estudiante-card:nth-child(4) { border-top-color: #f6a623; }
+.estudiante-card:nth-child(5) { border-top-color: #00897b; }
+.estudiante-card:nth-child(6) { border-top-color: #ce2ed6; }
+.estudiante-card:nth-child(7) { border-top-color: #ead639; }
+.estudiante-card:nth-child(8) { border-top-color: #00897b; }
+.estudiante-card:nth-child(9) { border-top-color: #f54636; }
+.estudiante-card:nth-child(10) { border-top-color: #6dd1ff; }
+.estudiante-card:nth-child(11) { border-top-color: #ff73c7; }
+.estudiante-card:nth-child(12) { border-top-color: #893b00; }
 
-/* Mensaje */
+
+/* ===== PANTALLA MENSAJE ===== */
 .estudiante-mensaje {
     display: flex;
     justify-content: center;
     align-items: center;
     min-height: 100vh;
     width: 100%;
-    background-color: #eaf7ff;
+    background-color: #eef4ff;
 }
 
 .estudiante-mensaje-caja {
@@ -195,21 +207,21 @@ html, body {
     border-radius: 16px;
     box-shadow: 0 4px 15px rgba(0,0,0,0.1);
     max-width: 380px;
-    width: 100%;
-    padding: 40px 35px;
+    width: 90%;
+    padding: 36px 32px;
 }
 
 .estudiante-mensaje-caja .encabezado {
     display: flex;
     align-items: center;
-    gap: 16px;
-    margin-bottom: 20px;
+    gap: 14px;
+    margin-bottom: 16px;
 }
 
 .estudiante-mensaje-caja .encabezado i {
-    font-size: 32px;
-    padding: 10px;
-    border-radius: 10px;
+    font-size: 28px;
+    padding: 8px;
+    border-radius: 50%;
     flex-shrink: 0;
 }
 
@@ -224,7 +236,7 @@ html, body {
 }
 
 .estudiante-mensaje-caja h2 {
-    font-size: 1.8rem;
+    font-size: 1.3rem;
     font-weight: 700;
     margin: 0;
     line-height: 1.2;
@@ -235,10 +247,17 @@ html, body {
 
 .estudiante-mensaje-caja p {
     color: #555;
-    margin-top: 8px;
-    font-size: 14px;
+    margin-top: 6px;
+    font-size: 0.9rem;
 }
 
+.estudiante-mensaje-caja .texto-redirigir {
+    color: #6b7280;
+    font-size: 0.8rem;
+    margin-top: 4px;
+}
+
+/* LOGIN */
 .login-panel-izq {
     background: linear-gradient(180deg, #4e73df 10%, #224abe 100%);
     color: #fff;
@@ -259,4 +278,9 @@ body.pagina-login {
     min-height: 100vh;
     display: flex;
     align-items: center;
+}
+
+/* prestamos */
+.grupoBotones .botonAgregar {
+    margin-left: 8px;
 }

@@ -39,13 +39,21 @@
                style-src 'self' https://paintball-millions-system-testing.trycloudflare.com 'unsafe-inline';
                media-src *;"> -->
 
-    <meta http-equiv="Content-Security-Policy"
+    <!-- <meta http-equiv="Content-Security-Policy"
     content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file:;
             script-src 'self' 'unsafe-inline' 'unsafe-eval' file: https://cdnjs.cloudflare.com;
-            connect-src 'self' https://roof-brussels-application-steady.trycloudflare.com file:;
+            connect-src 'self' https://camel-signed-framing-lake.trycloudflare.com  file:;
             img-src 'self' data: file:;
             style-src 'self' 'unsafe-inline' file:;
-            media-src *;">
+            media-src *;"> -->
+
+    <meta http-equiv="Content-Security-Policy"
+    content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file:;
+           script-src 'self' 'unsafe-inline' 'unsafe-eval' file: https://cdnjs.cloudflare.com https://cdn.jsdelivr.net;
+           connect-src 'self' https://print-mustang-lewis-median.trycloudflare.com file:;
+           img-src 'self' data: file:;
+           style-src 'self' 'unsafe-inline' file:;
+           media-src *;">
 
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
@@ -62,6 +70,7 @@
 
     <!-- Custom styles for this template-->
     <link href="css/sb-admin-2.css" rel="stylesheet">
+    <link rel="icon" href="img/favicon.png" type="image/png">
     
     <script src="js/app.js" defer></script>
     <script src="js/config.js" defer></script>

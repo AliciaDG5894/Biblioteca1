@@ -6,7 +6,7 @@
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
     <meta name="color-scheme" content="light">
-    <title>Modificar Historial de préstamo</title>
+    <title>Modificar Reporte de Daños</title>
 
     <!-- Custom fonts -->
     <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -38,7 +38,7 @@
                 <div id="topbar"></div>
                 <!-- End of Topbar -->
 
-                <h2>Modificar Historial de préstamo</h2>
+                <h2>Modificar reporte de daños</h2>
 
                 <form class="formulario mx-auto" id="modificarHistorialP" name="modificarHistorialP" autocomplete="off">
                     <!-- ID oculto para saber qué registro actualizar -->
@@ -56,7 +56,7 @@
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="descripcion">Descripción</label>
-                                <input type="text" class="form-control" id="descripcion" name="descripcion" required minlength="10" maxlength="200" multipleSpaces="true" letters="true" />
+                                <input type="text" class="form-control" id="descripcion" name="descripcion" required minlength="10" maxlength="200" multipleSpaces="true"/>
                             </div>
                         </div>
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
@@ -68,9 +68,13 @@
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="estado">Estado</label>
-                                <input type="text" class="form-control" id="estado" name="estado" required minlength="10" maxlength="200" multipleSpaces="true" letters="true" />
+                               <select id="estado" name="estado" class="form-control" required >
+                                    <option value="" disabled selected>Selecciona una opción</option>
+                                    <option value="Activo">Activo</option>
+                                    <option value="Solucionado">Solucionado</option>
+                                </select>  
                             </div>
-                        </div>       
+                        </div>         
                     </div>
                     <div class="d-flex justify-content-center mt-4 gap-3">
                         <button class="botonAgregar mr-3" id="actualizar" name="actualizar" type="submit">Actualizar</button>

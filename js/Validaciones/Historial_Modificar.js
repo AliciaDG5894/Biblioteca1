@@ -54,8 +54,9 @@ $("#modificarHistorialP").validate({
         descripcion:
         {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 5 caracteres",
+            minlength: "Por favor, ingrese más de 10 caracteres",
             maxlength: "Por favor, no ingrese más de 200 caracteres",
+            multipleSpaces: "Por favor, no ingrese múltiples espacios"
         },
         estado: {
             required: "Por favor, llene este campo"

@@ -16,6 +16,7 @@
 
     <!-- Custom styles for this page -->
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../img/favicon.png" type="image/png">
 
     <script src="../js/jquery.min.js"></script>
     
@@ -25,7 +26,6 @@
     <link rel="icon" href="../img/favicon.png" type="image/png">
 </head>
 <body id="page-top">
-
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -49,23 +49,13 @@
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="nombre">Nombre</label>
-                                <input type="text" class="form-control" id="nombre" name="nombre" required />
+                                <input type="text" class="form-control" id="nombre" name="nombre" required minlength="10" maxlength="50" multipleSpaces="true"/>
                             </div>
                         </div>
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="contrasena">Contraseña</label>
-                                <input type="text" class="form-control" id="contrasena" name="contrasena" required />
-                            </div>
-                        </div>
-                        <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
-                            <div class="mb-3">
-                                <label for="tipo">Tipo de Usuario</label>
-                                <select class="form-control" id="tipo" name="tipo" required>
-                                    <option value="" disabled selected>Selecciona una opción</option>
-                                    <option value="1">Administrador</option>
-                                    <option value="2">Usuario</option>
-                                </select>
+                                <input type="text" class="form-control" id="contrasena" name="contrasena" required minlength="5" maxlength="20" noSpaces="true"/>
                             </div>
                         </div>   
                     </div>

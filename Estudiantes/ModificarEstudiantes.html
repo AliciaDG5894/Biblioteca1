@@ -27,6 +27,7 @@
     <script src="../js/app.js"></script>
     <script src="../js/config.js"></script>
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../img/favicon.png" type="image/png">
 </head>
 <body id="page-top">
 
@@ -47,79 +48,77 @@
                 <div id="topbar"></div>
                 <!-- End of Topbar -->
 
-                <!-- <h2>Registro</h2> -->
-
-                <div class="container-fluid">
-
-                    <div class="row justify-content-center">
-                        <div class="col-12 col-md-10 col-lg-7">
-
-                            <h2>Modificar Estudiante</h2>
-
-                            <form enctype="multipart/form-data" id="modificarEst" name="modificarEst"
-                                autocomplete="off">
-
-                                <input type="hidden" id="id" name="id" />
-
-                                <div class="form-group">
+                <h2>Modificar Estudiante</h2>
+                    <form class="formulario mx-auto" enctype="multipart/form-data" id="modificarEst" name="modificarEst" autocomplete="off">
+                        <input type="hidden" id="id" name="id" />
+                        <div class="row justify-content-center">
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
                                     <label for="matricula">Matrícula</label>
-                                    <input type="text" class="form-control form-control-lg" id="matricula"
-                                        name="matricula" required minlength="8" maxlength="20">
+                                    <input type="text" class="form-control" id="matricula" name="matricula" required minlength="8" maxlength="8" numeros="true" noSpaces="true" integer="true">
                                 </div>
-
-                                <div class="form-group">
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
                                     <label for="nombre">Nombre</label>
-                                    <input type="text" class="form-control form-control-lg" id="nombre" name="nombre"
-                                        required minlength="10" maxlength="50">
+                                    <input type="text" class="form-control" id="nombre" name="nombre" required
+                                        minlength="10" maxlength="50" multipleSpaces="true" letters="true">
                                 </div>
-
-                                <div class="form-group">
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
                                     <label for="grado">Grado</label>
-                                    <input type="text" class="form-control form-control-lg" id="grado" name="grado"
-                                        required minlength="1" maxlength="2">
+                                    <input type="text" class="form-control" id="grado" name="grado" required
+                                        minlength="1" maxlength="2" max="11" numeros="true" integer="true" noSpaces="true">
                                 </div>
-
-                                <div class="form-group">
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
                                     <label for="seccion">Sección</label>
-                                    <input type="text" class="form-control form-control-lg" id="seccion" name="seccion"
-                                        required minlength="1" maxlength="2">
+                                    <input type="text" class="form-control" id="seccion" name="seccion" required
+                                        minlength="1" maxlength="1" letters="true" noSpaces="true">
                                 </div>
-
-                                <div class="form-group">
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
                                     <label for="genero">Género</label>
-                                    <input type="text" class="form-control form-control-lg" id="genero" name="genero"
-                                        required minlength="1" maxlength="2">
+                                    <input type="text" class="form-control" id="genero" name="genero" required
+                                        minlength="1" maxlength="1" letters="true" noSpaces="true">
                                 </div>
-
-                                <div class="form-group">
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
                                     <label for="carrera">Carrera</label>
-                                    <input type="text" class="form-control form-control-lg" id="carrera" name="carrera"
-                                        required maxlength="100">
+                                    <input type="text" class="form-control" id="carrera" name="carrera" required
+                                        minlength="10" maxlength="100" letters="true">
                                 </div>
-
-                                <div class="form-group">
+                            </div>
+                            <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
+                                <div class="mb-3">
                                     <label for="contacto">Contacto</label>
-                                    <input type="text" class="form-control form-control-lg" id="contacto"
-                                        name="contacto" required minlength="10" maxlength="50">
+                                    <input type="text" class="form-control" id="contacto" name="contacto" required
+                                        minlength="10" maxlength="50" noSpaces="true">
                                 </div>
-
-                                <div class="d-flex flex-column flex-sm-row gap-2 mt-4">
-                                    <button class="boton btn-primary btn-lg mr-sm-2" id="actualizar" name="actualizar"
-                                        type="submit">
-                                        Actualizar
-                                    </button>
-
-                                    <a href="Estudiantes.html" class="botonRegresar btn-secondary btn-lg"> Regresar </a>
-                                </div>
-
-                            </form>
-
+                            </div>
                         </div>
-                    </div>
+                        <div class="d-flex justify-content-center mt-4 gap-3">
+                            <button class="botonAgregar mr-3" id="actualizar" name="actualizar" type="submit">Actualizar
+                            </button>
+                            <a href="Estudiantes.html" class="botonAgregar">Regresar</a>
+                        </div>
 
+                    </form>
                 </div>
 
                 <!-- /.container-fluid -->
+                 
+                <!-- Footer -->
+                <footer class="sticky-footer bg-white">
+                    <div class="container my-auto">
+                        <div class="copyright text-center my-auto"></div>
+                    </div>
+                </footer>
+                <!-- End of Footer -->
 
             </div>
             <!-- End of Main Content -->

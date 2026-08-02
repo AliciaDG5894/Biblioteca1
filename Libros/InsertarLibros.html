@@ -66,41 +66,41 @@
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                        
                                 <label for="autores">Autores</label>
-                                <input type="text" class="form-control" id="autores" name="autores" required minlength="5" maxlength="200" multipleSpaces="true" letrasYCaracteres="true"/>
+                                <input type="text" class="form-control" id="autores" name="autores" required minlength="5" maxlength="200" multipleSpaces="true"/>
                             </div>
                         </div>
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                        
                                 <label for="res_cus">Responsable de custodia</label>
-                                <input type="text" class="form-control" id="res_cus" name="res_cus" required minlength="10" maxlength="200" multipleSpaces="true" letrasYCaracteres="true"/>
+                                <input type="text" class="form-control" id="res_cus" name="res_cus" required minlength="10" maxlength="50" multipleSpaces="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">
                                 <label for="dep_res">Departamento del responsable</label>
-                                <input type="text" class="form-control" id="dep_res" name="dep_res" required minlength="5" maxlength="100" multipleSpaces="true" letters="true"/>  
+                                <input type="text" class="form-control" id="dep_res" name="dep_res" required minlength="10" maxlength="50" multipleSpaces="true" letters="true"/>  
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="tipo">Tipo</label>
-                                <input type="text" class="form-control" id="tipo" name="tipo" required minlength="5" maxlength="50" multipleSpaces="true" letters="true"/>
+                                <input type="text" class="form-control" id="tipo" name="tipo" required minlength="5" maxlength="50" multipleSpaces="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="editora">Editorial</label>
-                                <input type="text" class="form-control" id="editora" name="editora" required minlength="5" maxlength="50" multipleSpaces="true" letrasYCaracteres="true"/>
+                                <input type="text" class="form-control" id="editora" name="editora" required minlength="5" maxlength="50" multipleSpaces="true"/>
                             </div>
                         </div>
 
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="isbn">ISBN</label>
-                                <input type="text" class="form-control" id="ISBN" name="ISBN" required minlength="1" maxlength="20"  noSpaces="true" numeros="true"/>
+                                <input type="text" class="form-control" id="ISBN" name="ISBN" required minlength="1" maxlength="20" multipleSpaces="true" numeros="true"/>
                             </div>
                         </div>
 
@@ -114,10 +114,9 @@
                         <div class="col-12 col-sm-12 col-md-10 col-lg-12 col-xl-12">
                             <div class="mb-3">                                
                                 <label for="cantidad">Cantidad</label>
-                                <input type="text" class="form-control" id="cantidad" name="cantidad" required  minlength="1" maxlength="5" noSpaces="true" numero="true" integer="true"/>
+                                <input type="text" class="form-control" id="cantidad" name="cantidad" required  minlength="1" letters="false" maxlength="3" max="500" noSpaces="true" numero="true" integer="true"/>
                             </div>
                         </div>
-                        
                     </div>
                     <div class="d-flex justify-content-center mt-4 gap-3">
                         <button class="botonAgregar mr-3" id="guardar" name="guardar" type="submit">Guardar</button>

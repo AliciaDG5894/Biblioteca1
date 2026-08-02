@@ -1,14 +1,39 @@
+// Agregar nuevas validaciones personalizadas
+$.validator.addMethod("email", function(value, element) {
+    return this.optional(element) || /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/i.test(value);
+}, "Por favor, ingrese un correo válido");
+
 $.validator.addMethod("numeros", function(value, element) {
     return this.optional(element) || /^[0-9.]+$/.test(value);
-}, "Por favor, ingresa solo números.");
+}, "Por favor, ingrese solo números.");
+
+$.validator.addMethod("endsWithDotZeroZero", function(value, element) {
+    return this.optional(element) || /^[0-9]+\.00$/.test(value);
+}, "Por favor, ingrese un número que termine en .00.");
+
+$.validator.addMethod("decimal", function(value, element) {
+    return this.optional(element) || /^[0-9]*\.?[0-9]+$/.test(value);
+}, "Por favor, ingrese un número válido.");
 
 $.validator.addMethod("integer", function(value, element) {
     return this.optional(element) || /^\d+$/.test(value);
-}, "Por favor, ingresa un número entero.");
+}, "Por favor, ingrese un número entero.");
+
+$.validator.addMethod("multipleSpaces", function (value, element) {
+    return this.optional(element) || /^(?!.*\s{2,}).*$/i.test(value.toLowerCase())
+}, "Por favor, no ingrese múltiples espacios");
 
 $.validator.addMethod("noSpaces", function (value, element) {
     return this.optional(element) || /^\S*$/i.test(value.toLowerCase())
 }, "Por favor, no ingrese espacios");
+
+$.validator.addMethod("letters", function (value, element) {
+    return this.optional(element) || /^[a-záéíóúñ ]+$/i.test(value.toLowerCase())
+}, "Por favor, ingrese solo letras");
+
+$.validator.addMethod("alphanumeric", function (value, element) {
+    return this.optional(element) || /^[0-9a-záéíóúñ]+$/i.test(value.toLowerCase())
+}, "Por favor, solo ingrese letras y números");
 
 // Validación del formulario
 $("#modificarDetalleP").validate({
@@ -24,10 +49,11 @@ $("#modificarDetalleP").validate({
         cantidad: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 1 caracter",
-            maxlength: "Por favor, no ingrese más de 5 caracteres",
+            maxlength: "Por favor, no ingrese más de 3 caracteres",
+            max: "Por favor, no ingrese un número mayor a 500",
             noSpaces: "Por favor, no ingrese espacios",
-            numeros: "Por favor, ingresa solo números",
-            integer: "Por favor, ingresa un número entero"
+            numeros: "Por favor, ingrese solo números",
+            integer: "Por favor, ingrese un número entero"
         }
     },
     errorPlacement: function(error, element) {

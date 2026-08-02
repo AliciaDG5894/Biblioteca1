@@ -1,8 +1,7 @@
-const API = "https://roof-brussels-application-steady.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://roof-brussels-application-steady.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://print-mustang-lewis-median.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://print-mustang-lewis-median.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
-
     const jwt = localStorage.getItem("jwt");
 
     if (jwt && !jwt.startsWith("eyJ")) {
@@ -21,13 +20,13 @@ function fetchConAuth(url, opciones = {}) {
             if (!res.ok) {
                 Swal.fire({
                     icon: "error",
-                    title: "Error de servidor",
-                    text: "El servidor no está disponible en este momento. Intenta más tarde.",
+                    title: "Error",
+                    text: "Intenta de nuevo.",
                     confirmButtonText: "Aceptar",
                     confirmButtonColor: "#4e73df",
                     customClass: { popup: 'swal-pequeno' }
                 });
-                throw new Error("Error de servidor: " + res.status);
+                throw new Error("Error: " + res.status);
             }
             return res;
         })
@@ -567,37 +566,90 @@ function cargarTotales() {
 
 // Generar archivos
 function exportarExcelVisitas() {
-    const tabla = $('#dataTableVisitas').DataTable();
-    const filas = tabla.rows({ search: 'applied' }).data().toArray();
-    
-    const datos = filas.map(d => ({
-        ID: d[0],
-        Estudiante: d[1],
-        Servicio: d[2],
-        Fecha: d[3],
-        "Hora entrada": d[4],
-        "Hora salida": d[5]
-    }));
+    try {
+        const tabla = $('#dataTableVisitas').DataTable();
+        const filas = tabla.rows({ search: 'applied' }).data().toArray();
+        
+        const datos = filas.map(d => ({
+            ID: d[0],
+            Estudiante: d[1],
+            Servicio: d[2],
+            Fecha: d[3],
+            "Hora entrada": d[4],
+            "Hora salida": d[5]
+        }));
 
-    const ws = XLSX.utils.json_to_sheet(datos);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Visitas");
-    XLSX.writeFile(wb, "Visitas.xlsx");
+        const ws = XLSX.utils.json_to_sheet(datos);
+        const wb = XLSX.utils.book_new();
+        XLSX.utils.book_append_sheet(wb, ws, "Visitas");
+
+        if (window.cordova && cordova.file && cordova.file.externalRootDirectory) {
+            alert("Iniciando exportar en APK...");
+            const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
+            const blob = new Blob([wbout], { type: 'application/octet-stream' });
+            window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function(dir) {
+                dir.getFile("Visitas.xlsx", { create: true }, function(file) {
+                    file.createWriter(function(writer) {
+                        writer.write(blob);
+                        writer.onwriteend = function() {
+                            alert("Archivo guardado, abriendo...");
+                            cordova.plugins.fileOpener2.open(
+                                cordova.file.externalRootDirectory + "Visitas.xlsx",
+                                'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
+                            );
+                        };
+                        writer.onerror = function(e) { alert("Error escribiendo: " + e.toString()); };
+                    });
+                }, function(e) { alert("Error creando archivo: " + e.toString()); });
+            }, function(e) { alert("Error directorio: " + e.toString()); });
+        } else {
+            // Browser
+            XLSX.writeFile(wb, "Visitas.xlsx");
+        }
+    } catch(e) {
+        alert("Error: " + e.toString());
+    }
 }
 
-function exportarPDFVisitas() {
-    const tabla = $('#dataTableVisitas').DataTable();
-    const filas = tabla.rows({ search: 'applied' }).data().toArray();
+async function exportarPDFVisitas() {
+    try {
+        const tabla = $('#dataTableVisitas').DataTable();
+        const filas = tabla.rows({ search: 'applied' }).data().toArray();
 
-    const { jsPDF } = window.jspdf;
-    const doc = new jsPDF();
-    doc.text("Reporte de Visitas", 14, 15);
-    doc.autoTable({
-        startY: 20,
-        head: [["ID", "Estudiante", "Servicio", "Fecha", "Hora entrada", "Hora salida"]],
-        body: filas.map(d => [d[0], d[1], d[2], d[3], d[4], d[5]])
-    });
-    doc.save("Visitas.pdf");
+        const { jsPDF } = window.jspdf;
+        const doc = new jsPDF();
+        doc.text("Reporte de Visitas", 14, 15);
+        doc.autoTable({
+            startY: 20,
+            head: [["ID", "Estudiante", "Servicio", "Fecha", "Hora entrada", "Hora salida"]],
+            body: filas.map(d => [d[0], d[1], d[2], d[3], d[4], d[5]])
+        });
+
+        if (window.cordova && cordova.file && cordova.file.externalRootDirectory) {
+            alert("Iniciando exportar PDF en APK...");
+            const pdfBlob = new Blob([doc.output('arraybuffer')], { type: 'application/pdf' });
+            window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function(dir) {
+                dir.getFile("Visitas.pdf", { create: true }, function(file) {
+                    file.createWriter(function(writer) {
+                        writer.write(pdfBlob);
+                        writer.onwriteend = function() {
+                            alert("PDF guardado, abriendo...");
+                            cordova.plugins.fileOpener2.open(
+                                cordova.file.externalRootDirectory + "Visitas.pdf",
+                                'application/pdf'
+                            );
+                        };
+                        writer.onerror = function(e) { alert("Error escribiendo PDF: " + e.toString()); };
+                    });
+                }, function(e) { alert("Error creando PDF: " + e.toString()); });
+            }, function(e) { alert("Error directorio PDF: " + e.toString()); });
+        } else {
+            // Browser
+            doc.save("Visitas.pdf");
+        }
+    } catch(e) {
+        alert("Error PDF: " + e.toString());
+    }
 }
 
 function exportarExcelDashboard() {
@@ -724,7 +776,7 @@ function insertarCarrera(event) {
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Respuesta insertar carrera:", data);
+      console.log("Respuesta registrar carrera:", data);
       Swal.fire({
           icon: data.status === "success" ? "success" : "error", 
           title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
@@ -854,7 +906,7 @@ function insertarEstudiante(event) {
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Respuesta insertar estudiante:", data);
+      console.log("Respuesta registrar estudiante:", data);
       Swal.fire({
           icon: data.status === "success" ? "success" : "error", 
           title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
@@ -930,6 +982,7 @@ function cargarDatosModificarEstudiante() {
 
 function modificarEstudiante(event) {
   event.preventDefault();
+  if (!$(this).valid()) return;
 
   let id = document.getElementById("id").value;
   let matricula = document.getElementById("matricula").value;
@@ -1086,9 +1139,18 @@ function insertarPrestamo(event) {
   })
     .then(res => res.json())
     .then(data => {
-      alert(data.message);
-      cargarPrestamos();
-      document.getElementById("insertarPrestamo").reset();
+      console.log("Respuesta registrar prestamos:", data);
+      Swal.fire({
+          icon: data.status === "success" ? "success" : "error", 
+          title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
+          confirmButtonColor: "#4e73df",
+          customClass: {popup: 'swal-pequeno'}
+      })
+      .then(() => {
+        if (data.status === "success") {
+          window.location.href = "Prestamos.html";
+        }
+      });
     })
     .catch(err => console.error("Error insertando prestamo:", err));
 }
@@ -1104,7 +1166,7 @@ function cargarDatosModificarPrestamo() {
       .then(data => {
         document.getElementById("id_prestamo").value = data.Id_prestamo;
         document.getElementById("id_estudiante_real").value = data.Estudiante;
-        document.getElementById("id_estudiante").value = data.Nombre;
+        document.getElementById("nombre").value = data.Nombre;
         document.getElementById("fecha_prestamo").value = data.Fecha_prestamo;
         document.getElementById("fecha_entrega").value = data.Fecha_entrega;
         document.getElementById("fecha_devolucion").value =
@@ -1119,6 +1181,7 @@ function cargarDatosModificarPrestamo() {
 
 function modificarPrestamos(event) {
   event.preventDefault();
+  if (!$(this).valid()) return;
 
   let id = document.getElementById("id_prestamo").value;
   let estudiante = document.getElementById("id_estudiante_real").value;
@@ -1150,7 +1213,7 @@ function modificarPrestamos(event) {
 
 function eliminarPrestamo(id_prestamo) {
   Swal.fire({
-    icon: "warning", title: "¿Eliminar préstamo?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    icon: "warning", title: "¿Eliminar préstamo?", text: "Esta acción no se puede deshacer. <p>Tambien eliminarias los libros prestados y los reportes de daños</p>", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
     confirmButtonColor: "#4e73df",
     cancelButtonColor: "#e53935",
     customClass: { popup: 'swal-pequeno' }
@@ -1229,7 +1292,7 @@ function insertarServicio(event) {
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Respuesta insertar servicio:", data);
+      console.log("Respuesta registrar servicio:", data);
       Swal.fire({
           icon: data.status === "success" ? "success" : "error", 
           title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
@@ -1347,7 +1410,7 @@ function cargarLibros() {
         });
       }
     })
-    .catch(err => console.error("Error cargando servicios:", err));
+    .catch(err => console.error("Error cargando libros:", err));
 }
  
 // --- INSERTAR LIBRO ---
@@ -1371,7 +1434,7 @@ function insertarLibro(event) {
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Respuesta insertar libro:", data);
+      console.log("Respuesta registrar libro:", data);
       Swal.fire({
           icon: data.status === "success" ? "success" : "error", 
           title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
@@ -1488,7 +1551,7 @@ function cargarHistorialP() {
         });
       }
     })
-    .catch(err => console.error("Error cargando servicios:", err));
+    .catch(err => console.error("Error cargando Reporte de Daños:", err));
 }
 
 // --- INSERTAR HistorialP ---
@@ -1506,7 +1569,7 @@ function insertarHistorialP(event) {
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Respuesta insertar historial del préstamo:", data);
+      console.log("Respuesta registrar reporte de daños:", data);
       Swal.fire({
           icon: data.status === "success" ? "success" : "error", 
           title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
@@ -1519,7 +1582,7 @@ function insertarHistorialP(event) {
         }
       });
     })
-    .catch(err => console.error("Error insertando historial del préstamo:", err));
+    .catch(err => console.error("Error insertando reporte de daños:", err));
 }
 
 // Select
@@ -1582,7 +1645,7 @@ function eliminarHistorialP(id) {
           customClass: { popup: 'swal-pequeno' }
         }).then(() => cargarHistorialP());
       })
-      .catch(err => console.error("Error eliminando historial de préstamo:", err));
+      .catch(err => console.error("Error eliminando reporte de daños:", err));
   });
 }
 
@@ -1631,7 +1694,7 @@ function cargarDetalleP() {
         });
       }
     })
-    .catch(err => console.error("Error cargando servicios:", err));
+    .catch(err => console.error("Error cargando detalle de préstamos:", err));
 }
 
 // --- INSERTAR DETALLEP ---
@@ -1648,7 +1711,7 @@ function insertarDetalleP(event) {
   })
     .then(res => res.json())
     .then(data => {
-          console.log("Respuesta insertar detalle del préstamo:", data);
+          console.log("Respuesta registrar libro prestado:", data);
           Swal.fire({
               icon: data.status === "success" ? "success" : "error", 
               title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
@@ -1661,7 +1724,7 @@ function insertarDetalleP(event) {
             }
           });
         })
-    .catch(err => console.error("Error insertando detalle del préstamo:", err));
+    .catch(err => console.error("Error insertando libro prestado:", err));
 }
 
 function cargarLibrosDatalist() {
@@ -1719,7 +1782,7 @@ function cargarDatosModificarDetalleP() {
 // --- ELIMINAR DETALLE PRÉSTAMO ---
 function eliminarDetalleP(id) {
   Swal.fire({
-    icon: "warning", title: "¿Eliminar detalle de préstamo?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    icon: "warning", title: "¿Eliminar libro prestado?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
     confirmButtonColor: "#4e73df",
     cancelButtonColor: "#e53935",
     customClass: { popup: 'swal-pequeno' }
@@ -1741,7 +1804,7 @@ function eliminarDetalleP(id) {
           customClass: { popup: 'swal-pequeno' }
         }).then(() => cargarDetalleP());
       })
-      .catch(err => console.error("Error eliminando detalle de préstamo:", err));
+      .catch(err => console.error("Error eliminando libro prestado:", err));
   });
 }
 
@@ -1754,7 +1817,6 @@ function cargarUsuarios() {
         dato.Id_Usuario,
         dato.Nombre_Usuario,
         dato.Contrasena,
-        dato.Tipo_Usuario,
         dato.PIN,
         dato.Token,
 
@@ -1778,7 +1840,6 @@ function cargarUsuarios() {
             { title: 'ID' },
             { title: 'Nombre' },
             { title: 'Contraseña' },
-            { title: 'Tipo de usuario' },
             { title: 'Pin' },
             { title: 'Token' },
             { title: 'Modificar' },
@@ -1801,16 +1862,15 @@ function insertarUsuario(event) {
   event.preventDefault();
   let nombre = document.getElementById("nombre").value;
   let contrasena = document.getElementById("contrasena").value;
-  let tipo = document.getElementById("tipo").value;
 
   fetchConAuth(`${API}?accion=insertar_usuario`, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Nombre_Usuario=" + encodeURIComponent(nombre) + "&Contrasena=" + encodeURIComponent(contrasena) + "&Tipo_Usuario=" + encodeURIComponent(tipo)
+    body: "Nombre_Usuario=" + encodeURIComponent(nombre) + "&Contrasena=" + encodeURIComponent(contrasena)
   })
     .then(res => res.json())
     .then(data => {
-      console.log("Respuesta insertar usuario:", data);
+      console.log("Respuesta registrar usuario:", data);
       Swal.fire({
           icon: data.status === "success" ? "success" : "error", 
           title: data.status === "success" ? "¡Éxito!" : "Error", text: data.message, confirmButtonText: "Aceptar",
@@ -1837,7 +1897,6 @@ function cargarDatosModificarUsuario() {
         document.getElementById("id").value = data.Id_Usuario;
         document.getElementById("nombre").value = data.Nombre_Usuario;
         document.getElementById("contrasena").value = data.Contrasena;
-        document.getElementById("tipo").value = data.Tipo_Usuario;
       })
       .catch(err => console.error("Error cargando datos del usuario:", err));
   }
@@ -1975,8 +2034,8 @@ document.addEventListener("DOMContentLoaded", () => {
   cargarPartials();
   if (document.getElementById("dataTableCarreras")) cargarCarreras();
   if (document.getElementById("dataTableServicios")) cargarServicios();
-  if (document.getElementById("dataTableEstudiantes")) cargarEstudiantes();
-  if (document.getElementById("dataTablePrestamos")) cargarPrestamos();
+  if (document.getElementById("dataTableEst")) cargarEstudiantes();
+  if (document.getElementById("dataTablePrest")) cargarPrestamos();
   if (document.getElementById("dataTableLibros")) cargarLibros();
   if (document.getElementById("dataTableHistorialP")) cargarHistorialP();
   if (document.getElementById("dataTableDetalleP")) cargarDetalleP();
@@ -2177,6 +2236,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formModificar) {
     formModificar.addEventListener("submit", function (event) {
       event.preventDefault();
+      if (!$(this).valid()) return;
       let id = document.getElementById("id").value;
       let nombre = document.getElementById("nombre").value;
 
@@ -2206,6 +2266,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formModificarSrv) {
     formModificarSrv.addEventListener("submit", function(event) {
       event.preventDefault();
+      if (!$(this).valid()) return;
       let id     = document.getElementById("id").value;
       let nombre = document.getElementById("nombreSrv").value;
 
@@ -2240,6 +2301,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formModificarLib) {
     formModificarLib.addEventListener("submit", function(event) {
       event.preventDefault();
+      if (!$(this).valid()) return;
       let id = document.getElementById("id").value;
       let Titulo = document.getElementById("titulo").value;
       let Fecha_edi = document.getElementById("fecha_edi").value;
@@ -2279,6 +2341,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formModificarHistorialP) {
     formModificarHistorialP.addEventListener("submit", function(event) {
       event.preventDefault();
+      if (!$(this).valid()) return;
       let id = document.getElementById("id").value;
       let Prestamo = document.getElementById("prestamo").value;
       let Descripcion = document.getElementById("descripcion").value;
@@ -2303,7 +2366,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         })
-        .catch(err => console.error("Error modificando historial de préstamos:", err));
+        .catch(err => console.error("Error modificando reporte de daños:", err));
     });
   }
 
@@ -2311,6 +2374,7 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formModificarDetalleP) {
     formModificarDetalleP.addEventListener("submit", function(event) {
       event.preventDefault();
+      if (!$(this).valid()) return;
       let id = document.getElementById("id").value;
       let Prestamo = document.getElementById("prestamo").value;
       let Libro = document.getElementById("libro").value;
@@ -2334,7 +2398,7 @@ document.addEventListener("DOMContentLoaded", () => {
                 }
             });
         })
-        .catch(err => console.error("Error modificando detalle de préstamos:", err));
+        .catch(err => console.error("Error modificando libro prestado:", err));
     });
   }
 
@@ -2342,15 +2406,15 @@ document.addEventListener("DOMContentLoaded", () => {
   if (formModificarUsuario) {
     formModificarUsuario.addEventListener("submit", function(event) {
       event.preventDefault();
+      if (!$(this).valid()) return;
       let id     = document.getElementById("id").value;
       let nombre = document.getElementById("nombre").value;
       let contrasena = document.getElementById("contrasena").value;
-      let tipo = document.getElementById("tipo").value;
 
       fetchConAuth(`${API}?accion=modificar_usuario`, {
         method: "POST",
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: "Id_Usuario=" + encodeURIComponent(id) + "&Nombre_Usuario=" + encodeURIComponent(nombre) + "&Contrasena=" + encodeURIComponent(contrasena) + "&Tipo_Usuario=" + encodeURIComponent(tipo)
+        body: "Id_Usuario=" + encodeURIComponent(id) + "&Nombre_Usuario=" + encodeURIComponent(nombre) + "&Contrasena=" + encodeURIComponent(contrasena)
       })
         .then(res => res.json())
         .then(data => {

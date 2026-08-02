@@ -18,6 +18,11 @@ $.validator.addMethod("alphanumeric", function (value, element) {
     return this.optional(element) || /^[0-9a-záéíóúñ]+$/i.test(value.toLowerCase())
 }, "Por favor, solo ingrese letras y números");
 
+$.validator.addMethod("multipleSpaces", function (value, element) {
+    return this.optional(element) || /^(?!.*\s{2,}).*$/i.test(value.toLowerCase())
+}, "Por favor, no ingrese múltiples espacios");
+
+
 // Validación del formulario
 $("#modificarEst").validate({
     errorClass: "v_error",
@@ -26,50 +31,51 @@ $("#modificarEst").validate({
         matricula: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 8 caracteres",
-            maxlength: "Por favor, no ingrese más de 20 caracteres",
+            maxlength: "Por favor, no ingrese más de 8 caracteres",
             numeros: "Por favor, ingresa solo números",
             noSpaces: "Por favor, no ingrese espacios",
-            integer: "Por favor, ingresa un número entero"
+            integer: "Por favor, solo ingrese números enteros"
         },
         nombre: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 10 caracteres",
             maxlength: "Por favor, no ingrese más de 50 caracteres",
-            letters: "Por favor, ingrese solo letras"
+            letters: "Por favor, ingrese solo ingrese letras",
+            multipleSpaces: "Por favor, no ingrese múltiples espacios"
         },
         grado: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 1 caracter",
             maxlength: "Por favor, no ingrese más de 2 caracteres",
+            max: "Por favor, no ingrese un número mayor a 11",
             numeros: "Por favor, ingresa solo números",
             noSpaces: "Por favor, no ingrese espacios",
-            integer: "Por favor, ingresa un número entero"
+            integer: "Por favor, solo ingrese números enteros"
         },
         seccion: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 1 caracter",
-            maxlength: "Por favor, no ingrese más de 2 caracteres",
+            maxlength: "Por favor, no ingrese más de 1 caracter",
             letters: "Por favor, ingrese solo letras",
             noSpaces: "Por favor, no ingrese espacios"
         },
         genero: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 1 caracter",
-            maxlength: "Por favor, no ingrese más de 2 caracteres",
+            maxlength: "Por favor, no ingrese más de 1 caracter",
             letters: "Por favor, ingrese solo letras",
             noSpaces: "Por favor, no ingrese espacios"
         },
         carrera: {
             required: "Por favor, llene este campo",
+            minlength: "Por favor, ingrese más de 10 caracteres",
             maxlength: "Por favor, no ingrese más de 100 caracteres",
-            letters: "Por favor, ingrese solo letras",
-            noSpaces: "Por favor, no ingrese espacios"
+            letters: "Por favor, ingrese solo letras"
         },
         contacto: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 10 caracteres",
             maxlength: "Por favor, no ingrese más de 50 caracteres",
-            alphanumeric: "Por favor, solo ingrese letras y números",
             noSpaces: "Por favor, no ingrese espacios"
         }
     },

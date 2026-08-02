@@ -14,7 +14,7 @@ $("#modificarSrv").validate({
         nombreSrv: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 10 caracteres",
-            maxlength: "Por favor, no ingrese más de 200 caracteres",
+            maxlength: "Por favor, no ingrese más de 50 caracteres",
             multipleSpaces: "Por favor, no ingrese múltiples espacios",
             letters: "Por favor, ingrese solo letras"
         }
