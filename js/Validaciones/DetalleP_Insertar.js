@@ -5,19 +5,19 @@ $.validator.addMethod("email", function(value, element) {
 
 $.validator.addMethod("numeros", function(value, element) {
     return this.optional(element) || /^[0-9.]+$/.test(value);
-}, "Por favor, ingresa solo números");
+}, "Por favor, ingrese solo números.");
 
 $.validator.addMethod("endsWithDotZeroZero", function(value, element) {
     return this.optional(element) || /^[0-9]+\.00$/.test(value);
-}, "Por favor, ingrese un número que termine en .00");
+}, "Por favor, ingrese un número que termine en .00.");
 
 $.validator.addMethod("decimal", function(value, element) {
     return this.optional(element) || /^[0-9]*\.?[0-9]+$/.test(value);
-}, "Por favor, ingrese un número válido");
+}, "Por favor, ingrese un número válido.");
 
 $.validator.addMethod("integer", function(value, element) {
     return this.optional(element) || /^\d+$/.test(value);
-}, "Por favor, ingrese un número entero");
+}, "Por favor, ingrese un número entero.");
 
 $.validator.addMethod("multipleSpaces", function (value, element) {
     return this.optional(element) || /^(?!.*\s{2,}).*$/i.test(value.toLowerCase())
@@ -35,34 +35,26 @@ $.validator.addMethod("alphanumeric", function (value, element) {
     return this.optional(element) || /^[0-9a-záéíóúñ]+$/i.test(value.toLowerCase())
 }, "Por favor, solo ingrese letras y números");
 
-$.validator.addMethod("letrasYCaracteres", function(value, element) {
-  return this.optional(element) || /^[a-záéíóúüñ .\-_]+$/i.test(value);
-}, "Por favor, solo se permiten letras, espacios, punto, guiones");
-
 
 // Validación del formulario
-$("#modificarPrestamo").validate({
-    errorClass: "v_error", // Estilo para errores
-    validClass: "v_correcto",   // Estilo para válidos
+$("#insertarDetalleP").validate({
+    errorClass: "v_error",
+    validClass: "v_correcto",
     messages: {
-        nombre: {
+        prestamo: {
+            required: "Por favor, seleccione un préstamo"
+        },
+        libro: {
+            required: "Por favor, seleccione un libro"
+        },
+        cantidad: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 10 caracteres",
-            maxlength: "Por favor, no ingrese más de 50 caracteres",
-            letters: "Por favor, ingrese solo ingrese letras",
-            multipleSpaces: "Por favor, no ingrese múltiples espacios"
-        },
-        fecha_prestamo: {
-            required: "Por favor, llene este campo"
-        },
-        fecha_entrega: {
-            required: "Por favor, llene este campo"
-        },
-        fecha_devolucion: {
-            required: "Por favor, llene este campo"
-        },
-        estado: {
-            required: "Por favor, llene este campo"
+            minlength: "Por favor, ingrese más de 1 caracter",
+            maxlength: "Por favor, no ingrese más de 3 caracteres",
+            max: "Por favor, no ingrese un número mayor a 500",
+            noSpaces: "Por favor, no ingrese espacios",
+            numeros: "Por favor, ingrese solo números",
+            integer: "Por favor, ingrese un número entero"
         }
     },
     errorPlacement: function(error, element) {

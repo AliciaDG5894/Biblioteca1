@@ -10,7 +10,7 @@ let idEstudianteActual = null;
 
 // Escuchar el input de matrícula
 document.getElementById("matricula").addEventListener("input", function() {
-    if (this.value.length >= 5) {
+    if (this.value.length >= 8) {
         const matricula = this.value;
         this.value = "";
         verificarEstudiante(matricula);
@@ -18,7 +18,12 @@ document.getElementById("matricula").addEventListener("input", function() {
 });
 
 function verificarEstudiante(matricula) {
-    fetch(`${API}?accion=verificar_estudiante&matricula=${encodeURIComponent(matricula)}`)
+    const jwt = localStorage.getItem("jwt");
+    fetch(`${API}?accion=verificar_estudiante&matricula=${encodeURIComponent(matricula)}`, {
+        headers: {
+            Authorization: `Bearer ${jwt || ""}`
+        }
+    })
         .then(res => res.json())
         .then(data => {
             if (data.status === "error") {
@@ -45,7 +50,12 @@ function verificarEstudiante(matricula) {
 }
 
 function cargarServicios(idEstudiante) {
-    fetch(`${API}?accion=listar_servicios_estudiante`)
+    const jwt = localStorage.getItem("jwt");
+    fetch(`${API}?accion=listar_servicios_estudiante`, {
+        headers: {
+            Authorization: `Bearer ${jwt || ""}`
+        }
+    })
         .then(res => res.json())
         .then(servicios => {
             const contenedor = document.getElementById("contenedorServicios");
@@ -54,7 +64,11 @@ function cargarServicios(idEstudiante) {
             servicios.forEach(s => {
                 const card = document.createElement("div");
                 card.className = "estudiante-card";
-                card.innerHTML = `<i class="fas fa-book"></i><h3>${s.Nombre}</h3>`;
+                card.innerHTML = `
+                    <i class="fas fa-book-open" style="font-size:22px; color:#1E3A8A; margin-bottom:12px;"></i>
+                    <h3 style="font-size:0.95rem; font-weight:700; color:#1a1a1a; margin:0 0 8px 0;">${s.Nombre}</h3>
+                    <p style="font-size:0.78rem; color:#6b7280; margin:0;">Haz clic para seleccionar este servicio.</p>
+                `;
                 card.addEventListener("click", () => {
                     registrarEntrada(idEstudiante, s.Id_servicio);
                 });
@@ -66,9 +80,13 @@ function cargarServicios(idEstudiante) {
 }
 
 function registrarEntrada(idEstudiante, idServicio) {
+    const jwt = localStorage.getItem("jwt");
     fetch(`${API}?accion=registrar_entrada`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: { 
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Bearer ${jwt || ""}`
+        },
         body: "Estudiante=" + encodeURIComponent(idEstudiante) + 
               "&Servicio=" + encodeURIComponent(idServicio)
     })
@@ -80,30 +98,37 @@ function registrarEntrada(idEstudiante, idServicio) {
 }
 
 function registrarSalida(idEntrada, nombre) {
+    const jwt = localStorage.getItem("jwt");
     fetch(`${API}?accion=registrar_salida`, {
         method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        headers: { 
+            "Content-Type": "application/x-www-form-urlencoded",
+            "Authorization": `Bearer ${jwt || ""}`
+        },
         body: "Id_entrada_salida=" + encodeURIComponent(idEntrada)
     })
     .then(res => res.json())
     .then(data => {
         mostrarMensaje("success", "Salida registrada", 
-                       nombre + " - Hora de salida: " + data.hora, true);
+                       nombre + " <p>Hora de salida: " + data.hora + "</p>", true);
     });
 }
 
 function mostrarMensaje(tipo, titulo, texto, regresar) {
     const esExito = tipo === "success";
+    const icono = esExito 
+        ? `<i class="fas fa-check-circle" style="font-size:32px; color:#28a745;"></i>` 
+        : `<i class="fas fa-times-circle" style="font-size:32px; color:#dc3545;"></i>`;
 
     document.getElementById("pantallaMensaje").innerHTML = `
         <div class="estudiante-mensaje">
             <div class="estudiante-mensaje-caja">
                 <div class="encabezado">
-                    <i class="fas ${esExito ? 'fa-check-circle success' : 'fa-times-circle error'}"></i>
-                    <h2 class="${tipo}">${titulo}</h2>
+                    ${icono}
+                    <p><h2 class="${tipo}">${titulo}</h2></p>
                 </div>
-                <p>${texto}</p>
-                <p>Redirigiendo en 3 segundos...</p>
+                <p><h5>${texto}</h5></p>
+                <p><h5>Redirigiendo en 3 segundos...</h5></p>
             </div>
         </div>
     `;

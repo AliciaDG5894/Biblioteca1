@@ -41,18 +41,22 @@ $.validator.addMethod("letrasYCaracteres", function(value, element) {
 
 
 // Validación del formulario
-$("#insertarHis").validate({
+$("#insertarHistorialP").validate({
     errorClass: "v_error", // Estilo para errores
     validClass: "v_correcto",   // Estilo para válidos
     messages: {
         prestamo: {
             required: "Por favor, llene este campo"
         },
+        fecha: {
+            required: "Por favor, llene este campo"
+        },
         descripcion:
         {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 5 caracteres",
+            minlength: "Por favor, ingrese más de 10 caracteres",
             maxlength: "Por favor, no ingrese más de 200 caracteres",
+            multipleSpaces: "Por favor, no ingrese múltiples espacios"
         },
         estado: {
             required: "Por favor, llene este campo"

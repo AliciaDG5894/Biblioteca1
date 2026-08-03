@@ -4,6 +4,8 @@ document.addEventListener("DOMContentLoaded", () => {
     const sugerencias = document.getElementById("sugerencias");
     const idEstudiante = document.getElementById("id_estudiante");
 
+    if (!txtNombre) return;
+
     txtNombre.addEventListener("keyup", async () => {
 
         const nombre = txtNombre.value.trim();
@@ -14,10 +16,14 @@ document.addEventListener("DOMContentLoaded", () => {
         }
 
         try {
-
+            const jwt = localStorage.getItem("jwt");
             const respuesta = await fetch(
-                "https://bulk-carries-given-senior.trycloudflare.com/test/api/index.php?accion=buscar_estudiantes&nombre=" + encodeURIComponent(nombre)
-
+                `${API}?accion=buscar_estudiantes&nombre=` + encodeURIComponent(nombre),
+                {
+                    headers: {
+                        Authorization: `Bearer ${jwt || ""}`
+                    }
+                }
             );
 
             const estudiantes = await respuesta.json();
@@ -36,18 +42,14 @@ document.addEventListener("DOMContentLoaded", () => {
                 item.textContent = estudiante.Nombre;
 
                 item.addEventListener("click", () => {
-
                     txtNombre.value = estudiante.Nombre;
-
-                    idEstudiante.value =
-                        estudiante.Id_estudiante;
-
+                    
+                    if (idEstudiante) idEstudiante.value = estudiante.Id_estudiante;
+                    
+                    const idReal = document.getElementById("id_estudiante_real");
+                    if (idReal) idReal.value = estudiante.Id_estudiante;
+                    
                     sugerencias.innerHTML = "";
-
-                    // cargarDatosAlumno(
-                    //     estudiante.Id_estudiante
-                    // );
-
                 });
 
                 sugerencias.appendChild(item);

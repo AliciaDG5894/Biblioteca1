@@ -1,12 +1,10 @@
-// const API = "https://therefore-lawn-drama-determination.trycloudflare.com/test/api/index.php";
+// const API = "https://cables-cursor-midlands-connecticut.trycloudflare.com/test/api/index.php";
 
 $.ajaxSetup({
     headers: {
         Authorization: `Bearer ${localStorage.getItem("jwt")}`
     }
 })
-
-// opcional para que no deje al ususario esperando checar
 
 $.get(API + "?sesion", function (sesion) {
     if ((sesion.length == 0) && (location.pathname.indexOf("login.html") == -1)) {
@@ -20,7 +18,6 @@ $.get(API + "?sesion", function (sesion) {
     }
  
 })
-
 
 $(document).on("click", "#btnCerrarSesion", function(event) {
     if (confirm("¿Está seguro que desea cerrar sesión?")) {

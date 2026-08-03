@@ -5,7 +5,7 @@ $.validator.addMethod("email", function(value, element) {
 
 $.validator.addMethod("numeros", function(value, element) {
     return this.optional(element) || /^[0-9.]+$/.test(value);
-}, "Por favor, ingresa solo números");
+}, "Por favor, ingrese solo números");
 
 $.validator.addMethod("endsWithDotZeroZero", function(value, element) {
     return this.optional(element) || /^[0-9]+\.00$/.test(value);
@@ -41,27 +41,23 @@ $.validator.addMethod("letrasYCaracteres", function(value, element) {
 
 
 // Validación del formulario
-$("#modificarPrestamo").validate({
-    errorClass: "v_error", // Estilo para errores
-    validClass: "v_correcto",   // Estilo para válidos
+$("#insertarUsuario").validate({
+    errorClass: "v_error",
+    validClass: "v_correcto",
     messages: {
         nombre: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese más de 10 caracteres",
             maxlength: "Por favor, no ingrese más de 50 caracteres",
-            letters: "Por favor, ingrese solo ingrese letras",
             multipleSpaces: "Por favor, no ingrese múltiples espacios"
         },
-        fecha_prestamo: {
-            required: "Por favor, llene este campo"
+        contrasena: {
+            required: "Por favor, llene este campo",
+            minlength: "Por favor, ingrese más de 5 caracteres",
+            maxlength: "Por favor, no ingrese más de 20 caracteres",
+            noSpaces: "Por favor, no ingrese espacios"
         },
-        fecha_entrega: {
-            required: "Por favor, llene este campo"
-        },
-        fecha_devolucion: {
-            required: "Por favor, llene este campo"
-        },
-        estado: {
+        tipo: {
             required: "Por favor, llene este campo"
         }
     },

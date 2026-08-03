@@ -2,28 +2,12 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <!--
-        Customize this policy to fit your own app's needs. For more guidance, please refer to the docs:
-            https://cordova.apache.org/docs/en/latest/
-        Some notes:
-            * https://ssl.gstatic.com is required only on Android and is needed for TalkBack to function properly
-            * Disables use of inline scripts in order to mitigate risk of XSS vulnerabilities. To change this:
-                * Enable inline JS: add 'unsafe-inline' to default-src
-        -->
-    <!-- <meta http-equiv="Content-Security-Policy"
-      content="default-src 'self' data: gap: https://ssl.gstatic.com 'unsafe-eval' 'unsafe-inline' file:;
-               script-src 'self' 'unsafe-inline' 'unsafe-eval' file:;
-               connect-src 'self' https://functionality-div-juan-adjustable.trycloudflare.com http://192.168.1.121 file:;
-               img-src 'self' data: file:;
-               style-src 'self' 'unsafe-inline' file:;
-               media-src *;"> -->
-
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
     <meta name="color-scheme" content="light">
     <!-- <link rel="stylesheet" href="css/index.css"> -->
-    <title>Detalles de Préstamo</title>
+    <title>Libros Prestados</title>
 
     <!-- Custom fonts for this template -->
     <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -34,6 +18,7 @@
     <!-- Custom styles for this page -->
     <link href="../css/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../img/favicon.png" type="image/png">
 
     <script src="../js/jquery.min.js"></script>
 
@@ -41,6 +26,10 @@
     <link rel="stylesheet" href="../css/vendor/datatables/dataTables.bootstrap4.min.css">
     <script src="../css/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="../css/vendor/datatables/dataTables.bootstrap4.min.js"></script>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="../js/app.js"></script>
+    <script src="../js/config.js"></script>
 </head>
 <body id="page-top">
 
@@ -85,7 +74,7 @@
                     <!-- DataTales Example -->
                     <div class="card shadow mb-4">
                         <div class="card-header py-3">
-                            <h6 class="m-0 font-weight-bold text-primary ">Detalles de Préstamo</h6>
+                            <h6 class="m-0 font-weight-bold text-primary ">Libros Prestados</h6>
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
@@ -149,15 +138,8 @@
     <script src="../css/vendor/datatables/dataTables.bootstrap4.min.js"></script>
 
     <!-- Page level custom scripts -->
-    <!-- <script src="../js/demo/datatables-demo.js"></script> -->
-    
-    <script src="../js/app.js" defer></script>
-    <script src="../js/config.js" defer></script>    
+    <!-- <script src="../js/demo/datatables-demo.js"></script> -->    
 
-<<<<<<< HEAD
-=======
-    <!-- <script src="../js/cordova.js"></script> -->
->>>>>>> 3011e8ba1731418daa3ed1fbc4441aa5ae96141b
     <script src="../cordova.js"></script>
     <script src="../js/index.js"></script>
 </body>

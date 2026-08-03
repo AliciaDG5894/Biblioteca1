@@ -9,18 +9,19 @@
     <link href="../css/vendor/fontawesome-free/css/all.min.css" rel="stylesheet">
     <link href="../css/sb-admin-2.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
+    <link rel="icon" href="../img/favicon.png" type="image/png">
 </head>
 <body id="page-top">
 
     <!-- PANTALLA: ESCANEAR -->
     <div id="pantallaEscanear" class="estudiante-pantalla">
-        <i class="fas fa-book estudiante-icono"></i>
+        <img src="../img/favicon.png" class="estudiante-icono-img" alt="Biblioteca UTNC">
         <h1>BIBLIOTECA UTNC</h1>
         <h5>Bienvenido correcaminos a tu biblioteca</h5>
         <div class="estudiante-caja">
-            <div class="estudiante-escanear">   <!-- ← este div es la caja blanca -->
+            <div class="estudiante-escanear">
                 <h3>Escanea tu gafete</h3>
-                <input type="text" id="matricula" class="estudiante-input" placeholder="Matrícula" autofocus autocomplete="off" style="border:none; border-bottom:2px solid #ddd; border-radius:0; box-shadow:none; outline:none;"/>
+                <input type="text" id="matricula" name="matricula" class="estudiante-input" placeholder="Matrícula" autofocus autocomplete="off" />
             </div>
         </div>
     </div>
@@ -28,7 +29,7 @@
     <!-- PANTALLA: SELECCIONAR SERVICIO -->
     <div id="pantallaServicios" class="estudiante-pantalla" style="display:none;">
         <div class="estudiante-encabezado">
-            <i class="fas fa-book"></i>
+            <i class="fas fa-book-open"></i>
             <div>
                 <h2>Selecciona el servicio</h2>
                 <p id="nombreEstudiante"></p>
@@ -52,5 +53,11 @@
 
     <script src="../js/jquery.min.js"></script>
     <script src="../js/Escaneo.js"></script>
+
+        
+    <!-- VALIDACIONES jQuery -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/jquery.validate.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-validate/1.19.5/additional-methods.min.js"></script>
+    <script src="../js/Validaciones/Escaneo.js"></script>
 </body>
 </html>

@@ -72,12 +72,14 @@ function fb() {
 function obtenerFBToken() {
     window.FirebasexMessaging.getToken(function (token) {
         if (token) {
-            console.log("Firebase Token:", token);
+            alert("Token obtenido: " + token.substring(0, 15));
             localStorage.setItem("FBToken", token);
-
             enviarToken(token);
+        } else {
+            alert("Token vacío");
         }
     }, function (error) {
+        alert("Error obteniendo token: " + error);
         console.error("Error al obtener Firebase Token:", error);
     });
 }
@@ -120,8 +122,14 @@ function enviarToken(token) {
         body: JSON.stringify({ fbtoken: token })
     })
     .then(res => res.json())
-    .then(data => console.log("Token guardado en backend:", data))
-    .catch(err => console.error("Error al guardar token:", err));
+    .then(data => {
+        alert("Respuesta insertarToken: " + JSON.stringify(data));
+        console.log("Token guardado en backend:", data);
+    })
+    .catch(err => {
+        alert("Error guardando token: " + err.toString());
+        console.error("Error al guardar token:", err);
+    });
 }
 
 esperarFirebasePlugin();
