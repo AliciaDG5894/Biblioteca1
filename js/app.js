@@ -1,5 +1,5 @@
-const API = "https://tent-assess-roller-actually.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://tent-assess-roller-actually.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://bulk-carries-given-senior.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://bulk-carries-given-senior.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
 
@@ -174,7 +174,7 @@ function graficarGenero() {
             paper_bgcolor: "white",
             plot_bgcolor: "white",
 
-            showlegend: false,
+            showlegend: true,
 
             autosize: true,
             margin: {
@@ -202,39 +202,6 @@ function graficarGenero() {
         )
     }, "json");
 }
-
-// function obtenerLayout() {
-
-//     const movil = window.innerWidth < 768;
-
-//     return {
-//         autosize: true,
-//         height: movil ? 220 : 300,
-
-//         margin: {
-//             l: movil ? 40 : 55,
-//             r: 10,
-//             t: 20,
-//             b: movil ? 70 : 45
-//         },
-
-//         xaxis: {
-//             tickangle: movil ? -90 : -45,
-//             tickfont: {
-//                 size: movil ? 9 : 12
-//             }
-//         },
-
-//         yaxis: {
-//             title: {
-//                 text: "Cantidad de visitas"
-//             },
-//             tickfont: {
-//                 size: movil ? 9 : 12
-//             }
-//         }
-//     };
-// }
 
 function graficarVisitas() {
 
@@ -289,7 +256,7 @@ function graficarVisitas() {
                 l: movil ? 40 : 55,
                 r: 25,
                 t: 25,
-                b: movil ? 80 : 45
+                b: movil ? 10 : 45
             },
 
             font: {
@@ -314,7 +281,7 @@ function graficarVisitas() {
                 title: {
                     text: "Cantidad de visitas",
                     font: {
-                        size: movil ? 9 : 12,
+                        size: movil ? 10 : 12,
                         color: "#858796"
                     }
                 },
@@ -339,8 +306,6 @@ function graficarVisitas() {
                 }
             }
         }
-
-        // var layout = obtenerLayout();
 
         Plotly.newPlot("divGraficaVisitas", data, layout, {
             responsive: true,
@@ -374,7 +339,7 @@ function graficarVisitasServicio() {
 
         let shapes = [];
         let annotations = [];
-        let coloresPorPunto = []; // para el borde del tooltip por color de barra
+        let coloresPorPunto = []; 
 
         values.forEach(function(valor, index){
 
@@ -1533,19 +1498,19 @@ function eliminarVisitas(id) {
     .catch(err => console.error("Error eliminando visita:", err));
 }
 
-let qrPollingInterval = null;
-let qrPollingTimeout  = null;
+// let qrPollingInterval = null;
+// let qrPollingTimeout  = null;
 
-function detenerPollingQR() {
-    if (qrPollingInterval) {
-      clearInterval(qrPollingInterval);
-      qrPollingInterval = null;
-    }
-    if (qrPollingTimeout) {
-      clearTimeout(qrPollingTimeout);
-      qrPollingTimeout = null;
-    }
-  }
+// function detenerPollingQR() {
+//     if (qrPollingInterval) {
+//       clearInterval(qrPollingInterval);
+//       qrPollingInterval = null;
+//     }
+//     if (qrPollingTimeout) {
+//       clearTimeout(qrPollingTimeout);
+//       qrPollingTimeout = null;
+//     }
+//   }
 
 window.addEventListener("resize", () => {
     graficarVisitas();
@@ -1576,54 +1541,54 @@ document.addEventListener("DOMContentLoaded", () => {
     }
   });
 
-  $(document).on("click", "#btnUsarQR", function () {
-    const usuario = $("#txtUsuario").val();
-    if (!usuario) {
-      alert("Primero escribe tu usuario");
-      return;
-    }
+  // $(document).on("click", "#btnUsarQR", function () {
+  //   const usuario = $("#txtUsuario").val();
+  //   if (!usuario) {
+  //     alert("Primero escribe tu usuario");
+  //     return;
+  //   }
 
-    $("#modalQR").modal("show");
-    $("#divQR").html("<p>Cargando QR...</p>");
+  //   $("#modalQR").modal("show");
+  //   $("#divQR").html("<p>Cargando QR...</p>");
 
-    $.get(`${API}?qrIniciarSesion&usuario=${encodeURIComponent(usuario)}`, function (resp) {
-      if (typeof resp === "string") resp = JSON.parse(resp);
+  //   $.get(`${API}?qrIniciarSesion&usuario=${encodeURIComponent(usuario)}`, function (resp) {
+  //     if (typeof resp === "string") resp = JSON.parse(resp);
 
-      if (resp.error) {
-        $("#divQR").html(`<p>${resp.error}</p>`);
-        return;
-      }
+  //     if (resp.error) {
+  //       $("#divQR").html(`<p>${resp.error}</p>`);
+  //       return;
+  //     }
 
-      $("#divQR").html(`
-        <img src="${resp.src}" class="img-fluid" alt="Código QR">
-        <input type="hidden" id="QRToken" value="${resp.token}">
-      `);
+  //     $("#divQR").html(`
+  //       <img src="${resp.src}" class="img-fluid" alt="Código QR">
+  //       <input type="hidden" id="QRToken" value="${resp.token}">
+  //     `);
 
-      const qrToken = resp.token;
+  //     const qrToken = resp.token;
 
-      detenerPollingQR();
+  //     detenerPollingQR();
 
-      qrPollingInterval = setInterval(() => {
-        $.post(`${API}?iniciarSesion&QRToken=${qrToken}`, function (jwt) {
-          if (typeof jwt === "string") jwt = jwt.trim();
-          if (jwt && jwt !== "error" && jwt.startsWith("eyJ")) {
-            detenerPollingQR();
-            localStorage.setItem("jwt", jwt);
-            window.location = "../index.html";
-          }
-        });
-      }, 3000);
+  //     qrPollingInterval = setInterval(() => {
+  //       $.post(`${API}?iniciarSesion&QRToken=${qrToken}`, function (jwt) {
+  //         if (typeof jwt === "string") jwt = jwt.trim();
+  //         if (jwt && jwt !== "error" && jwt.startsWith("eyJ")) {
+  //           detenerPollingQR();
+  //           localStorage.setItem("jwt", jwt);
+  //           window.location = "../index.html";
+  //         }
+  //       });
+  //     }, 3000);
 
-      qrPollingTimeout = setTimeout(() => {
-        detenerPollingQR();
-        $("#divQR").append("<p class='text-muted mt-2'>El código expiró, vuelve a intentarlo.</p>");
-      }, 120000);
-    });
-  });
+  //     qrPollingTimeout = setTimeout(() => {
+  //       detenerPollingQR();
+  //       $("#divQR").append("<p class='text-muted mt-2'>El código expiró, vuelve a intentarlo.</p>");
+  //     }, 120000);
+  //   });
+  // });
 
-  $("#modalQR").on("hidden.bs.modal", function () {
-    detenerPollingQR();
-  });
+  // $("#modalQR").on("hidden.bs.modal", function () {
+  //   detenerPollingQR();
+  // });
 
   //Manejo de cajas
   document.getElementById("btnUsarPIN").addEventListener("click", () => {

@@ -16,7 +16,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
 
             const respuesta = await fetch(
-                "https://tent-assess-roller-actually.trycloudflare.com/test/api/index.php?accion=buscar_estudiantes&nombre=" + encodeURIComponent(nombre)
+                "https://bulk-carries-given-senior.trycloudflare.com/test/api/index.php?accion=buscar_estudiantes&nombre=" + encodeURIComponent(nombre)
 
             );
 
