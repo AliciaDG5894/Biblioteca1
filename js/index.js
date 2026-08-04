@@ -116,9 +116,19 @@ let fbOnPushNotification = function (mensaje) {
 };
 
 function enviarToken(token) {
+    const jwt = localStorage.getItem("jwt");
+
+    if (!jwt || !jwt.startsWith("eyJ")) {
+        console.log("Aún no hay sesión, el token de Firebase se enviará después del login.");
+        return; 
+    }
+
     fetch(`${API}?accion=insertarToken`, {
         method: "POST",
-        headers: { "Content-Type": "application/json" },
+        headers: { 
+            "Content-Type": "application/json",
+            "Authorization": "Bearer " + jwt
+         },
         body: JSON.stringify({ fbtoken: token })
     })
     .then(res => res.json())

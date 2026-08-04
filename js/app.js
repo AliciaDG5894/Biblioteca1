@@ -1,5 +1,5 @@
-const API = "https://print-mustang-lewis-median.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://print-mustang-lewis-median.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://transport-situations-carmen-midi.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://transport-situations-carmen-midi.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");
@@ -45,50 +45,31 @@ function fetchConAuth(url, opciones = {}) {
         });
 }
 
-let modalErrorLogin = null;
-if (document.getElementById("exampleModal")) {
-    modalErrorLogin = new bootstrap.Modal("#exampleModal", {
-        keyboard: false
-    });
+function obtenerNombreUsuario() {
+    const jwt = localStorage.getItem("jwt");
+    if (!jwt) return null;
+
+    try {
+        const payloadBase64 = jwt.split(".")[1];
+        const payload = JSON.parse(atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/")));
+        const partes = payload.sub.split("|");
+        return partes[1];
+    } catch (error) {
+        return null;
+    }
 }
 
-$("#frmLogin").submit(function (event) {
-    event.preventDefault()
-    $.post(`${API}?iniciarSesion`, $(this).serialize(), function (respuesta) {
+function mostrarToast(mensaje, tipo = "info") {
+    const $toast = $("#toastPIN");
 
-      respuesta = respuesta.trim();
+    $toast.removeClass("bg-success bg-danger bg-info text-white");
+    if (tipo === "success") $toast.addClass("bg-success text-white");
+    else if (tipo === "error") $toast.addClass("bg-danger text-white");
+    else $toast.addClass("bg-info text-white");
 
-      if (respuesta === "error") {
-          if (modalErrorLogin) modalErrorLogin.show();
-          return;
-      }
-
-      if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
-          console.error("Respuesta inválida:", respuesta);
-          alert("No fue posible iniciar sesión. El servidor devolvió un error.");
-          return;
-      }
-
-      localStorage.setItem("jwt", respuesta);
-      window.location = "../index.html";
-
-        // if (respuesta === "error") {
-        //     if (modalErrorLogin) modalErrorLogin.show();
-        //     return;
-        // }
-
-        // // Validar que realmente sea un JWT
-        // if (typeof respuesta !== "string" || !respuesta.startsWith("eyJ")) {
-        //     console.error("Respuesta inválida:", respuesta);
-        //     alert("No fue posible iniciar sesión. El servidor devolvió un error.");
-        //     return;
-        // }
-
-        // localStorage.setItem("jwt", respuesta);
-        // window.location = "../index.html";
-    });
-    
-})
+    $("#toastPINBody").text(mensaje);
+    $toast.toast("show");
+}
 
 function manejarPIN() {
   let pin = document.getElementById("inputPIN").value;
@@ -100,10 +81,17 @@ function manejarPIN() {
     })
     .then(res => res.json())
     .then(data => {
-      alert(data.message);
+      mostrarToast(data.message, data.success ? "success" : "error");
       $('#modalPIN').modal('hide');
+      // alert(data.message);
+      // $('#modalPIN').modal('hide');
     })
-    .catch(err => console.error("Error eliminando PIN:", err));
+    // .catch(err => console.error("Error eliminando PIN:", err));
+    // return;
+    .catch(err => {
+      console.error("Error eliminando PIN:", err);
+      mostrarToast("Ocurrió un error al eliminar el PIN.", "error");
+    });
     return;
   }
 
@@ -121,25 +109,18 @@ function manejarPIN() {
   })
   .then(res => res.json())
   .then(data => {
-    alert(data.message);
+    mostrarToast(data.message, data.success ? "success" : "error");
     $('#modalPIN').modal('hide');
+    // alert(data.message);
+    // $('#modalPIN').modal('hide');
   })
-  .catch(err => console.error("Error guardando PIN:", err));
+  .catch(err => {
+    console.error("Error guardando PIN:", err);
+    mostrarToast("Ocurrió un error al guardar el PIN.", "error");
+  });
+  // .catch(err => console.error("Error guardando PIN:", err));
 }
 
-function obtenerNombreUsuario() {
-    const jwt = localStorage.getItem("jwt");
-    if (!jwt) return null;
-
-    try {
-        const payloadBase64 = jwt.split(".")[1];
-        const payload = JSON.parse(atob(payloadBase64.replace(/-/g, "+").replace(/_/g, "/")));
-        const partes = payload.sub.split("|");
-        return partes[1];
-    } catch (error) {
-        return null;
-    }
-}
 
 // Cargar plantillas sidebar y topbar
 function cargarPartials() {
@@ -956,9 +937,10 @@ function buscarPorMatricula() {
 document.addEventListener("DOMContentLoaded", () => {
   const matriculaInput = document.getElementById("matricula");
   if (matriculaInput) {
-    matriculaInput.addEventListener("blur", buscarPorMatricula);
+    matriculaInput.addEventListener("change", buscarPorMatricula);
   }
 });
+
 
 function cargarDatosModificarEstudiante() {
   const params = new URLSearchParams(window.location.search);
@@ -1983,27 +1965,73 @@ function cargarVisitas() {
     .catch(err => console.error("Error cargando historial de prestamos:", err));
 }
 
+// // --- ELIMINAR VISITAS ---
+// function eliminarVisitas(id) {
+//   Swal.fire({
+//     icon: "warning", title: "¿Eliminar visita?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+//     confirmButtonColor: "#4e73df",
+//     cancelButtonColor: "#e53935",
+//     customClass: { popup: 'swal-pequeno' }
+//   }).then((result) => {
+//     if (!result.isConfirmed) return;
+
+//   fetchConAuth(`${API}?accion=eliminar_Visitas`, {
+//     method: "POST",
+//     headers: { "Content-Type": "application/x-www-form-urlencoded" },
+//     body: "Id_entrada_salida=" + encodeURIComponent(id)
+//   })
+//     .then(res => res.json())
+//     .then(data => {
+//       alert(data.message);
+//       cargarVisitas();
+//     })
+//     .catch(err => console.error("Error eliminando visita:", err));
+// }
+//       .then(res => res.json())
+//       .then(data => {
+//         Swal.fire({
+//           icon: data.status === "success" ? "success" : "error",
+//           title: data.status === "success" ? "¡Eliminado!" : "Error",
+//           text: data.message, confirmButtonText: "Aceptar",
+//           confirmButtonColor: "#4e73df",
+//           customClass: { popup: 'swal-pequeno' }
+//         }).then(() => cargarVisitas());
+//       })
+//       .catch(err => console.error("Error eliminando visita:", err));
+//   });
+// }
+
+// window.addEventListener("resize", () => {
+//     graficarVisitas();
+// });
+
 // --- ELIMINAR VISITAS ---
 function eliminarVisitas(id) {
   Swal.fire({
-    icon: "warning", title: "¿Eliminar visita?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
+    icon: "warning",
+    title: "¿Eliminar visita?",
+    text: "Esta acción no se puede deshacer.",
+    showCancelButton: true,
+    confirmButtonText: "Sí, eliminar",
+    cancelButtonText: "Cancelar",
     confirmButtonColor: "#4e73df",
     cancelButtonColor: "#e53935",
     customClass: { popup: 'swal-pequeno' }
   }).then((result) => {
     if (!result.isConfirmed) return;
 
-  fetchConAuth(`${API}?accion=eliminar_Visitas`, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: "Id_entrada_salida=" + encodeURIComponent(id)
-  })
+    fetchConAuth(`${API}?accion=eliminar_Visitas`, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: "Id_entrada_salida=" + encodeURIComponent(id)
+    })
       .then(res => res.json())
       .then(data => {
         Swal.fire({
           icon: data.status === "success" ? "success" : "error",
           title: data.status === "success" ? "¡Eliminado!" : "Error",
-          text: data.message, confirmButtonText: "Aceptar",
+          text: data.message,
+          confirmButtonText: "Aceptar",
           confirmButtonColor: "#4e73df",
           customClass: { popup: 'swal-pequeno' }
         }).then(() => cargarVisitas());
@@ -2012,25 +2040,12 @@ function eliminarVisitas(id) {
   });
 }
 
-let qrPollingInterval = null;
-let qrPollingTimeout  = null;
-
-function detenerPollingQR() {
-    if (qrPollingInterval) {
-      clearInterval(qrPollingInterval);
-      qrPollingInterval = null;
-    }
-    if (qrPollingTimeout) {
-      clearTimeout(qrPollingTimeout);
-      qrPollingTimeout = null;
-    }
-  }
-
 window.addEventListener("resize", () => {
-    graficarVisitas();
+  graficarVisitas();
 });
 
-document.addEventListener("DOMContentLoaded", () => {
+
+document.addEventListener("DOMContentLoaded", () => {  
   cargarPartials();
   if (document.getElementById("dataTableCarreras")) cargarCarreras();
   if (document.getElementById("dataTableServicios")) cargarServicios();
@@ -2046,64 +2061,20 @@ document.addEventListener("DOMContentLoaded", () => {
   if (document.getElementById("divGraficaVisitasServicio")) graficarVisitasServicio();
 
   const btnPIN = document.getElementById("btnPINSeguridad");
-  $(document).on("click", "#btnPINSeguridad", function() {
-    $('#modalPIN').modal('show');
-  });
+    $(document).on("click", "#btnPINSeguridad", function() {
+        $('#modalPIN').modal('show');
+    });
 
   document.addEventListener("click", function(event) {
     if (event.target && event.target.id === "guardarPIN") {
       manejarPIN();
-    }
-  });
-
-  $(document).on("click", "#btnUsarQR", function () {
-    const usuario = $("#txtUsuario").val();
-    if (!usuario) {
-      alert("Primero escribe tu usuario");
-      return;
-    }
-
-    $("#modalQR").modal("show");
-    $("#divQR").html("<p>Cargando QR...</p>");
-
-    $.get(`${API}?qrIniciarSesion&usuario=${encodeURIComponent(usuario)}`, function (resp) {
-      if (typeof resp === "string") resp = JSON.parse(resp);
-
-      if (resp.error) {
-        $("#divQR").html(`<p>${resp.error}</p>`);
-        return;
       }
-
-      $("#divQR").html(`
-        <img src="${resp.src}" class="img-fluid" alt="Código QR">
-        <input type="hidden" id="QRToken" value="${resp.token}">
-      `);
-
-      const qrToken = resp.token;
-
-      detenerPollingQR();
-
-      qrPollingInterval = setInterval(() => {
-        $.post(`${API}?iniciarSesion&QRToken=${qrToken}`, function (jwt) {
-          if (typeof jwt === "string") jwt = jwt.trim();
-          if (jwt && jwt !== "error" && jwt.startsWith("eyJ")) {
-            detenerPollingQR();
-            localStorage.setItem("jwt", jwt);
-            window.location = "../index.html";
-          }
-        });
-      }, 3000);
-
-      qrPollingTimeout = setTimeout(() => {
-        detenerPollingQR();
-        $("#divQR").append("<p class='text-muted mt-2'>El código expiró, vuelve a intentarlo.</p>");
-      }, 120000);
-    });
   });
 
-  $("#modalQR").on("hidden.bs.modal", function () {
-    detenerPollingQR();
-  });
+  const fbToken = localStorage.getItem("FBToken");
+  if (fbToken && typeof enviarToken === "function") {
+      enviarToken(fbToken);
+  }
 
   //Manejo de cajas
   const btnUsarPIN = document.getElementById("btnUsarPIN");
@@ -2127,8 +2098,6 @@ document.addEventListener("DOMContentLoaded", () => {
           document.getElementById("btnUsarPIN").style.display = "block";
       });
   }
-
-
 
   if (document.getElementById("insertarHistorialP")) {
       cargarPrestamosSelect();
