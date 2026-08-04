@@ -1,5 +1,5 @@
-const API = "https://bulk-carries-given-senior.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://bulk-carries-given-senior.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://grade-sox-uploaded-busy.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://grade-sox-uploaded-busy.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");
@@ -404,12 +404,9 @@ function graficarVisitasServicio() {
 
         let shapes = [];
         let annotations = [];
-<<<<<<< HEAD
-        let coloresPorPunto = []; 
-=======
+
         let coloresPorPunto = []; // para el borde del tooltip por color de barra
         const movil = window.innerWidth < 768;
->>>>>>> d2a4f3f66a4e9e84afe01353e40d23b9e6403718
 
         values.forEach(function(valor, index){
 
