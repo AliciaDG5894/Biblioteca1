@@ -1,5 +1,5 @@
-const API = "https://print-mustang-lewis-median.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://print-mustang-lewis-median.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://embedded-growing-realistic-peninsula.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://embedded-growing-realistic-peninsula.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");
@@ -583,18 +583,18 @@ function exportarExcelVisitas() {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Visitas");
 
-        if (window.cordova && cordova.file && cordova.file.externalRootDirectory) {
-            alert("Iniciando exportar en APK...");
+        if (window.cordova && cordova.file) {
+            alert("cordova.file disponible: " + cordova.file.dataDirectory);
             const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
             const blob = new Blob([wbout], { type: 'application/octet-stream' });
-            window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function(dir) {
+            window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
                 dir.getFile("Visitas.xlsx", { create: true }, function(file) {
                     file.createWriter(function(writer) {
                         writer.write(blob);
                         writer.onwriteend = function() {
                             alert("Archivo guardado, abriendo...");
                             cordova.plugins.fileOpener2.open(
-                                cordova.file.externalRootDirectory + "Visitas.xlsx",
+                                cordova.file.dataDirectory + "Visitas.xlsx",
                                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                             );
                         };
@@ -603,7 +603,6 @@ function exportarExcelVisitas() {
                 }, function(e) { alert("Error creando archivo: " + e.toString()); });
             }, function(e) { alert("Error directorio: " + e.toString()); });
         } else {
-            // Browser
             XLSX.writeFile(wb, "Visitas.xlsx");
         }
     } catch(e) {

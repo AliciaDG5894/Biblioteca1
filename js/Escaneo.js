@@ -1,4 +1,4 @@
-const API = "https://print-mustang-lewis-median.trycloudflare.com/test/api/index.php";
+const API = "https://embedded-growing-realistic-peninsula.trycloudflare.com/test/api/index.php";
 
 // Bloquear navegación hacia atrás
 history.pushState(null, null, location.href);
