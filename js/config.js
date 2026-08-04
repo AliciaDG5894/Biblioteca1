@@ -19,14 +19,30 @@ $.get(API + "?sesion", function (sesion) {
  
 })
 
-$(document).on("click", "#btnCerrarSesion", function(event) {
-    if (confirm("¿Está seguro que desea cerrar sesión?")) {
-        localStorage.removeItem("jwt");
-        setTimeout(function() {
-            window.location.href = "../Usuarios/login.html"
-        }, 500)
-    }
-})
+$(document).on("click", "#btnCerrarSesion", function (event) {
+    $('#modalCerrarSesion').modal('show');
+});
+
+$(document).on("click", "#btnConfirmarCerrarSesion", function () {
+    $('#modalCerrarSesion').modal('hide');
+    hacerLogout();
+});
+
+function hacerLogout() {
+    localStorage.removeItem("jwt");
+    setTimeout(function () {
+        window.location.href = "../Usuarios/login.html";
+    }, 500);
+}
+
+// $(document).on("click", "#btnCerrarSesion", function(event) {
+//     if (confirm("¿Está seguro que desea cerrar sesión?")) {
+//         localStorage.removeItem("jwt");
+//         setTimeout(function() {
+//             window.location.href = "../Usuarios/login.html"
+//         }, 500)
+//     }
+// })
 
 // $.get(`${API}?sesion`, function (sesion) {
 //     if (sesion.length) {
