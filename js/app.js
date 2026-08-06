@@ -220,7 +220,7 @@ function graficarGenero() {
             paper_bgcolor: "white",
             plot_bgcolor: "white",
 
-            showlegend: true,
+            showlegend: false,
 
             autosize: true,
             margin: {
@@ -386,7 +386,7 @@ function graficarVisitasServicio() {
         let shapes = [];
         let annotations = [];
 
-        let coloresPorPunto = []; // para el borde del tooltip por color de barra
+        let coloresPorPunto = [];
         const movil = window.innerWidth < 768;
 
         values.forEach(function(valor, index){
