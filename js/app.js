@@ -249,39 +249,6 @@ function graficarGenero() {
     }, "json");
 }
 
-// function obtenerLayout() {
-
-//     const movil = window.innerWidth < 768;
-
-//     return {
-//         autosize: true,
-//         height: movil ? 220 : 300,
-
-//         margin: {
-//             l: movil ? 40 : 55,
-//             r: 10,
-//             t: 20,
-//             b: movil ? 70 : 45
-//         },
-
-//         xaxis: {
-//             tickangle: movil ? -90 : -45,
-//             tickfont: {
-//                 size: movil ? 9 : 12
-//             }
-//         },
-
-//         yaxis: {
-//             title: {
-//                 text: "Cantidad de visitas"
-//             },
-//             tickfont: {
-//                 size: movil ? 9 : 12
-//             }
-//         }
-//     };
-// }
-
 function graficarVisitas() {
     const mes = document.getElementById("filtroMes")?.value || "";
     const anio = document.getElementById("filtroAnio")?.value || "";
@@ -336,7 +303,7 @@ function graficarVisitas() {
                 l: movil ? 40 : 55,
                 r: 25,
                 t: 25,
-                b: movil ? 80 : 45
+                b: movil ? 10 : 45
             },
 
             font: {
@@ -361,7 +328,7 @@ function graficarVisitas() {
                 title: {
                     text: "Cantidad de visitas",
                     font: {
-                        size: movil ? 9 : 12,
+                        size: movil ? 10 : 12,
                         color: "#858796"
                     }
                 },
@@ -386,8 +353,6 @@ function graficarVisitas() {
                 }
             }
         }
-
-        // var layout = obtenerLayout();
 
         Plotly.newPlot("divGraficaVisitas", data, layout, {
             responsive: true,
@@ -420,7 +385,8 @@ function graficarVisitasServicio() {
 
         let shapes = [];
         let annotations = [];
-        let coloresPorPunto = []; // para el borde del tooltip por color de barra
+
+        let coloresPorPunto = [];
         const movil = window.innerWidth < 768;
 
         values.forEach(function(valor, index){
