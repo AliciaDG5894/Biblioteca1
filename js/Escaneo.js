@@ -1,4 +1,4 @@
-const API = "https://grade-sox-uploaded-busy.trycloudflare.com/test/api/index.php";
+const API = "https://nuclear-runner-has-chubby.trycloudflare.com/test/api/index.php";
 
 // Bloquear navegación hacia atrás
 history.pushState(null, null, location.href);

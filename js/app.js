@@ -1,5 +1,5 @@
-const API = "https://grade-sox-uploaded-busy.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://grade-sox-uploaded-busy.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://nuclear-runner-has-chubby.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://nuclear-runner-has-chubby.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");
