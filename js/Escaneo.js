@@ -1,8 +1,4 @@
-<<<<<<< HEAD
-const API = "https://embedded-growing-realistic-peninsula.trycloudflare.com/test/api/index.php";
-=======
-const API = "https://transport-situations-carmen-midi.trycloudflare.com/test/api/index.php";
->>>>>>> 1e6a6c29983efd547f1eec83d65899ea0f41bbbb
+const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
 
 // Bloquear navegación hacia atrás
 history.pushState(null, null, location.href);
