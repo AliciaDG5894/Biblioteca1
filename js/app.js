@@ -1,5 +1,5 @@
-const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
-const API_ESTUDIANTES = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/Estudiantes.php";
+const API = "https://llc-extension-princeton-northern.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://llc-extension-princeton-northern.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");

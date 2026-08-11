@@ -72,7 +72,7 @@ function fb() {
 function obtenerFBToken() {
     window.FirebasexMessaging.getToken(function (token) {
         if (token) {
-            alert("Token obtenido: " + token.substring(0, 15));
+            // alert("Token obtenido: " + token.substring(0, 15));
             localStorage.setItem("FBToken", token);
             enviarToken(token);
         } else {
@@ -133,7 +133,7 @@ function enviarToken(token) {
     })
     .then(res => res.json())
     .then(data => {
-        alert("Respuesta insertarToken: " + JSON.stringify(data));
+        // alert("Respuesta insertarToken: " + JSON.stringify(data));
         console.log("Token guardado en backend:", data);
     })
     .catch(err => {
