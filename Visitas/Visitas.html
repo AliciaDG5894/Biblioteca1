@@ -47,15 +47,27 @@
                 <div class="container-fluid">
 
                     <!-- Page Heading -->
-                    <div class="d-sm-flex align-items-center justify-content-between mb-4">
-                        <h1 class="h3 mb-2 text-gray-800">Registros</h1>
-                        <div class="d-flex gap-2">
-                            <button onclick="exportarExcelVisitas()" class="btn btn-sm btn-success">
-                                <i class="fas fa-file-excel"></i> Excel
-                            </button>
-                            <button onclick="exportarPDFVisitas()" class="btn btn-sm btn-danger">
-                                <i class="fas fa-file-pdf"></i> PDF
-                            </button>
+                    <div class="container-fluid">
+                        <div class="row mb-4 align-items-center">
+                            <div class="col-8 col-sm-10 col-md-10 col-lg-10 col-xl-10">
+                                <div class="col">
+                                    <h1 class="h3 mb-2 text-gray-800">Registros</h1>
+                                </div>
+                            </div>
+                            <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                                <div class="col-auto d-flex gap-2">
+                                    <button id="btnEliminarSeleccionadosVis" class="btn btn-danger btn-sm d-none"
+                                        onclick="eliminarVisitasSeleccionadas()">
+                                        <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Eliminar</span>
+                                    </button>
+                                    <button onclick="exportarExcelVisitas()" class="btn btn-sm btn-success">
+                                        <i class="fas fa-file-excel"></i> Excel
+                                    </button>
+                                    <button onclick="exportarPDFVisitas()" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-file-pdf"></i> PDF
+                                    </button>
+                                </div>
+                            </div>
                         </div>
                     </div>
 
@@ -71,13 +83,14 @@
                                     width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="checkTodos" onclick="seleccionarTodosVis(this)"></th>
                                             <th>ID</th>
                                             <th>Estudiante</th>
                                             <th>Servicio</th>
                                             <th>Fecha</th>
                                             <th>Hora de entrada</th>
                                             <th>Hora de salida</th>
-                                            <th>Eliminar</th>
+                                            <!-- <th>Eliminar</th> -->
                                         </tr>
                                     </thead>
                                     <tbody id="tablaVisitas"></tbody>

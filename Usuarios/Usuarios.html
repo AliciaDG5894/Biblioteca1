@@ -45,7 +45,7 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
+    
                     <!-- Page Heading -->
                     <div class="container-fluid">
                         <div class="row mb-4 align-items-center">
@@ -55,13 +55,15 @@
                                 </div>
                             </div>
                             <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
-                                <div class="col-auto">
-                                    <div class="mb-1">
-                                        <a href="InsertarUsuarios.html" class="botonAgregar">
-                                            <i class="fas fa-plus"></i>
-                                            <span class="d-none d-md-inline">Agregar</span>
-                                        </a>
-                                    </div>
+                                <div class="col-auto d-flex gap-2">
+                                    <button id="btnEliminarSeleccionadosUsr" class="btn btn-danger btn-sm d-none"
+                                        onclick="eliminarUsuariosSeleccionados()">
+                                        <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Eliminar</span>
+                                    </button>
+                                    <a href="InsertarUsuarios.html" class="botonAgregar">
+                                        <i class="fas fa-plus"></i>
+                                        <span class="d-none d-md-inline">Agregar</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -77,13 +79,14 @@
                                 <table class="table table-bordered" id="dataTableUsuarios" name="dataTableUsuarios" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="checkTodos" onclick="seleccionarTodosUsr(this)"></th>
                                             <th>ID</th>
                                             <th>Nombre</th>
                                             <th>Contraseña</th>
                                             <th>Pin</th>
                                             <th>Token</th>
                                             <th>Modificar</th>
-                                            <th>Eliminar</th>
+                                            <!-- <th>Eliminar</th> -->
                                         </tr>
                                     </thead>
                                     <tbody id="tablaUsuarios"></tbody>

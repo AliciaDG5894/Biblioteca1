@@ -1,4 +1,4 @@
-const API = "https://sure-entirely-believes-recreational.trycloudflare.com/test/api/index.php";
+const API = "https://text-searches-alert-urgent.trycloudflare.com/test/api/index.php";
 
 let modalErrorLogin = null;
 if (document.getElementById("exampleModal")) {

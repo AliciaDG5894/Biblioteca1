@@ -30,7 +30,7 @@ $("#insertarEstudiante").validate({
     messages: {
         matricula: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 8 caracteres",
+            minlength: "Por favor, ingrese 8 caracteres",
             maxlength: "Por favor, no ingrese más de 8 caracteres",
             numeros: "Por favor, ingresa solo números",
             noSpaces: "Por favor, no ingrese espacios",
@@ -54,14 +54,14 @@ $("#insertarEstudiante").validate({
         },
         seccion: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 1 caracter",
+            minlength: "Por favor, ingrese solo 1 caracter",
             maxlength: "Por favor, no ingrese más de 1 caracter",
             letters: "Por favor, ingrese solo letras",
             noSpaces: "Por favor, no ingrese espacios"
         },
         genero: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 1 caracter",
+            minlength: "Por favor, ingrese solo 1 caracter",
             maxlength: "Por favor, no ingrese más de 1 caracter",
             letters: "Por favor, ingrese solo letras",
             noSpaces: "Por favor, no ingrese espacios"

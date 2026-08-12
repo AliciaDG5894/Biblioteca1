@@ -1,16 +1,16 @@
 document.addEventListener("DOMContentLoaded", () => {
 
-    const txtNombre = document.getElementById("nombre");
+    const txtMatricula = document.getElementById("matricula");
     const sugerencias = document.getElementById("sugerencias");
     const idEstudiante = document.getElementById("id_estudiante");
 
-    if (!txtNombre) return;
+    if (!txtMatricula) return;
 
-    txtNombre.addEventListener("keyup", async () => {
+    txtMatricula.addEventListener("keyup", async () => {
 
-        const nombre = txtNombre.value.trim();
+        const matricula = txtMatricula.value.trim();
 
-        if (nombre.length < 2) {
+        if (matricula.length < 2) {
             sugerencias.innerHTML = "";
             return;
         }
@@ -18,7 +18,7 @@ document.addEventListener("DOMContentLoaded", () => {
         try {
             const jwt = localStorage.getItem("jwt");
             const respuesta = await fetch(
-                `${API}?accion=buscar_estudiantes&nombre=` + encodeURIComponent(nombre),
+                `${API}?accion=buscar_estudiantes&matricula=` + encodeURIComponent(matricula),
                 {
                     headers: {
                         Authorization: `Bearer ${jwt || ""}`
@@ -39,10 +39,12 @@ document.addEventListener("DOMContentLoaded", () => {
                     "list-group-item-action"
                 );
 
-                item.textContent = estudiante.Nombre;
+                item.textContent = estudiante.Matricula;
 
                 item.addEventListener("click", () => {
-                    txtNombre.value = estudiante.Nombre;
+                    txtMatricula.value = estudiante.Matricula;
+
+                    $(txtMatricula).valid();
                     
                     if (idEstudiante) idEstudiante.value = estudiante.Id_estudiante;
                     
