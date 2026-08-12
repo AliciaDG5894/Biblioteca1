@@ -1201,7 +1201,7 @@ function cargarDatosModificarPrestamo() {
       .then(data => {
         document.getElementById("id_prestamo").value = data.Id_prestamo;
         document.getElementById("id_estudiante_real").value = data.Estudiante;
-        document.getElementById("matricula").value = data.Matrícula;
+        document.getElementById("matricula").value = data.Matricula;
         document.getElementById("fecha_prestamo").value = data.Fecha_prestamo;
         document.getElementById("fecha_entrega").value = data.Fecha_entrega;
         document.getElementById("fecha_devolucion").value =
