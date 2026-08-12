@@ -1,5 +1,5 @@
-const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
-const API_ESTUDIANTES = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/Estudiantes.php";
+const API = "https://sure-entirely-believes-recreational.trycloudflare.com/test/api/index.php";
+const API_ESTUDIANTES = "https://sure-entirely-believes-recreational.trycloudflare.com/test/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");
@@ -1026,21 +1026,6 @@ function cargarPrestamos() {
       ];
 
     });
-      // const filas = data.map(dato => [
-      //   dato.Id_prestamo,
-      //   dato.Estudiante,
-      //   dato.Fecha_prestamo,
-      //   dato.Fecha_entrega,
-      //   dato.Fecha_devolucion,
-      //   dato.Estado,
-      //   `<a href="ModificarPrestamos.html?id=${dato.Id_prestamo}">
-      //      <i class="fas fa-edit"></i> <span class='d-none d-md-inline'>Modificar
-      //    </a>`,
-      //   `<a href="#" onclick="eliminarPrestamo(${dato.Id_prestamo}, this)">
-      //      <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar
-      //    </a>`
-      // ]);
-
       if ($.fn.DataTable.isDataTable('#dataTablePrest')) {
         let tabla = $('#dataTablePrest').DataTable();
         tabla.clear();
