@@ -53,17 +53,23 @@
                     <!-- Page Heading -->
                     <div class="container-fluid">
                         <div class="row mb-4 align-items-center">
-                            <div class="col-8 col-sm-10 col-md-10 col-lg-10 col-x1-10 col-xx1-10">
+                            <div class="col-8 col-sm-10 col-md-10 col-lg-10 col-xl-10">
                                 <div class="col">
                                     <h1 class="h3 mb-2 text-gray-800">Registros</h1>
                                 </div>
                             </div>
-                            <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-x1-2 col-xx1-2">
-                                <div class="col-auto">
+                            <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                                <div class="col-auto d-flex gap-2">
+                                    <button id="btnEliminarSeleccionadosLib" class="btn btn-danger btn-sm d-none"
+                                        onclick="eliminarLibrosSeleccionados()">
+                                        <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Eliminar</span>
+                                    </button>
+                                    <div class="col-auto">
                                     <div class="mb-1">
                                         <a href="InsertarLibros.html" class="botonAgregar"><i
                                                 class="fas fa-plus "></i><span class="d-none d-md-inline">Agregar</a>
                                     </div>
+                                </div>
                                 </div>
                             </div>
                         </div>
@@ -79,6 +85,7 @@
                                 <table class="table table-bordered" id="dataTableLibros" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="checkTodos" onclick="seleccionarTodosLib(this)"></th>
                                             <th>ID</th>
                                             <th>Título</th>
                                             <th>Fecha edición</th>
@@ -91,7 +98,7 @@
                                             <th>Área</th>
                                             <th>Cantidad</th>
                                             <th>Modificar</th>
-                                            <th>Eliminar</th>
+                                            <!-- <th>Eliminar</th> -->
                                         </tr>
                                     </thead>
                                     <tbody id="tablaLibros"></tbody>

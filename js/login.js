@@ -1,4 +1,4 @@
-const API = "https://llc-extension-princeton-northern.trycloudflare.com/test/api/index.php";
+const API = "https://requiring-shorts-lung-automotive.trycloudflare.com/test/api/index.php";
 
 let modalErrorLogin = null;
 if (document.getElementById("exampleModal")) {

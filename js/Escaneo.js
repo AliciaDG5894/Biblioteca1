@@ -1,4 +1,4 @@
-const API = "https://llc-extension-princeton-northern.trycloudflare.com/test/api/index.php";
+const API = "https://requiring-shorts-lung-automotive.trycloudflare.com/test/api/index.php";
 
 // Bloquear navegación hacia atrás
 history.pushState(null, null, location.href);
