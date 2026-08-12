@@ -30,7 +30,7 @@ $("#modificarEst").validate({
     messages: {
         matricula: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 8 caracteres",
+            minlength: "Por favor, ingrese 8 caracteres",
             maxlength: "Por favor, no ingrese más de 8 caracteres",
             numeros: "Por favor, ingresa solo números",
             noSpaces: "Por favor, no ingrese espacios",
