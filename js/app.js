@@ -1,6 +1,7 @@
 const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
 const API_ESTUDIANTES = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/Estudiantes.php";
 
+
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");
 
@@ -249,39 +250,6 @@ function graficarGenero() {
     }, "json");
 }
 
-// function obtenerLayout() {
-
-//     const movil = window.innerWidth < 768;
-
-//     return {
-//         autosize: true,
-//         height: movil ? 220 : 300,
-
-//         margin: {
-//             l: movil ? 40 : 55,
-//             r: 10,
-//             t: 20,
-//             b: movil ? 70 : 45
-//         },
-
-//         xaxis: {
-//             tickangle: movil ? -90 : -45,
-//             tickfont: {
-//                 size: movil ? 9 : 12
-//             }
-//         },
-
-//         yaxis: {
-//             title: {
-//                 text: "Cantidad de visitas"
-//             },
-//             tickfont: {
-//                 size: movil ? 9 : 12
-//             }
-//         }
-//     };
-// }
-
 function graficarVisitas() {
     const mes = document.getElementById("filtroMes")?.value || "";
     const anio = document.getElementById("filtroAnio")?.value || "";
@@ -336,7 +304,7 @@ function graficarVisitas() {
                 l: movil ? 40 : 55,
                 r: 25,
                 t: 25,
-                b: movil ? 80 : 45
+                b: movil ? 10 : 45
             },
 
             font: {
@@ -361,7 +329,7 @@ function graficarVisitas() {
                 title: {
                     text: "Cantidad de visitas",
                     font: {
-                        size: movil ? 9 : 12,
+                        size: movil ? 10 : 12,
                         color: "#858796"
                     }
                 },
@@ -386,8 +354,6 @@ function graficarVisitas() {
                 }
             }
         }
-
-        // var layout = obtenerLayout();
 
         Plotly.newPlot("divGraficaVisitas", data, layout, {
             responsive: true,
@@ -420,7 +386,8 @@ function graficarVisitasServicio() {
 
         let shapes = [];
         let annotations = [];
-        let coloresPorPunto = []; // para el borde del tooltip por color de barra
+
+        let coloresPorPunto = [];
         const movil = window.innerWidth < 768;
 
         values.forEach(function(valor, index){
@@ -564,18 +531,18 @@ function exportarExcelVisitas() {
         const wb = XLSX.utils.book_new();
         XLSX.utils.book_append_sheet(wb, ws, "Visitas");
 
-        if (window.cordova && cordova.file && cordova.file.externalRootDirectory) {
-            alert("Iniciando exportar en APK...");
+        if (window.cordova && cordova.file) {
+            alert("cordova.file disponible: " + cordova.file.dataDirectory);
             const wbout = XLSX.write(wb, { bookType: 'xlsx', type: 'array' });
             const blob = new Blob([wbout], { type: 'application/octet-stream' });
-            window.resolveLocalFileSystemURL(cordova.file.externalRootDirectory, function(dir) {
+            window.resolveLocalFileSystemURL(cordova.file.dataDirectory, function(dir) {
                 dir.getFile("Visitas.xlsx", { create: true }, function(file) {
                     file.createWriter(function(writer) {
                         writer.write(blob);
                         writer.onwriteend = function() {
                             alert("Archivo guardado, abriendo...");
                             cordova.plugins.fileOpener2.open(
-                                cordova.file.externalRootDirectory + "Visitas.xlsx",
+                                cordova.file.dataDirectory + "Visitas.xlsx",
                                 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet'
                             );
                         };
@@ -584,7 +551,6 @@ function exportarExcelVisitas() {
                 }, function(e) { alert("Error creando archivo: " + e.toString()); });
             }, function(e) { alert("Error directorio: " + e.toString()); });
         } else {
-            // Browser
             XLSX.writeFile(wb, "Visitas.xlsx");
         }
     } catch(e) {
@@ -821,6 +787,7 @@ function cargarEstudiantes() {
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
+        `<input type="checkbox" class="checkEst" value="${dato.Id_estudiante}" onchange="actualizarBotonEliminarEst()">`,
         dato.Id_estudiante,
         dato.Matricula,
         dato.Nombre,
@@ -831,10 +798,11 @@ function cargarEstudiantes() {
         dato.Contacto,
         `<a href="ModificarEstudiantes.html?id=${dato.Id_estudiante}">
            <i class="fas fa-edit"></i> <span class='d-none d-md-inline'>Modificar
-         </a>`,
-        `<a href="#" onclick="eliminarEstudiante(${dato.Id_estudiante}, this)">
-           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar
          </a>`
+        // ,
+        // `<a href="#" onclick="eliminarEstudiante(${dato.Id_estudiante}, this)">
+        //    <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar
+        //  </a>`
       ]);
 
       if ($.fn.DataTable.isDataTable('#dataTableEst')) {
@@ -845,6 +813,7 @@ function cargarEstudiantes() {
         $('#dataTableEst').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosEst(this)">' },
             { title: 'ID' },
             { title: 'Matrícula' },
             { title: 'Nombre' },
@@ -853,8 +822,9 @@ function cargarEstudiantes() {
             { title: 'Género' },
             { title: 'Carrera' },
             { title: 'Contacto' },
-            { title: 'Modificar' },
-            { title: 'Eliminar' }
+            { title: 'Modificar' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -936,10 +906,53 @@ function buscarPorMatricula() {
 
 document.addEventListener("DOMContentLoaded", () => {
   const matriculaInput = document.getElementById("matricula");
-  if (matriculaInput) {
+  const campoNombre = document.getElementById("nombre");
+
+  // Solo enganchamos este listener si estamos en una página que
+  // realmente tiene el campo "nombre" (formulario de estudiantes).
+  // Así evitamos que se dispare en el formulario de préstamos.
+  if (matriculaInput && campoNombre) {
     matriculaInput.addEventListener("change", buscarPorMatricula);
   }
 });
+
+// function buscarPorMatricula() {
+//   let matricula = document.getElementById("matricula").value;
+
+//   if (matricula) {
+//     fetchConAuth(`${API_ESTUDIANTES}?accion=buscarMatricula`, {
+//       method: "POST",
+//       headers: { "Content-Type": "application/x-www-form-urlencoded" },
+//       body: "matricula=" + encodeURIComponent(matricula)
+//     })
+//       .then(res => res.json())
+//       .then(data => {
+//         console.log("JSON parseado:", data);
+
+//         if (Array.isArray(data) && data.length >= 2) {
+//           const datosPersonales = data[0];
+//           const datosAcademicos = data[1];
+
+//           document.getElementById("nombre").value = datosPersonales.nombreCompleto || "";
+//           document.getElementById("genero").value = datosPersonales.genero || "";
+//           document.getElementById("grado").value = datosAcademicos.grado || "";
+//           document.getElementById("seccion").value = datosAcademicos.seccion || "";
+//           document.getElementById("carrera").value = datosAcademicos.carrera || "";
+//           document.getElementById("contacto").value = "";
+//         } else {
+//           alert("No se encontraron datos para esa matrícula");
+//         }
+//       })
+//       .catch(err => console.error("Error buscando matrícula:", err));
+//   }
+// }
+
+// document.addEventListener("DOMContentLoaded", () => {
+//   const matriculaInput = document.getElementById("matricula");
+//   if (matriculaInput) {
+//     matriculaInput.addEventListener("change", buscarPorMatricula);
+//   }
+// });
 
 
 function cargarDatosModificarEstudiante() {
@@ -1024,6 +1037,58 @@ function eliminarEstudiante(id) {
   });
 }
 
+function actualizarBotonEliminarEst() {
+    const seleccionados = document.querySelectorAll('.checkEst:checked').length;
+    const btn = document.getElementById('btnEliminarSeleccionados');
+    if (btn) {
+        btn.classList.toggle('d-none', seleccionados === 0);
+    }
+}
+
+function seleccionarTodosEst(checkbox) {
+    document.querySelectorAll('.checkEst').forEach(cb => {
+        cb.checked = checkbox.checked;
+    });
+    actualizarBotonEliminarEst();
+}
+
+function eliminarEstudiantesSeleccionados() {
+    const ids = [...document.querySelectorAll('.checkEst:checked')].map(cb => cb.value);
+    if (ids.length === 0) return;
+
+    Swal.fire({
+        icon: "warning",
+        title: `¿Eliminar ${ids.length} estudiante(s)?`,
+        text: "Esta acción no se puede deshacer.",
+        showCancelButton: true,
+        confirmButtonText: "Sí, eliminar",
+        cancelButtonText: "Cancelar",
+        confirmButtonColor: "#4e73df",
+        cancelButtonColor: "#e53935",
+        customClass: { popup: 'swal-pequeno' }
+    }).then((result) => {
+        if (!result.isConfirmed) return;
+
+        fetchConAuth(`${API_ESTUDIANTES}?accion=eliminar_varios`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({ ids })
+        })
+        .then(res => res.json())
+        .then(data => {
+            Swal.fire({
+                icon: data.status === "success" ? "success" : "error",
+                title: data.status === "success" ? "¡Eliminados!" : "Error",
+                text: data.message,
+                confirmButtonText: "Aceptar",
+                confirmButtonColor: "#4e73df",
+                customClass: { popup: 'swal-pequeno' }
+            }).then(() => cargarEstudiantes());
+        })
+        .catch(err => console.error("Error eliminando estudiantes:", err));
+    });
+}
+
 // PRESTAMOS
 function cargarPrestamos() {
   fetchConAuth(`${API}?accion=prestamos`)
@@ -1043,6 +1108,7 @@ function cargarPrestamos() {
           break;
       }
       return [
+        `<input type="checkbox" class="checkPrest" value="${dato.Id_prestamo}" onchange="actualizarBotonEliminarPrest()">`,
         dato.Id_prestamo,
         dato.Estudiante,
         dato.Fecha_prestamo,
@@ -1052,29 +1118,15 @@ function cargarPrestamos() {
         `<a href="ModificarPrestamos.html?id=${dato.Id_prestamo}">
             <i class="fas fa-edit"></i>
             <span class='d-none d-md-inline'>Modificar</span>
-        </a>`,
-        `<a href="#" onclick="eliminarPrestamo(${dato.Id_prestamo})">
-            <i class="fas fa-trash"></i>
-            <span class='d-none d-md-inline'>Eliminar</span>
         </a>`
+        // ,
+        // `<a href="#" onclick="eliminarPrestamo(${dato.Id_prestamo})">
+        //     <i class="fas fa-trash"></i>
+        //     <span class='d-none d-md-inline'>Eliminar</span>
+        // </a>`
       ];
 
     });
-      // const filas = data.map(dato => [
-      //   dato.Id_prestamo,
-      //   dato.Estudiante,
-      //   dato.Fecha_prestamo,
-      //   dato.Fecha_entrega,
-      //   dato.Fecha_devolucion,
-      //   dato.Estado,
-      //   `<a href="ModificarPrestamos.html?id=${dato.Id_prestamo}">
-      //      <i class="fas fa-edit"></i> <span class='d-none d-md-inline'>Modificar
-      //    </a>`,
-      //   `<a href="#" onclick="eliminarPrestamo(${dato.Id_prestamo}, this)">
-      //      <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar
-      //    </a>`
-      // ]);
-
       if ($.fn.DataTable.isDataTable('#dataTablePrest')) {
         let tabla = $('#dataTablePrest').DataTable();
         tabla.clear();
@@ -1083,14 +1135,16 @@ function cargarPrestamos() {
         $('#dataTablePrest').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosPrest(this)">' },
             { title: 'ID' },
             { title: 'Estudiante' },
             { title: 'Fecha de Préstamo' },
             { title: 'Fecha de Entrega' },
             { title: 'Fecha de Devolución' },
             { title: 'Estado' },
-            { title: 'Modificar' },
-            { title: 'Eliminar' }
+            { title: 'Modificar' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -1148,7 +1202,7 @@ function cargarDatosModificarPrestamo() {
       .then(data => {
         document.getElementById("id_prestamo").value = data.Id_prestamo;
         document.getElementById("id_estudiante_real").value = data.Estudiante;
-        document.getElementById("nombre").value = data.Nombre;
+        document.getElementById("matricula").value = data.Matricula;
         document.getElementById("fecha_prestamo").value = data.Fecha_prestamo;
         document.getElementById("fecha_entrega").value = data.Fecha_entrega;
         document.getElementById("fecha_devolucion").value =
@@ -1221,20 +1275,41 @@ function eliminarPrestamo(id_prestamo) {
   });
 }
 
+//  ELIMINAR VARIOS - PRÉSTAMOS 
+function actualizarBotonEliminarPrest() {
+    const btn = document.getElementById('btnEliminarSeleccionadosPrest');
+    if (btn) btn.classList.toggle('d-none', document.querySelectorAll('.checkPrest:checked').length === 0);
+}
+function seleccionarTodosPrest(checkbox) {
+    document.querySelectorAll('.checkPrest').forEach(cb => cb.checked = checkbox.checked);
+    actualizarBotonEliminarPrest();
+}
+function eliminarPrestamosSeleccionados() {
+    const ids = [...document.querySelectorAll('.checkPrest:checked')].map(cb => cb.value);
+    if (!ids.length) return;
+    Swal.fire({ icon:"warning", title:`¿Eliminar ${ids.length} préstamo(s)?`, text:"También se eliminarán sus artículos y reportes de daños.", showCancelButton:true, confirmButtonText:"Sí, eliminar", cancelButtonText:"Cancelar", confirmButtonColor:"#4e73df", cancelButtonColor:"#e53935", customClass:{popup:'swal-pequeno'} })
+    .then(r => { if (!r.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_varios_prestamos`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ids}) })
+        .then(res => res.json()).then(data => { Swal.fire({ icon:data.status==="success"?"success":"error", title:data.status==="success"?"¡Eliminados!":"Error", text:data.message, confirmButtonText:"Aceptar", confirmButtonColor:"#4e73df", customClass:{popup:'swal-pequeno'} }).then(() => cargarPrestamos()); });
+    });
+}
+
 // SERVICIOS
 function cargarServicios() {
   fetchConAuth(`${API}?accion=listar_servicios`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
+        `<input type="checkbox" class="checkSrv" value="${dato.Id_servicio}" onchange="actualizarBotonEliminarSrv()">`,
         dato.Id_servicio,
         dato.Nombre,
         `<a href="ModificarServicio.html?id=${dato.Id_servicio}">
            <i class="fas fa-edit"></i><span class='d-none d-md-inline'> Modificar</span>
-         </a>`,
-        `<a href="#" onclick="eliminarServicio(${dato.Id_servicio}, this)">
-           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
          </a>`
+        //  ,
+        // `<a href="#" onclick="eliminarServicio(${dato.Id_servicio}, this)">
+        //    <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+        //  </a>`
       ]);
  
       if ($.fn.DataTable.isDataTable('#dataTableServicios')) {
@@ -1245,10 +1320,12 @@ function cargarServicios() {
         $('#dataTableServicios').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosSrv(this)">' },
             { title: 'ID' },
             { title: 'Nombre' },
-            { title: 'Modificar' },
-            { title: 'Eliminar' }
+            { title: 'Modificar' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -1333,12 +1410,32 @@ function eliminarServicio(id) {
   });
 }
 
+//  ELIMINAR VARIOS - SERVICIOS 
+function actualizarBotonEliminarSrv() {
+    const btn = document.getElementById('btnEliminarSeleccionadosSrv');
+    if (btn) btn.classList.toggle('d-none', document.querySelectorAll('.checkSrv:checked').length === 0);
+}
+function seleccionarTodosSrv(checkbox) {
+    document.querySelectorAll('.checkSrv').forEach(cb => cb.checked = checkbox.checked);
+    actualizarBotonEliminarSrv();
+}
+function eliminarServiciosSeleccionados() {
+    const ids = [...document.querySelectorAll('.checkSrv:checked')].map(cb => cb.value);
+    if (!ids.length) return;
+    Swal.fire({ icon:"warning", title:`¿Eliminar ${ids.length} servicio(s)?`, text:"Esta acción no se puede deshacer.", showCancelButton:true, confirmButtonText:"Sí, eliminar", cancelButtonText:"Cancelar", confirmButtonColor:"#4e73df", cancelButtonColor:"#e53935", customClass:{popup:'swal-pequeno'} })
+    .then(r => { if (!r.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_varios_servicios`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ids}) })
+        .then(res => res.json()).then(data => { Swal.fire({ icon:data.status==="success"?"success":"error", title:data.status==="success"?"¡Eliminados!":"Error", text:data.message, confirmButtonText:"Aceptar", confirmButtonColor:"#4e73df", customClass:{popup:'swal-pequeno'} }).then(() => cargarServicios()); });
+    });
+}
+
 // LIBROS
 function cargarLibros() {
   fetchConAuth(`${API}?accion=listar_libro`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
+        `<input type="checkbox" class="checkLib" value="${dato.Id_libro}" onchange="actualizarBotonEliminarLib()">`,
         dato.Id_libro,
         dato.Titulo,               
         dato.Fecha_edicion,            
@@ -1353,10 +1450,11 @@ function cargarLibros() {
 
         `<a href="ModificarLibros.html?id=${dato.Id_libro}">
            <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
-         </a>`,
-        `<a href="#" onclick="eliminarLibro(${dato.Id_libro}, this)">
-           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
          </a>`
+        //  ,
+        // `<a href="#" onclick="eliminarLibro(${dato.Id_libro}, this)">
+        //    <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+        //  </a>`
 
       ]);
  
@@ -1368,6 +1466,7 @@ function cargarLibros() {
         $('#dataTableLibros').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosLib(this)">' },
             { title: 'ID' },
             { title: 'Título' },
             { title: 'Fecha Edición' },
@@ -1379,8 +1478,9 @@ function cargarLibros() {
             { title: 'ISBN' },
             { title: 'Área' },
             { title: 'Cantidad' },
-            { title: 'Modificar' },
-            { title: 'Eliminar' }
+            { title: 'Modificar' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -1486,12 +1586,32 @@ function eliminarLibro(id) {
   });
 }
 
+//  ELIMINAR VARIOS - LIBROS 
+function actualizarBotonEliminarLib() {
+    const btn = document.getElementById('btnEliminarSeleccionadosLib');
+    if (btn) btn.classList.toggle('d-none', document.querySelectorAll('.checkLib:checked').length === 0);
+}
+function seleccionarTodosLib(checkbox) {
+    document.querySelectorAll('.checkLib').forEach(cb => cb.checked = checkbox.checked);
+    actualizarBotonEliminarLib();
+}
+function eliminarLibrosSeleccionados() {
+    const ids = [...document.querySelectorAll('.checkLib:checked')].map(cb => cb.value);
+    if (!ids.length) return;
+    Swal.fire({ icon:"warning", title:`¿Eliminar ${ids.length} libro(s)?`, text:"Esta acción no se puede deshacer.", showCancelButton:true, confirmButtonText:"Sí, eliminar", cancelButtonText:"Cancelar", confirmButtonColor:"#4e73df", cancelButtonColor:"#e53935", customClass:{popup:'swal-pequeno'} })
+    .then(r => { if (!r.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_varios_libros`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ids}) })
+        .then(res => res.json()).then(data => { Swal.fire({ icon:data.status==="success"?"success":"error", title:data.status==="success"?"¡Eliminados!":"Error", text:data.message, confirmButtonText:"Aceptar", confirmButtonColor:"#4e73df", customClass:{popup:'swal-pequeno'} }).then(() => cargarLibros()); });
+    });
+}
+
 // Historial_Prestamos
 function cargarHistorialP() {
   fetchConAuth(`${API}?accion=listar_HistorialP`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
+        `<input type="checkbox" class="checkHist" value="${dato.Id_historial}" onchange="actualizarBotonEliminarHist()">`,
         dato.Id_historial,
         dato.Nombre,               
         dato.Descripcion,            
@@ -1500,10 +1620,11 @@ function cargarHistorialP() {
 
         `<a href="ModificarHistorialP.html?id=${dato.Id_historial}">
            <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
-         </a>`,
-        `<a href="#" onclick="eliminarHistorialP(${dato.Id_historial}, this)">
-           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
          </a>`
+        //  ,
+        // `<a href="#" onclick="eliminarHistorialP(${dato.Id_historial}, this)">
+        //    <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+        //  </a>`
 
       ]);
  
@@ -1515,13 +1636,15 @@ function cargarHistorialP() {
         $('#dataTableHistorialP').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosHist(this)">' },
             { title: 'ID' },
             { title: 'Préstamo' },
             { title: 'Descripción' },
             { title: 'Fecha' },
             { title: 'Estado' },
-            { title: 'Modificar' },
-            { title: 'Eliminar' }
+            { title: 'Modificar' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -1598,7 +1721,7 @@ function cargarDatosModificarHistorialP() {
         document.getElementById("fecha").value = data.Fecha;
         document.getElementById("estado").value = data.Estado;
       })
-      .catch(err => console.error("Error cargando datos del historial de préstamo:", err));
+      .catch(err => console.error("Error cargando datos del reporte de daños:", err));
   }
 }
  
@@ -1631,12 +1754,32 @@ function eliminarHistorialP(id) {
   });
 }
 
+//  ELIMINAR VARIOS - HISTORIAL PRÉSTAMOS 
+function actualizarBotonEliminarHist() {
+    const btn = document.getElementById('btnEliminarSeleccionadosHist');
+    if (btn) btn.classList.toggle('d-none', document.querySelectorAll('.checkHist:checked').length === 0);
+}
+function seleccionarTodosHist(checkbox) {
+    document.querySelectorAll('.checkHist').forEach(cb => cb.checked = checkbox.checked);
+    actualizarBotonEliminarHist();
+}
+function eliminarHistorialSeleccionados() {
+    const ids = [...document.querySelectorAll('.checkHist:checked')].map(cb => cb.value);
+    if (!ids.length) return;
+    Swal.fire({ icon:"warning", title:`¿Eliminar ${ids.length} reporte(s)?`, text:"Esta acción no se puede deshacer.", showCancelButton:true, confirmButtonText:"Sí, eliminar", cancelButtonText:"Cancelar", confirmButtonColor:"#4e73df", cancelButtonColor:"#e53935", customClass:{popup:'swal-pequeno'} })
+    .then(r => { if (!r.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_varios_historialP`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ids}) })
+        .then(res => res.json()).then(data => { Swal.fire({ icon:data.status==="success"?"success":"error", title:data.status==="success"?"¡Eliminados!":"Error", text:data.message, confirmButtonText:"Aceptar", confirmButtonColor:"#4e73df", customClass:{popup:'swal-pequeno'} }).then(() => cargarHistorialP()); });
+    });
+}
+
 // DETALLE PRESTAMOS
 function cargarDetalleP() {
   fetchConAuth(`${API}?accion=listar_DetalleP`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
+        `<input type="checkbox" class="checkDet" value="${dato.Id_detalle_prestamo}" onchange="actualizarBotonEliminarDet()">`,
         dato.Id_detalle_prestamo,
         dato.Nombre,               
         dato.Titulo,            
@@ -1644,10 +1787,11 @@ function cargarDetalleP() {
 
         `<a href="ModificarDetalleP.html?id=${dato.Id_detalle_prestamo}">
            <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
-         </a>`,
-        `<a href="#" onclick="eliminarDetalleP(${dato.Id_detalle_prestamo}, this)">
-           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
          </a>`
+        //  ,
+        // `<a href="#" onclick="eliminarDetalleP(${dato.Id_detalle_prestamo}, this)">
+        //    <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+        //  </a>`
 
       ]);
  
@@ -1659,12 +1803,14 @@ function cargarDetalleP() {
         $('#dataTableDetalleP').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosDet(this)">' },
             { title: 'ID' },
             { title: 'Préstamo' },
             { title: 'Libro' },
             { title: 'Cantidad' },
-            { title: 'Modificar' },
-            { title: 'Eliminar' }
+            { title: 'Modificar' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -1676,7 +1822,7 @@ function cargarDetalleP() {
         });
       }
     })
-    .catch(err => console.error("Error cargando detalle de préstamos:", err));
+    .catch(err => console.error("Error cargando libros prestados:", err));
 }
 
 // --- INSERTAR DETALLEP ---
@@ -1790,12 +1936,32 @@ function eliminarDetalleP(id) {
   });
 }
 
+// --- ELIMINAR VARIOS DETALLES PRÉSTAMO ---
+function actualizarBotonEliminarDet() {
+    const btn = document.getElementById('btnEliminarSeleccionados');
+    if (btn) btn.classList.toggle('d-none', document.querySelectorAll('.checkDet:checked').length === 0);
+}
+function seleccionarTodosDet(checkbox) {
+    document.querySelectorAll('.checkDet').forEach(cb => cb.checked = checkbox.checked);
+    actualizarBotonEliminarDet();
+}
+function eliminarDetalleSeleccionados() {
+    const ids = [...document.querySelectorAll('.checkDet:checked')].map(cb => cb.value);
+    if (!ids.length) return;
+    Swal.fire({ icon:"warning", title:`¿Eliminar ${ids.length} detalle(s)?`, text:"Esta acción no se puede deshacer.", showCancelButton:true, confirmButtonText:"Sí, eliminar", cancelButtonText:"Cancelar", confirmButtonColor:"#4e73df", cancelButtonColor:"#e53935", customClass:{popup:'swal-pequeno'} })
+    .then(r => { if (!r.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_varios_detalleP`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ids}) })
+        .then(res => res.json()).then(data => { Swal.fire({ icon:data.status==="success"?"success":"error", title:data.status==="success"?"¡Eliminados!":"Error", text:data.message, confirmButtonText:"Aceptar", confirmButtonColor:"#4e73df", customClass:{popup:'swal-pequeno'} }).then(() => cargarDetalleP()); });
+    });
+}
+
 // USUARIOS
 function cargarUsuarios() {
   fetchConAuth(`${API}?accion=listar_Usuarios`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
+        `<input type="checkbox" class="checkUsr" value="${dato.Id_Usuario}" onchange="actualizarBotonEliminarUsr()">`,
         dato.Id_Usuario,
         dato.Nombre_Usuario,
         dato.Contrasena,
@@ -1804,10 +1970,11 @@ function cargarUsuarios() {
 
         `<a href="ModificarUsuarios.html?id=${dato.Id_Usuario}">
           <i class="fas fa-edit"></i><span class='d-none d-md-inline'>Modificar</span>
-        </a>`,
-        `<a href="#" onclick="eliminarUsuario(${dato.Id_Usuario}, this)">
-          <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
         </a>`
+        // ,
+        // `<a href="#" onclick="eliminarUsuario(${dato.Id_Usuario}, this)">
+        //   <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+        // </a>`
 
       ]);
  
@@ -1819,13 +1986,15 @@ function cargarUsuarios() {
         $('#dataTableUsuarios').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosUsr(this)">' },
             { title: 'ID' },
             { title: 'Nombre' },
             { title: 'Contraseña' },
             { title: 'Pin' },
             { title: 'Token' },
-            { title: 'Modificar' },
-            { title: 'Eliminar' }
+            { title: 'Modificar' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -1917,12 +2086,33 @@ function eliminarUsuario(id) {
     });
 }
 
+//  ELIMINAR VARIOS - USUARIOS 
+function actualizarBotonEliminarUsr() {
+    const btn = document.getElementById('btnEliminarSeleccionadosUsr');
+    if (btn) btn.classList.toggle('d-none', document.querySelectorAll('.checkUsr:checked').length === 0);
+}
+function seleccionarTodosUsr(checkbox) {
+    document.querySelectorAll('.checkUsr').forEach(cb => cb.checked = checkbox.checked);
+    actualizarBotonEliminarUsr();
+}
+function eliminarUsuariosSeleccionados() {
+    const ids = [...document.querySelectorAll('.checkUsr:checked')].map(cb => cb.value);
+    if (!ids.length) return;
+    Swal.fire({ icon:"warning", title:`¿Eliminar ${ids.length} usuario(s)?`, text:"Esta acción no se puede deshacer.", showCancelButton:true, confirmButtonText:"Sí, eliminar", cancelButtonText:"Cancelar", confirmButtonColor:"#4e73df", cancelButtonColor:"#e53935", customClass:{popup:'swal-pequeno'} })
+    .then(r => { if (!r.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_varios_usuarios`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ids}) })
+        .then(res => res.json()).then(data => { Swal.fire({ icon:data.status==="success"?"success":"error", title:data.status==="success"?"¡Eliminados!":"Error", text:data.message, confirmButtonText:"Aceptar", confirmButtonColor:"#4e73df", customClass:{popup:'swal-pequeno'} }).then(() => cargarUsuarios()); });
+    });
+}
+
+
 // VISITAS
 function cargarVisitas() {
   fetchConAuth(`${API}?accion=listar_Visitas`)
     .then(res => res.json())
     .then(data => {
       const filas = data.map(dato => [
+        `<input type="checkbox" class="checkVis" value="${dato.Id_entrada_salida}" onchange="actualizarBotonEliminarVis()">`,
         dato.Id_entrada_salida,
         dato.NE,               
         dato.NS,            
@@ -1930,9 +2120,9 @@ function cargarVisitas() {
         dato.Hora_entrada,
         dato.Hora_salida,
 
-        `<a href="#" onclick="eliminarVisitas(${dato.Id_entrada_salida}, this)">
-           <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
-         </a>`
+        // `<a href="#" onclick="eliminarVisitas(${dato.Id_entrada_salida}, this)">
+        //    <i class="fas fa-trash"></i> <span class='d-none d-md-inline'>Eliminar</span>
+        //  </a>`
 
       ]);
  
@@ -1944,13 +2134,15 @@ function cargarVisitas() {
         $('#dataTableVisitas').DataTable({
           data: filas,
           columns: [
+            { title: '<input type="checkbox" id="checkTodos" onclick="seleccionarTodosVis(this)">' },
             { title: 'ID' },
             { title: 'Estudiante' },
             { title: 'Servicio' },
             { title: 'Fecha' },
             { title: 'Hora de entrada' },
-            { title: 'Hora de salida' },
-            { title: 'Eliminar' }
+            { title: 'Hora de salida' }
+            // ,
+            // { title: 'Eliminar' }
           ],
           pageLength: 10,
           language: {
@@ -1964,46 +2156,6 @@ function cargarVisitas() {
     })
     .catch(err => console.error("Error cargando historial de prestamos:", err));
 }
-
-// // --- ELIMINAR VISITAS ---
-// function eliminarVisitas(id) {
-//   Swal.fire({
-//     icon: "warning", title: "¿Eliminar visita?", text: "Esta acción no se puede deshacer.", showCancelButton: true, confirmButtonText: "Sí, eliminar", cancelButtonText: "Cancelar",
-//     confirmButtonColor: "#4e73df",
-//     cancelButtonColor: "#e53935",
-//     customClass: { popup: 'swal-pequeno' }
-//   }).then((result) => {
-//     if (!result.isConfirmed) return;
-
-//   fetchConAuth(`${API}?accion=eliminar_Visitas`, {
-//     method: "POST",
-//     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-//     body: "Id_entrada_salida=" + encodeURIComponent(id)
-//   })
-//     .then(res => res.json())
-//     .then(data => {
-//       alert(data.message);
-//       cargarVisitas();
-//     })
-//     .catch(err => console.error("Error eliminando visita:", err));
-// }
-//       .then(res => res.json())
-//       .then(data => {
-//         Swal.fire({
-//           icon: data.status === "success" ? "success" : "error",
-//           title: data.status === "success" ? "¡Eliminado!" : "Error",
-//           text: data.message, confirmButtonText: "Aceptar",
-//           confirmButtonColor: "#4e73df",
-//           customClass: { popup: 'swal-pequeno' }
-//         }).then(() => cargarVisitas());
-//       })
-//       .catch(err => console.error("Error eliminando visita:", err));
-//   });
-// }
-
-// window.addEventListener("resize", () => {
-//     graficarVisitas();
-// });
 
 // --- ELIMINAR VISITAS ---
 function eliminarVisitas(id) {
@@ -2038,6 +2190,25 @@ function eliminarVisitas(id) {
       })
       .catch(err => console.error("Error eliminando visita:", err));
   });
+}
+
+//  ELIMINAR VARIOS - VISITAS 
+function actualizarBotonEliminarVis() {
+    const btn = document.getElementById('btnEliminarSeleccionadosVis');
+    if (btn) btn.classList.toggle('d-none', document.querySelectorAll('.checkVis:checked').length === 0);
+}
+function seleccionarTodosVis(checkbox) {
+    document.querySelectorAll('.checkVis').forEach(cb => cb.checked = checkbox.checked);
+    actualizarBotonEliminarVis();
+}
+function eliminarVisitasSeleccionadas() {
+    const ids = [...document.querySelectorAll('.checkVis:checked')].map(cb => cb.value);
+    if (!ids.length) return;
+    Swal.fire({ icon:"warning", title:`¿Eliminar ${ids.length} visita(s)?`, text:"Esta acción no se puede deshacer.", showCancelButton:true, confirmButtonText:"Sí, eliminar", cancelButtonText:"Cancelar", confirmButtonColor:"#4e73df", cancelButtonColor:"#e53935", customClass:{popup:'swal-pequeno'} })
+    .then(r => { if (!r.isConfirmed) return;
+        fetchConAuth(`${API}?accion=eliminar_varios_visitas`, { method:"POST", headers:{"Content-Type":"application/json"}, body:JSON.stringify({ids}) })
+        .then(res => res.json()).then(data => { Swal.fire({ icon:data.status==="success"?"success":"error", title:data.status==="success"?"¡Eliminados!":"Error", text:data.message, confirmButtonText:"Aceptar", confirmButtonColor:"#4e73df", customClass:{popup:'swal-pequeno'} }).then(() => cargarVisitas()); });
+    });
 }
 
 window.addEventListener("resize", () => {

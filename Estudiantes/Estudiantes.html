@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="format-detection" content="telephone=no">
@@ -24,15 +25,16 @@
     <script src="../css/vendor/datatables/jquery.dataTables.min.js"></script>
     <script src="../css/vendor/datatables/dataTables.bootstrap4.min.js"></script>
     <script src="https://cdn.plot.ly/plotly-3.1.0.min.js"></script>
-    <script src="../js/plotly.min.js"></script>  
+    <script src="../js/plotly.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="../js/app.js" defer></script>
-    <script src="../js/config.js" defer></script>  
+    <script src="../js/config.js" defer></script>
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="icon" href="../img/favicon.png" type="image/png">
 </head>
+
 <body id="page-top">
-    
+
     <div id="wrapper">
 
         <!-- Sidebar -->
@@ -53,8 +55,9 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-                    
+
                     <!-- Page Heading -->
+
                     <div class="container-fluid">
                         <div class="row mb-4 align-items-center">
                             <div class="col-8 col-sm-10 col-md-10 col-lg-10 col-xl-10">
@@ -63,8 +66,12 @@
                                 </div>
                             </div>
                             <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
-                                <div class="col-auto">
+                                <div class="col-auto d-flex gap-2">
                                     <div class="mb-1">
+                                        <button id="btnEliminarSeleccionados" class="btn btn-danger btn-sm d-none"
+                                            onclick="eliminarEstudiantesSeleccionados()">
+                                            <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Eliminar</span>
+                                        </button>
                                         <a href="InsertarEstudiantes.html" class="botonAgregar">
                                             <i class="fas fa-plus"></i>
                                             <span class="d-none d-md-inline">Agregar</span>
@@ -82,10 +89,12 @@
                         </div>
                         <div class="card-body">
                             <div class="table-responsive">
-                            
+
                                 <table class="table table-bordered" id="dataTableEst" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="checkTodos"
+                                                    onclick="seleccionarTodosEst(this)"></th>
                                             <th>ID</th>
                                             <th>Matrícula</th>
                                             <th>Nombre</th>
@@ -95,7 +104,7 @@
                                             <th>Carrera</th>
                                             <th>Contacto</th>
                                             <th>Modificar</th>
-                                            <th>Eliminar</th>
+                                            <!-- <th>Eliminar</th> -->
                                         </tr>
                                     </thead>
                                     <tbody id="tablaEstudiantes">
@@ -122,7 +131,7 @@
     <a class="scroll-to-top rounded" href="#page-top">
         <i class="fas fa-angle-up"></i>
     </a>
-  
+
     <!-- Bootstrap core JavaScript-->
     <script src="../css/vendor/jquery/jquery.min.js"></script>
     <script src="../css/vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -144,4 +153,5 @@
     <script src="cordova.js"></script>
     <script src="../js/index.js"></script>
 </body>
+
 </html>

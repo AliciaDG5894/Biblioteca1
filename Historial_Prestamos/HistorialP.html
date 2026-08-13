@@ -54,13 +54,15 @@
                                 </div>
                             </div>
                             <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
-                                <div class="col-auto">
-                                    <div class="mb-1">
-                                        <a href="InsertarHistorialP.html" class="botonAgregar">
-                                            <i class="fas fa-plus"></i>
-                                            <span class="d-none d-md-inline">Agregar</span>
-                                        </a>
-                                    </div>
+                                <div class="col-auto d-flex gap-2">
+                                    <button id="btnEliminarSeleccionadosHist" class="btn btn-danger btn-sm d-none"
+                                        onclick="eliminarHistorialSeleccionados()">
+                                        <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Eliminar</span>
+                                    </button>
+                                    <a href="InsertarHistorialP.html" class="botonAgregar">
+                                        <i class="fas fa-plus"></i>
+                                        <span class="d-none d-md-inline">Agregar</span>
+                                    </a>
                                 </div>
                             </div>
                         </div>
@@ -76,13 +78,14 @@
                                 <table class="table table-bordered" id="dataTableHistorialP" name="dataTableHistorialP" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="checkTodos" onclick="seleccionarTodosHist(this)"></th>
                                             <th>ID</th>
                                             <th>Prestamo</th>
                                             <th>Descripcion</th>
                                             <th>Fecha</th>
                                             <th>Estado</th>
                                             <th>Modificar</th>
-                                            <th>Eliminar</th>
+                                            <!-- <th>Eliminar</th> -->
                                         </tr>
                                     </thead>
                                     <tbody id="tablaHistorialP"></tbody>

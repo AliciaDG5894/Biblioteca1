@@ -8,23 +8,27 @@ if (document.getElementById("exampleModal")) {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
-    document.getElementById("btnUsarPIN").addEventListener("click", () => {
-        document.getElementById("loginPassword").style.display = "none";
-        document.getElementById("loginPIN").style.display = "block";
-        document.getElementById("txtContrasena").value = "";
-
-        document.getElementById("btnUsarPIN").style.display = "none";
-        document.getElementById("btnUsarPassword").style.display = "block";
-    });
-
-    document.getElementById("btnUsarPassword").addEventListener("click", () => {
-        document.getElementById("loginPassword").style.display = "block";
-        document.getElementById("loginPIN").style.display = "none";
-        document.getElementById("txtPIN").value = "";
-
-        document.getElementById("btnUsarPassword").style.display = "none";
-        document.getElementById("btnUsarPIN").style.display = "block";
-    });
+    const btnUsarPIN = document.getElementById("btnUsarPIN");
+      if (btnUsarPIN) {
+          btnUsarPIN.addEventListener("click", () => {
+              document.getElementById("loginPassword").style.display = "none";
+              document.getElementById("loginPIN").style.display = "block";
+              document.getElementById("txtContrasena").value = "";
+              document.getElementById("btnUsarPIN").style.display = "none";
+              document.getElementById("btnUsarPassword").style.display = "block";
+          });
+      }
+    
+      const btnUsarPassword = document.getElementById("btnUsarPassword");
+      if (btnUsarPassword) {
+          btnUsarPassword.addEventListener("click", () => {
+              document.getElementById("loginPassword").style.display = "block";
+              document.getElementById("loginPIN").style.display = "none";
+              document.getElementById("txtPIN").value = "";
+              document.getElementById("btnUsarPassword").style.display = "none";
+              document.getElementById("btnUsarPIN").style.display = "block";
+          });
+      }
 
     const params = new URLSearchParams(location.search);
     const qrToken = params.get("QRToken");

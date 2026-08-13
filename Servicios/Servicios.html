@@ -5,7 +5,7 @@
     <meta name="format-detection" content="telephone=no">
     <meta name="msapplication-tap-highlight" content="no">
     <meta name="viewport" content="initial-scale=1, width=device-width, viewport-fit=cover">
-    <meta name="color-scheme" content="light dark">
+    <meta name="color-scheme" content="light">
     <title>Servicios</title>
 
     <!-- Custom fonts -->
@@ -13,6 +13,8 @@
 
     <!-- Custom styles -->
     <link href="../css/sb-admin-2.css" rel="stylesheet">
+
+    
     <link href="../css/vendor/datatables/dataTables.bootstrap4.min.css" rel="stylesheet">
     <link rel="stylesheet" href="../css/styles.css">
     <link rel="icon" href="../img/favicon.png" type="image/png">
@@ -44,7 +46,7 @@
 
                 <!-- Begin Page Content -->
                 <div class="container-fluid">
-
+                    
                     <!-- Page Heading -->
                     <div class="container-fluid">
                         <div class="row mb-4 align-items-center">
@@ -54,13 +56,12 @@
                                 </div>
                             </div>
                             <div class="col-4 col-sm-2 col-md-2 col-lg-2 col-xl-2">
-                                <div class="col-auto">
-                                    <div class="mb-1">
-                                        <a href="InsertarServicios.html" class="botonAgregar">
-                                            <i class="fas fa-plus"></i>
-                                            <span class="d-none d-md-inline">Agregar</span>
-                                        </a>
-                                    </div>
+                                <div class="col-auto d-flex gap-2">
+                                    <button id="btnEliminarSeleccionadosSrv" class="btn btn-danger btn-sm d-none"
+                                        onclick="eliminarServiciosSeleccionados()">
+                                        <i class="fas fa-trash"></i> <span class="d-none d-md-inline">Eliminar</span>
+                                    </button>
+                                    <a href="InsertarServicios.html" class="botonAgregar"><i class="fas fa-plus "></i><span class="d-none d-md-inline">Agregar</a>
                                 </div>
                             </div>
                         </div>
@@ -76,10 +77,11 @@
                                 <table class="table table-bordered" id="dataTableServicios" width="100%" cellspacing="0">
                                     <thead>
                                         <tr>
+                                            <th><input type="checkbox" id="checkTodos" onclick="seleccionarTodosSrv(this)"></th>
                                             <th>ID</th>
                                             <th>Nombre</th>
                                             <th>Modificar</th>
-                                            <th>Eliminar</th>
+                                            <!-- <th>Eliminar</th> -->
                                         </tr>
                                     </thead>
                                     <tbody id="tablaServicios"></tbody>
