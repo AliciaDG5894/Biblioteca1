@@ -72,7 +72,7 @@ function fb() {
 function obtenerFBToken() {
     window.FirebasexMessaging.getToken(function (token) {
         if (token) {
-            alert("Token obtenido: " + token.substring(0, 15));
+            // alert("Token obtenido: " + token.substring(0, 15));
             localStorage.setItem("FBToken", token);
             enviarToken(token);
         } else {
@@ -109,7 +109,7 @@ function esperarFirebasePlugin() {
 }
 
 let fbOnPushNotification = function (mensaje) {
-    alert(mensaje);
+    // alert(mensaje);
     if (typeof cargarVisitas === "function" && document.getElementById("dataTableVisitas")) {
         cargarVisitas();
     }
@@ -133,11 +133,11 @@ function enviarToken(token) {
     })
     .then(res => res.json())
     .then(data => {
-        alert("Respuesta insertarToken: " + JSON.stringify(data));
+        // alert("Respuesta insertarToken: " + JSON.stringify(data));
         console.log("Token guardado en backend:", data);
     })
     .catch(err => {
-        alert("Error guardando token: " + err.toString());
+        // alert("Error guardando token: " + err.toString());
         console.error("Error al guardar token:", err);
     });
 }

@@ -1,12 +1,12 @@
-const API = "https://transport-situations-carmen-midi.trycloudflare.com/test/api/index.php";
-const API_ESTUDIANTES = "https://transport-situations-carmen-midi.trycloudflare.com/test/api/Estudiantes.php";
+const API = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/index.php";
+const API_ESTUDIANTES = "https://dfhash.com/temporal/practicasDDI/biblioteca/api/Estudiantes.php";
 
 function fetchConAuth(url, opciones = {}) {
     const jwt = localStorage.getItem("jwt");
 
     if (jwt && !jwt.startsWith("eyJ")) {
         localStorage.removeItem("jwt");
-        window.location.href = "../Usuarios/login.html";
+        window.location.href = "Usuarios/login.html";
         return;
     }
 
@@ -2077,27 +2077,27 @@ document.addEventListener("DOMContentLoaded", () => {
   }
 
   //Manejo de cajas
-  const btnUsarPIN = document.getElementById("btnUsarPIN");
-  if (btnUsarPIN) {
-      btnUsarPIN.addEventListener("click", () => {
-          document.getElementById("loginPassword").style.display = "none";
-          document.getElementById("loginPIN").style.display = "block";
-          document.getElementById("txtContrasena").value = "";
-          document.getElementById("btnUsarPIN").style.display = "none";
-          document.getElementById("btnUsarPassword").style.display = "block";
-      });
-  }
+  // const btnUsarPIN = document.getElementById("btnUsarPIN");
+  // if (btnUsarPIN) {
+  //     btnUsarPIN.addEventListener("click", () => {
+  //         document.getElementById("loginPassword").style.display = "none";
+  //         document.getElementById("loginPIN").style.display = "block";
+  //         document.getElementById("txtContrasena").value = "";
+  //         document.getElementById("btnUsarPIN").style.display = "none";
+  //         document.getElementById("btnUsarPassword").style.display = "block";
+  //     });
+  // }
 
-  const btnUsarPassword = document.getElementById("btnUsarPassword");
-  if (btnUsarPassword) {
-      btnUsarPassword.addEventListener("click", () => {
-          document.getElementById("loginPassword").style.display = "block";
-          document.getElementById("loginPIN").style.display = "none";
-          document.getElementById("txtPIN").value = "";
-          document.getElementById("btnUsarPassword").style.display = "none";
-          document.getElementById("btnUsarPIN").style.display = "block";
-      });
-  }
+  // const btnUsarPassword = document.getElementById("btnUsarPassword");
+  // if (btnUsarPassword) {
+  //     btnUsarPassword.addEventListener("click", () => {
+  //         document.getElementById("loginPassword").style.display = "block";
+  //         document.getElementById("loginPIN").style.display = "none";
+  //         document.getElementById("txtPIN").value = "";
+  //         document.getElementById("btnUsarPassword").style.display = "none";
+  //         document.getElementById("btnUsarPIN").style.display = "block";
+  //     });
+  // }
 
   if (document.getElementById("insertarHistorialP")) {
       cargarPrestamosSelect();
