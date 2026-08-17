@@ -47,8 +47,8 @@ $("#modificarPrestamo").validate({
     messages: {
         nombre: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese más de 10 caracteres",
-            maxlength: "Por favor, no ingrese más de 50 caracteres",
+            minlength: "Por favor, ingrese de 8 caracteres",
+            maxlength: "Por favor, no ingrese más de 8 caracteres",
             letters: "Por favor, ingrese solo ingrese letras",
             multipleSpaces: "Por favor, no ingrese múltiples espacios"
         },
