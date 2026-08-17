@@ -47,10 +47,11 @@ $("#modificarPrestamo").validate({
     messages: {
         matricula: {
             required: "Por favor, llene este campo",
-            minlength: "Por favor, ingrese de 8 caracteres",
+            minlength: "Por favor, ingrese 8 caracteres",
             maxlength: "Por favor, no ingrese más de 8 caracteres",
-            letters: "Por favor, ingrese solo ingrese letras",
-            multipleSpaces: "Por favor, no ingrese múltiples espacios"
+            numeros: "Por favor, ingresa solo números",
+            noSpaces: "Por favor, no ingrese espacios",
+            integer: "Por favor, solo ingrese números enteros"
         },
         fecha_prestamo: {
             required: "Por favor, llene este campo"
