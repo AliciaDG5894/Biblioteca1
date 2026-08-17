@@ -45,7 +45,7 @@ $("#modificarPrestamo").validate({
     errorClass: "v_error", // Estilo para errores
     validClass: "v_correcto",   // Estilo para válidos
     messages: {
-        nombre: {
+        matricula: {
             required: "Por favor, llene este campo",
             minlength: "Por favor, ingrese de 8 caracteres",
             maxlength: "Por favor, no ingrese más de 8 caracteres",
