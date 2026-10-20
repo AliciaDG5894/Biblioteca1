@@ -45,8 +45,8 @@ jobs:
         with:
           node-version: '22'
 
-      - name: Instalar Vitest
-        run: npm install --no-save vitest
+      - name: Instalar Vitest y jsdom
+        run: npm install --no-save vitest jsdom
 
       - name: Ejecutar pruebas automatizadas
         run: npx vitest run --environment jsdom
