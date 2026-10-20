@@ -29,5 +29,5 @@ jobs:
           done
 
       - name: Validar archivo principal
-        run: test -f www/index.html
+        run: test -f index.html
         
