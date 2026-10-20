@@ -39,4 +39,17 @@ jobs:
           echo "Archivos JavaScript encontrados: $cantidad"
           test "$cantidad" -gt 0
 
+      
+      - name: Configurar Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+
+      - name: Instalar Vitest
+        run: npm install --no-save vitest
+
+      - name: Ejecutar pruebas automatizadas
+        run: npx vitest run --environment jsdom
+
+
         
