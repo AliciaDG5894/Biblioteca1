@@ -27,3 +27,7 @@ jobs:
           while IFS= read -r -d '' archivo; do
             php -l "$archivo" || exit 1
           done
+
+      - name: Validar archivo principal
+        run: test -f www/index.html
+        
