@@ -30,4 +30,13 @@ jobs:
 
       - name: Validar archivo principal
         run: test -f index.html
+
+      
+      - name: Verificar archivos JavaScript
+        run: |
+          cantidad=$(find . -type f -name "*.js" \
+            -not -path "./.git/*" | wc -l)
+          echo "Archivos JavaScript encontrados: $cantidad"
+          test "$cantidad" -gt 0
+
         
